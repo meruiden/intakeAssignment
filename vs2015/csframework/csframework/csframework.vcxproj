@@ -1,0 +1,135 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{A7316614-8098-4AAC-876B-C01215379DD0}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>csframework</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>$(SolutionDir)../external\Box2D;$(SolutionDir)../external\windows\SDL2_ttf\include;$(SolutionDir)../external\windows\SDL2_mixer\include;$(SolutionDir)../external\windows\SDL2_image\include;$(SolutionDir)../csframework;$(SolutionDir)../external\glm;$(SolutionDir)../external\windows\glew\include;$(SolutionDir)../external\windows\SDL2\include;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)../external\windows\Box2D\lib;$(SolutionDir)../external\windows\SDL2_ttf\lib\x86;$(SolutionDir)../external\windows\SDL2_mixer\lib\x86;$(SolutionDir)../external\windows\SDL2_image\lib\x86;$(SolutionDir)../external\windows\glew\lib\Release\Win32;$(SolutionDir)../external\windows\SDL2\lib\x86;$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir)Lib\um\x86</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>$(SolutionDir)../external\Box2D;$(SolutionDir)../external\windows\SDL2_ttf\include;$(SolutionDir)../external\windows\SDL2_mixer\include;$(SolutionDir)../external\windows\SDL2_image\include;$(SolutionDir)../csframework;$(SolutionDir)../external\glm;$(SolutionDir)../external\windows\glew\include;$(SolutionDir)../external\windows\SDL2\include;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)../external\windows\Box2D\lib;$(SolutionDir)../external\windows\SDL2_ttf\lib\x86;$(SolutionDir)../external\windows\SDL2_mixer\lib\x86;$(SolutionDir)../external\windows\SDL2_image\lib\x86;$(SolutionDir)../external\windows\glew\lib\Release\Win32;$(SolutionDir)../external\windows\SDL2\lib\x86;$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir)Lib\um\x86</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\csframework\engine\camera.cpp" />
+    <ClCompile Include="..\..\..\csframework\engine\collisionhandler.cpp" />
+    <ClCompile Include="..\..\..\csframework\engine\color.cpp" />
+    <ClCompile Include="..\..\..\csframework\engine\entity.cpp" />
+    <ClCompile Include="..\..\..\csframework\engine\hudelement.cpp" />
+    <ClCompile Include="..\..\..\csframework\engine\hudtext.cpp" />
+    <ClCompile Include="..\..\..\csframework\engine\input.cpp" />
+    <ClCompile Include="..\..\..\csframework\engine\mesh.cpp" />
+    <ClCompile Include="..\..\..\csframework\engine\physicsbody.cpp" />
+    <ClCompile Include="..\..\..\csframework\engine\renderer.cpp" />
+    <ClCompile Include="..\..\..\csframework\engine\resourceloader.cpp" />
+    <ClCompile Include="..\..\..\csframework\engine\resourcemanager.cpp" />
+    <ClCompile Include="..\..\..\csframework\engine\scene.cpp" />
+    <ClCompile Include="..\..\..\csframework\engine\scenemanager.cpp" />
+    <ClCompile Include="..\..\..\csframework\engine\shader.cpp" />
+    <ClCompile Include="..\..\..\csframework\engine\sound.cpp" />
+    <ClCompile Include="..\..\..\csframework\engine\sprite.cpp" />
+    <ClCompile Include="..\..\..\csframework\engine\spritesheet.cpp" />
+    <ClCompile Include="..\..\..\csframework\engine\textmesh.cpp" />
+    <ClCompile Include="..\..\..\csframework\engine\texture.cpp" />
+    <ClCompile Include="..\..\..\csframework\engine\vector2.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\csframework\engine\camera.h" />
+    <ClInclude Include="..\..\..\csframework\engine\collisionhandler.h" />
+    <ClInclude Include="..\..\..\csframework\engine\color.h" />
+    <ClInclude Include="..\..\..\csframework\engine\config.h" />
+    <ClInclude Include="..\..\..\csframework\engine\entity.h" />
+    <ClInclude Include="..\..\..\csframework\engine\hudelement.h" />
+    <ClInclude Include="..\..\..\csframework\engine\hudtext.h" />
+    <ClInclude Include="..\..\..\csframework\engine\input.h" />
+    <ClInclude Include="..\..\..\csframework\engine\mesh.h" />
+    <ClInclude Include="..\..\..\csframework\engine\physicsbody.h" />
+    <ClInclude Include="..\..\..\csframework\engine\renderer.h" />
+    <ClInclude Include="..\..\..\csframework\engine\resourceloader.h" />
+    <ClInclude Include="..\..\..\csframework\engine\resourcemanager.h" />
+    <ClInclude Include="..\..\..\csframework\engine\scene.h" />
+    <ClInclude Include="..\..\..\csframework\engine\scenemanager.h" />
+    <ClInclude Include="..\..\..\csframework\engine\shader.h" />
+    <ClInclude Include="..\..\..\csframework\engine\sound.h" />
+    <ClInclude Include="..\..\..\csframework\engine\sprite.h" />
+    <ClInclude Include="..\..\..\csframework\engine\spritesheet.h" />
+    <ClInclude Include="..\..\..\csframework\engine\textmesh.h" />
+    <ClInclude Include="..\..\..\csframework\engine\texture.h" />
+    <ClInclude Include="..\..\..\csframework\engine\vector2.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
