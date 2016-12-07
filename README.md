@@ -5,6 +5,7 @@ I am making this for my intake assignment.
 How to build:<br>
 
 Windows: <br>
+
 	  Open the intakeAssignment.sln in the vs2015 folder.
 	  You dont need to install anything at all. Everything is pre linked and included
 	  
