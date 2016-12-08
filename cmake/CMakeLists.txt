@@ -1,4 +1,4 @@
-# CMake entry point
+﻿# CMake entry point
 cmake_minimum_required (VERSION 2.6)
 project (project)
 
@@ -64,7 +64,7 @@ include_directories(
 	${SDL2_MIXER_INCLUDE_DIRS}
 	${SDL2_TTF_INCLUDE_DIR}
 	${SDL2_INCLUDE_DIR}
-	${BOX2D_INCLUDE_DIR}
+	../external/Box2D/
 	../external/glm/
 	../csframework/
 )
@@ -79,7 +79,6 @@ set(ALL_LIBS
 	${SDL2_TTF_LIBRARY}
 	${SDL2IMAGE_LIBRARY}
 	${GLEW_LIBRARIES}
-	${BOX2D_LIBRARY}
 )
 
 set(FRAMEWORK_DIR "${CMAKE_SOURCE_DIR}/../csframework")
