@@ -6,6 +6,7 @@ vs2015/intakeAssignment/Debug
 vs2015/intakeAssignment/Release
 documentation/html
 
+*.obj
 *.suo
 *.user
 *.userosscache
