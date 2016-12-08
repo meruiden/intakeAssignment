@@ -84,4 +84,7 @@ private:
 	int fps;
 
 	Vector2 lastWindowSize;
+	Vector2 originalResolution;
+
+	int fullScreenFlag;
 };

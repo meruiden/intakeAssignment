@@ -19,9 +19,17 @@ Renderer::Renderer()
 	initGL();
 	Camera::setWindow(window);
 	Sound::init();
+
+	SDL_DisplayMode current;
+
+	SDL_Init(SDL_INIT_VIDEO);
+
+	SDL_GetCurrentDisplayMode(0, &current);
+
+	originalResolution = Vector2(current.w, current.h);
 }
 
-bool Renderer::mustQuit() 
+bool Renderer::mustQuit()
 {
 	return Input::getInstance()->mustQuit();
 }
@@ -53,7 +61,7 @@ void Renderer::initGL()
 
 	lastWindowSize = Vector2(window_width, window_height);
 	// Check that the window was successfully created
-	if (window == NULL) 
+	if (window == NULL)
 	{
 		// In the case that the window could not be made...
 		std::cout << "Could not create window: " << SDL_GetError() << std::endl;
@@ -69,7 +77,7 @@ void Renderer::initGL()
 	}
 
 	// Initialize GLEW
-	if (glewInit() != GLEW_OK) 
+	if (glewInit() != GLEW_OK)
 	{
 		fprintf(stderr, "Failed to initialize GLEW\n");
 		return;
@@ -86,7 +94,7 @@ void Renderer::initGL()
 
 	// Cull triangles which normal is not towards the camera
 	glDisable(GL_CULL_FACE);
-	
+
 	// Create and compile GLSL program from the shaders
 	programID = loadShaders("shaders/sprite.vert", "shaders/sprite.frag");
 
@@ -121,23 +129,33 @@ void Renderer::initGL()
 
 	TTF_Init();
 
+
+	fullScreenFlag = SDL_WINDOW_FULLSCREEN;
+
+	std::stringstream ss;
+	ss << SDL_GetPlatform();
+	if(ss.str() == "Linux")
+	{
+		fullScreenFlag = SDL_WINDOW_FULLSCREEN_DESKTOP;
+	}
+
 }
 
-void Renderer::renderScene() 
+void Renderer::renderScene()
 {
-	
+
 	Vector2 curWindowSize = Camera::getWindowSize();
 
 	if (lastWindowSize != curWindowSize)
 	{
-		
+
 		window_width = curWindowSize.x;
 		window_height = curWindowSize.y;
-		
+
 		glViewport(0, 0, curWindowSize.x, curWindowSize.y);
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		
+
 		ProjectionMatrix = glm::ortho(0.0f, (float)window_width, (float)window_height, 0.0f, 0.1f, 100.0f);
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
@@ -148,25 +166,28 @@ void Renderer::renderScene()
 			SDL_SetWindowSize(window, curWindowSize.x-1, curWindowSize.y-1);
 			SDL_SetWindowPosition(window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 		}
-		
+
 		lastWindowSize = curWindowSize;
-		
+
 	}
 
 	if (SDL_GetWindowFlags(window) & SDL_WINDOW_MINIMIZED && Camera::getFullScreen() && setFullScreenFix)
 	{
 		SDL_RestoreWindow(window);
 	}
-	if (Camera::getFullScreen() && !(SDL_GetWindowFlags(window) & SDL_WINDOW_FULLSCREEN))
+	if (Camera::getFullScreen() && !(SDL_GetWindowFlags(window) & fullScreenFlag))
 	{
-		SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
+		SDL_SetWindowFullscreen(window, fullScreenFlag);
 	}
-	
-	if (!Camera::getFullScreen() && (SDL_GetWindowFlags(window) & SDL_WINDOW_FULLSCREEN))
+
+	if (!Camera::getFullScreen() && (SDL_GetWindowFlags(window) & fullScreenFlag))
 	{
+
+		Camera::setResolution(originalResolution);
 		SDL_SetWindowFullscreen(window, 0);
 		SDL_SetWindowSize(window, curWindowSize.x + 1, curWindowSize.y + 1);
 		setFullScreenFix = true;
+
 	}
 
 	updateDeltaTime();
@@ -186,7 +207,7 @@ void Renderer::renderScene()
 	Input::getInstance()->update();
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	
+
 	if (scene != NULL) {
 		if(updateFixed)
 		{
@@ -214,7 +235,7 @@ void Renderer::renderScene()
 						b2Body* body = entities[i]->getPhysicsBody()->getBox2dBody();
 						for (int c = 0; c < entityChildren.size(); c++)
 						{
-							
+
 							int childsFound = 0;
 
 							while (childsFound != entityChildren.size())
@@ -259,7 +280,7 @@ void Renderer::renderScene()
 		needHigherLayer = true;
 
 		// Render all hud elements from the scene. lowest layer renders first highest layer renders last.
-		
+
 		while (needHigherLayer) {
 			needHigherLayer = false;
 			for (unsigned int i = 0; i < hudElements.size(); i++)
@@ -305,7 +326,7 @@ void Renderer::renderEntity(glm::mat4 &modelmatrix, Entity* entity, Camera* came
 			return;
 		}
 		bool succes = false;
-		
+
 		texture = ResourceManager::getInstance()->getTexture(entity->getSprite()->getFileName(), succes);
 		if (!succes)
 		{
@@ -314,7 +335,7 @@ void Renderer::renderEntity(glm::mat4 &modelmatrix, Entity* entity, Camera* came
 	}
 	else
 	{
-	
+
 		texture = entity->getSprite()->getDynamicTexture();
 	}
 
@@ -356,7 +377,7 @@ void Renderer::renderHudElement(HudElement* hudelement)
 
 	Vector2 position = Vector2();
 	Vector2 windowSize = Camera::getWindowSize();
-	
+
 	position = hudelement->getGlobalPosition();
 
 	// Use our shader
@@ -394,14 +415,14 @@ void Renderer::renderHudElement(HudElement* hudelement)
 	{
 		texture = hudelement->getSprite()->getDynamicTexture();
 	}
-	
+
 
 	hudelement->getSprite()->setTextureSize(Vector2(texture->getWidth(), texture->getHeight()));
 	if (hudelement->getSprite()->getSpriteSize().x == 0 && hudelement->getSprite()->getSpriteSize().y == 0)
 	{
 		hudelement->getSprite()->setSpriteSize(Vector2(texture->getWidth(), texture->getHeight()));
 	}
-	
+
 	if (!hudelement->getSprite()->hasDynamicMesh())
 	{
 		Vector2 spriteSize = hudelement->getSprite()->getSpriteSize();
@@ -470,7 +491,7 @@ void Renderer::renderMesh(glm::mat4 matrix, Mesh* mesh, GLuint textureBuffer, Ve
 	glDisableVertexAttribArray(vertexUVID);
 }
 
-glm::mat4 Renderer::getModelMatrix(Vector2 pos, Vector2 scal, float rot) 
+glm::mat4 Renderer::getModelMatrix(Vector2 pos, Vector2 scal, float rot)
 {
 	glm::vec3 position = glm::vec3(pos.x, pos.y, 0.0f);
 	glm::vec3 rotation = glm::vec3(0.0f, 0.0f, rot);
@@ -486,7 +507,7 @@ glm::mat4 Renderer::getModelMatrix(Vector2 pos, Vector2 scal, float rot)
 	return mm;
 }
 
-void Renderer::updateDeltaTime() 
+void Renderer::updateDeltaTime()
 {
 	double old_time = currentTime;
 	currentTime = SDL_GetTicks();
@@ -497,7 +518,7 @@ void Renderer::showFps() {
 	fpsCounter += dt;
 	fps++;
 	if (fpsCounter >= 1.0f) {
-		
+
 		fpsCounter = fmod(fpsCounter, dt);
 		std::cout << "FPS: " << fps << std::endl;
 		fps = 0;
@@ -506,6 +527,10 @@ void Renderer::showFps() {
 Renderer::~Renderer()
 {
 
+	if(Camera::getFullScreen())
+	{
+		Camera::setResolution(originalResolution);
+	}
 	// delete RecouseManager instance
 	delete  ResourceManager::getInstance();
 
@@ -523,5 +548,5 @@ Renderer::~Renderer()
 	// Quit SDL
 	SDL_Quit();
 	std::cout << "CLOSED SDL" << std::endl;
-	
+
 }
