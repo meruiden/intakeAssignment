@@ -27,9 +27,6 @@
     <ClCompile Include="..\..\csframework\project\settingscene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\csframework\project\square.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\csframework\project\level1.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -42,9 +39,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\csframework\project\settingscene.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\csframework\project\square.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\csframework\project\level1.h">

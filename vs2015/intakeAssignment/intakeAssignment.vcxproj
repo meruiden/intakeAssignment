@@ -16,14 +16,12 @@
     <ClCompile Include="..\..\csframework\project\menuscene.cpp" />
     <ClCompile Include="..\..\csframework\project\settingsbutton.cpp" />
     <ClCompile Include="..\..\csframework\project\settingscene.cpp" />
-    <ClCompile Include="..\..\csframework\project\square.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\csframework\project\level1.h" />
     <ClInclude Include="..\..\csframework\project\menuscene.h" />
     <ClInclude Include="..\..\csframework\project\settingsbutton.h" />
     <ClInclude Include="..\..\csframework\project\settingscene.h" />
-    <ClInclude Include="..\..\csframework\project\square.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{04A7EA57-7D35-410E-B97B-F56A5DB63B4F}</ProjectGuid>
