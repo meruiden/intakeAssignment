@@ -33,11 +33,11 @@
 class Color
 {
 public:
-    Color(int _r = 255, int _g = 255, int _b = 255, float _a = 255);
-    int r;
-    int g;
-    int b;
-    float a;
+    Color(unsigned char _r = 255, unsigned char _g = 255, unsigned char _b = 255, unsigned char _a = 255);
+	unsigned char r;
+	unsigned char g;
+	unsigned char b;
+	unsigned char a;
 
 private:
 

@@ -425,9 +425,9 @@ void Renderer::renderMesh(glm::mat4 matrix, Mesh* mesh, GLuint textureBuffer, Ve
 	glUniformMatrix4fv(matrixID, 1, GL_FALSE, &matrix[0][0]);
 
 	glUniform2f(uvoffset, uvOffset.x, uvOffset.y);
-	glUniform1f(alphafloat, 1.0f / 255.0f * color.a);
-
-	glUniform3f(rgbVec, (1.0f / 255.0f) * color.r, (1.0f / 255.0f) * color.g, (1.0f / 255.0f) * color.b);
+	glUniform1f(alphafloat, 1.0f / 255.0f * (float)color.a);
+	
+	glUniform3f(rgbVec, (1.0f / 255.0f) * (float)color.r, (1.0f / 255.0f) * (float)color.g, (1.0f / 255.0f) * (float)color.b);
 
 	// Bind our texture in Texture Unit 0
 	glActiveTexture(GL_TEXTURE0);
