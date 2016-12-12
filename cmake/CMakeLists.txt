@@ -151,6 +151,8 @@ add_executable(project
 	"${FRAMEWORK_DIR}/project/settingsbutton.h"
 	"${FRAMEWORK_DIR}/project/settingscene.cpp"
 	"${FRAMEWORK_DIR}/project/settingscene.h"
+	"${FRAMEWORK_DIR}/project/player.cpp"
+	"${FRAMEWORK_DIR}/project/player.h"
 )
 
 target_link_libraries(project
