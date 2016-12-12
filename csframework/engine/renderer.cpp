@@ -153,12 +153,8 @@ void Renderer::renderScene()
 		window_height = curWindowSize.y;
 
 		glViewport(0, 0, curWindowSize.x, curWindowSize.y);
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
 
 		ProjectionMatrix = glm::ortho(0.0f, (float)window_width, (float)window_height, 0.0f, 0.1f, 100.0f);
-		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
 
 		if (setFullScreenFix)
 		{
