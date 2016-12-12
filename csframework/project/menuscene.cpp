@@ -59,7 +59,7 @@ void MenuScene::update(float deletaTime)
 		startButton->color = GREY;
 		if (Input::getInstance()->getMouseButtonUp(1))
 		{
-			SceneManager::loadScene("mainScene");
+			SceneManager::loadScene("level1");
 		}
 	}
 	else

@@ -143,8 +143,8 @@ add_library(engine
 
 add_executable(project
 	"${FRAMEWORK_DIR}/project/main.cpp"
-	"${FRAMEWORK_DIR}/project/mainscene.cpp"
-	"${FRAMEWORK_DIR}/project/mainscene.h"
+	"${FRAMEWORK_DIR}/project/level1.cpp"
+	"${FRAMEWORK_DIR}/project/level1.h"
 	"${FRAMEWORK_DIR}/project/menuscene.cpp"
 	"${FRAMEWORK_DIR}/project/menuscene.h"
 	"${FRAMEWORK_DIR}/project/settingsbutton.cpp"

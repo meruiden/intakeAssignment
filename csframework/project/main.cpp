@@ -1,21 +1,21 @@
 #include <engine/renderer.h>
 #include <engine/scenemanager.h>
-#include <project/mainscene.h>
+#include <project/level1.h>
 #include <project/menuscene.h>
 #include <project/settingscene.h>
 
 Renderer* renderer;
-MainScene* mainscene = NULL;
+Level1* level1 = NULL;
 MenuScene* menuscene = NULL;
 SettingScene* settingscene = NULL;
 
 int main(int argc, char* argv[]) {
 	renderer = new Renderer();
-	mainscene = new MainScene();
+	level1 = new Level1();
 	menuscene = new MenuScene();
 	settingscene = new SettingScene();
 
-	SceneManager::addScene("mainScene", mainscene);
+	SceneManager::addScene("level1", level1);
 	SceneManager::addScene("settings", settingscene);
 	SceneManager::addScene("menu", menuscene);
 	SceneManager::loadScene("menu");
@@ -25,7 +25,7 @@ int main(int argc, char* argv[]) {
 	}
 
 	delete renderer;
-	delete mainscene;
+	delete level1;
 	delete menuscene;
 	delete settingscene;
 	return 0;
