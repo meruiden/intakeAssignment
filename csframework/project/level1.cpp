@@ -6,9 +6,7 @@ Level1::Level1() : Scene()
 	addEntity(player);
 
 	player->setPosition(Vector2(0, -200));
-	player->getPhysicsBody()->setPhysicsActive(true);
-
-
+	
 }
 
 void Level1::update(float deltaTime)

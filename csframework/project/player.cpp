@@ -6,6 +6,7 @@ Player::Player() : Entity()
 	this->getSpriteSheet()->setAnimateFrames(0, 7);
 	this->getSpriteSheet()->play();
 	this->getSpriteSheet()->setLoop(true);
+	this->getPhysicsBody()->setPhysicsActive(true);
 }
 
 void Player::update(float deltaTime)

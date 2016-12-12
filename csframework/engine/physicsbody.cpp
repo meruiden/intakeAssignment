@@ -24,7 +24,7 @@ void PhysicsBody::setBox2dBody(b2Body* body, b2FixtureDef fixtureDef)
 
 	if (body != NULL)
 	{
-		setPhysicsActive(false);
+		setPhysicsActive(physicsActive);
 	}
 }
 
@@ -162,7 +162,12 @@ void PhysicsBody::setTrigger(bool active)
 
 void PhysicsBody::setPhysicsActive(bool active)
 {
-	
+	physicsActive = active;
+
+	if (box2dBody == NULL)
+	{
+		return;
+	}
 	for (b2Fixture* f = box2dBody->GetFixtureList(); f; f = f->GetNext())
 	{
 		b2Filter filter = f->GetFilterData();
@@ -179,6 +184,5 @@ void PhysicsBody::setPhysicsActive(bool active)
 
 		f->SetFilterData(filter);
 	}
-	physicsActive = active;
 }
 
