@@ -19,6 +19,4 @@ private:
 	HudElement* startButton;
 	HudElement* settingsButton;
 	HudElement* quitButton;
-	Entity* sprite;
 };
-

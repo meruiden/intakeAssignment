@@ -30,6 +30,9 @@
     <ClCompile Include="..\..\csframework\project\level1.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\csframework\project\player.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\csframework\project\menuscene.h">
@@ -42,6 +45,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\csframework\project\level1.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\csframework\project\player.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
