@@ -21,6 +21,7 @@ public:
 	void setVelocity(Vector2 newVelocity);
 	void setPhysicsActive(bool active);
 	void setDrawColliders(bool active);
+	void setTrigger(bool active);
 	
 
 	b2FixtureDef getFixtureDef(){return fixtureDef;}
@@ -32,6 +33,7 @@ public:
 	static const int DYNAMIC = 2;
 	bool getPhysicsActive() { return physicsActive; }
 	bool getDrawColliders() { return drawColliders; }
+	bool isTrigger() { return trigger; }
 	int getPhysicsMode();
 
 	void regenerateColliderMesh();
@@ -44,5 +46,7 @@ private:
 	bool drawColliders;
 	bool physicsActive;
 	Mesh* drawColliderMesh;
+	bool trigger;
+	
 };
 

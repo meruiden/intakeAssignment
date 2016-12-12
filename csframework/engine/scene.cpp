@@ -43,6 +43,12 @@ void Scene::createPhysicsFor(Entity* entity)
 	fixture.shape = &shape;
 	fixture.density = 1.0f;
 
+	b2Filter filter;
+
+	filter.maskBits = 0x0001;
+	filter.categoryBits = 0x0001;
+	fixture.filter = filter;
+
 	body->CreateFixture(&fixture);
 	body->SetUserData(body);
 	entity->getPhysicsBody()->setBox2dBody(body, fixture);

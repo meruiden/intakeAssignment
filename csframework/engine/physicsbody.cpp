@@ -5,6 +5,7 @@ PhysicsBody::PhysicsBody()
 	box2dBody = NULL;
 	drawColliderMesh = NULL;
 	drawColliders = false;
+	trigger = false;
 }
 
 PhysicsBody::~PhysicsBody()
@@ -149,21 +150,34 @@ int PhysicsBody::getPhysicsMode()
 	return mode;
 }
 
+
+void PhysicsBody::setTrigger(bool active)
+{
+	for (b2Fixture* f = box2dBody->GetFixtureList(); f; f = f->GetNext())
+	{
+		f->SetSensor(active);
+		trigger = active;
+	}
+}
+
 void PhysicsBody::setPhysicsActive(bool active)
 {
 	
 	for (b2Fixture* f = box2dBody->GetFixtureList(); f; f = f->GetNext())
 	{
-		f->SetSensor(!active);
-	}
+		b2Filter filter = f->GetFilterData();
+		if (active)
+		{
+			filter.categoryBits = 0x0001;
+			setPhysicsMode(PhysicsBody::DYNAMIC);
+		}
+		else
+		{
+			filter.categoryBits = 0x0002;
+			setPhysicsMode(PhysicsBody::STATIC);
+		}
 
-	if (active)
-	{
-		setPhysicsMode(PhysicsBody::DYNAMIC);
-	}
-	else 
-	{
-		setPhysicsMode(PhysicsBody::STATIC);
+		f->SetFilterData(filter);
 	}
 	physicsActive = active;
 }

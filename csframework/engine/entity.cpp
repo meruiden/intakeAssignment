@@ -114,7 +114,10 @@ void Entity::setScale(Vector2 newScale)
 	b2FixtureDef fixtureDef;
 	fixtureDef.shape = &shape;
 	fixtureDef.density = 1.0f;
-
+	b2Filter filter;
+	filter.maskBits = 0x0001;
+	filter.categoryBits = 0x0001;
+	fixtureDef.filter = filter;
 	body->CreateFixture(&fixtureDef);
 	
 

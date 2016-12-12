@@ -13,6 +13,17 @@ void Player::update(float deltaTime)
 	this->getSpriteSheet()->animate(deltaTime, 1.0f / 15.0f);
 }
 
+void Player::onCollisionBegin(Entity* other)
+{
+	
+}
+
+void Player::onCollisionExit(Entity* other)
+{
+
+}
+
+
 Player::~Player()
 {
 
