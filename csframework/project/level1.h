@@ -20,6 +20,9 @@ private:
 	PlayerGroundTrigger* playerGroundTrigger;
 	Ground* ground;
 
+	Vector2 camAcc;
+	Vector2 camVel;
+
 	bool playerLeft;
 	bool playerRight;
 	bool playerJump;

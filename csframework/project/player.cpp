@@ -13,16 +13,6 @@ Player::Player(PlayerGroundTrigger* groundTrigger) : Entity()
 void Player::update(float deltaTime)
 {
 	this->getSpriteSheet()->animate(deltaTime, 1.0f / 15.0f);
-	if (isGrounded())
-	{
-		this->color = RED;
-	
-	}
-	else 
-	{
-		
-		this->color = WHITE;
-	}
 
 }
 

@@ -19,12 +19,15 @@ Level1::Level1() : Scene()
 	addEntity(ground);
 	ground->getPhysicsBody()->setPhysicsActive(true);
 	ground->getPhysicsBody()->setPhysicsMode(PhysicsBody::STATIC);
-	ground->setPosition(Vector2(0, 400));
+	ground->setPosition(Vector2(0, 200));
 	ground->setScale(Vector2(20, 1));
 
 	this->playerJump = false;
 	this->playerRight = false;
 	this->playerLeft = false;
+
+	camAcc = Vector2();
+	camVel = Vector2();
 }
 
 void Level1::update(float deltaTime)
@@ -62,7 +65,8 @@ void Level1::handleInput()
 	{
 		playerLeft = false;
 	}
-
+	
+	
 }
 
 
@@ -79,10 +83,18 @@ void Level1::fixedUpdate()
 	{
 		player->getPhysicsBody()->setVelocity(Vector2(-10.0f, playerVelocity.y));
 	}
+	
+	if (!playerLeft && !playerRight && player->isGrounded())
+	{
+		playerVelocity = player->getPhysicsBody()->getVelocity();
+		player->getPhysicsBody()->setVelocity(Vector2(playerVelocity.x * 0.97f, playerVelocity.y));
+
+	}
 	if (!player->isGrounded())
 	{
 		player->getPhysicsBody()->addForce(Vector2(0, 300.0f));
 	}
+
 	if (playerJump)
 	{
 		playerJump = false;
@@ -100,6 +112,23 @@ void Level1::fixedUpdate()
 		
 		player->getPhysicsBody()->addForce(Vector2(-400.0f, 0));
 	}
+
+	Vector2 camDir = Vector2(player->getPosition() + Vector2(250, 0), getCamera()->getPosition());
+	if (camDir.magnitude() > 50.0f)
+	{
+		camAcc += camDir * 0.008f;
+		
+	}
+
+
+	camVel += camAcc;
+	getCamera()->setPosition(getCamera()->getPosition() + camVel);
+
+	camAcc *= 0;
+
+	camVel *= 0.9f;
+
+	player->setRotation(0);
 }
  
 Level1::~Level1()

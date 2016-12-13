@@ -79,7 +79,9 @@ void Entity::setRotation(float newRotation)
 {
 	if (physicsBody->getBox2dBody() != NULL)
 	{
-		physicsBody->getBox2dBody()->SetTransform(b2Vec2(position.x * 0.02f, position.y * 0.02f), newRotation * DEG_TO_RAD);
+		physicsBody->getBox2dBody()->SetTransform(physicsBody->getBox2dBody()->GetPosition() , newRotation * DEG_TO_RAD);
+		physicsBody->getBox2dBody()->SetAngularVelocity(0);
+		physicsBody->getBox2dBody()->SetAngularDamping(0);
 	}
 
 	rotation = newRotation;

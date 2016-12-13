@@ -222,9 +222,8 @@ void Renderer::renderScene()
 			needHigherLayer = false;
 			for (unsigned int i = 0; i < entities.size(); i++)
 			{
-				entities[i]->update(dt);
-
 				if (entities[i]->getLayer() == curLayer) {
+					entities[i]->update(dt);
 					glm::mat4 modelmatrix = glm::mat4(1.0f);
 					/*if (updateFixed) {
 						std::vector<Entity*> entityChildren = entities[i]->getChildren();
@@ -281,9 +280,10 @@ void Renderer::renderScene()
 			needHigherLayer = false;
 			for (unsigned int i = 0; i < hudElements.size(); i++)
 			{
-				hudElements[i]->update(dt);
+				
 
 				if (hudElements[i]->getLayer() == curLayer) {
+					hudElements[i]->update(dt);
 					renderHudElement(hudElements[i]);
 				}
 
