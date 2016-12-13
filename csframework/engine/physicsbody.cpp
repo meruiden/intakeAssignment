@@ -181,7 +181,7 @@ void PhysicsBody::setPhysicsActive(bool active)
 			filter.categoryBits = 0x0002;
 			setPhysicsMode(PhysicsBody::STATIC);
 		}
-
+		
 		f->SetFilterData(filter);
 	}
 }

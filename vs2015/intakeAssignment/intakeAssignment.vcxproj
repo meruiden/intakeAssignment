@@ -11,17 +11,21 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\csframework\project\ground.cpp" />
     <ClCompile Include="..\..\csframework\project\level1.cpp" />
     <ClCompile Include="..\..\csframework\project\main.cpp" />
     <ClCompile Include="..\..\csframework\project\menuscene.cpp" />
     <ClCompile Include="..\..\csframework\project\player.cpp" />
+    <ClCompile Include="..\..\csframework\project\playergroundtrigger.cpp" />
     <ClCompile Include="..\..\csframework\project\settingsbutton.cpp" />
     <ClCompile Include="..\..\csframework\project\settingscene.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\csframework\project\ground.h" />
     <ClInclude Include="..\..\csframework\project\level1.h" />
     <ClInclude Include="..\..\csframework\project\menuscene.h" />
     <ClInclude Include="..\..\csframework\project\player.h" />
+    <ClInclude Include="..\..\csframework\project\playergroundtrigger.h" />
     <ClInclude Include="..\..\csframework\project\settingsbutton.h" />
     <ClInclude Include="..\..\csframework\project\settingscene.h" />
   </ItemGroup>

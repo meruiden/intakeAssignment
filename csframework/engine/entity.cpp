@@ -109,17 +109,18 @@ void Entity::setScale(Vector2 newScale)
 	b2Fixture* fixture = body->GetFixtureList();
 	body->DestroyFixture(fixture);
 	b2PolygonShape shape;
-	shape.SetAsBox(0.02f * (getWidth() / 2.0f), 0.02f * (getHeight() / 2.0f));
+	shape.SetAsBox(0.02f * (abs(getWidth() / 2.0f)), 0.02f * abs((getHeight() / 2.0f)));
 
 	b2FixtureDef fixtureDef;
 	fixtureDef.shape = &shape;
 	fixtureDef.density = 1.0f;
+	
 	b2Filter filter;
 	filter.maskBits = 0x0001;
 	filter.categoryBits = 0x0001;
 	fixtureDef.filter = filter;
-	body->CreateFixture(&fixtureDef);
-	
+	fixture = body->CreateFixture(&fixtureDef);
+	fixture->SetSensor(getPhysicsBody()->isTrigger());
 
 }
 
