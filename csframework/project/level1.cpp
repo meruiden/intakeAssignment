@@ -39,6 +39,7 @@ void Level1::update(float deltaTime)
 
 void Level1::handleInput()
 {
+	
 	if (input()->getKeyDown(SDLK_SPACE) && player->isGrounded())
 	{
 		playerJump = true;
@@ -46,24 +47,33 @@ void Level1::handleInput()
 
 	if (input()->getKeyDown(SDLK_d))
 	{
-		player->setScale(Vector2(1, 1));
+		
 		playerRight = true;
+		player->onWalk();
 	}
 
 	if (input()->getKeyDown(SDLK_a))
 	{
-		player->setScale(Vector2(-1, 1));
 		playerLeft = true;
+		player->onWalk();
 	}
 
 	if (input()->getKeyUp(SDLK_d))
 	{
 		playerRight = false;
+		if (!playerLeft)
+		{
+			player->onIdle();
+		}
 	}
 
 	if (input()->getKeyUp(SDLK_a))
 	{
 		playerLeft = false;
+		if (!playerRight)
+		{
+			player->onIdle();
+		}
 	}
 	
 	
@@ -105,11 +115,18 @@ void Level1::fixedUpdate()
 	{
 		
 		player->getPhysicsBody()->addForce(Vector2(400.0f, 0));
+		if (player->getScale() != Vector2(1, 1))
+		{
+			player->setScale(Vector2(1, 1));
+		}
 	}
 
 	if (playerLeft)
 	{
-		
+		if (player->getScale() != Vector2(-1, 1))
+		{
+			player->setScale(Vector2(-1, 1));
+		}
 		player->getPhysicsBody()->addForce(Vector2(-400.0f, 0));
 	}
 
@@ -130,6 +147,7 @@ void Level1::fixedUpdate()
 
 	player->setRotation(0);
 }
+
  
 Level1::~Level1()
 {

@@ -15,8 +15,13 @@ public:
 
 	bool isGrounded() { return groundTrigger->getGroundedCollisions() > 0; }
 
-
+	void onWalk();
+	void onIdle();
 private:
 	PlayerGroundTrigger* groundTrigger;
+
+	float walkAnimationFps;
+	float idleAnimationFps;
+	float animationFps;
 };
 
