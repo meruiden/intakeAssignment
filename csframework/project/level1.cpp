@@ -28,6 +28,13 @@ Level1::Level1() : Scene()
 
 	camAcc = Vector2();
 	camVel = Vector2();
+	
+	test = new Entity();
+	addEntity(test);
+	test->getPhysicsBody()->setPhysicsActive(true);
+	test->setPosition(Vector2(100, 100));
+	test->getPhysicsBody()->setCircleCollider(1, 7);
+	test->getPhysicsBody()->setDrawColliders(true);
 }
 
 void Level1::update(float deltaTime)
@@ -157,6 +164,7 @@ void Level1::fixedUpdate()
  
 Level1::~Level1()
 {
+	delete test;
 	delete ground;
 	delete playerGroundTrigger;
 	delete player;

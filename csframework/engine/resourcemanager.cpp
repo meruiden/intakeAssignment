@@ -30,8 +30,8 @@ void ResourceManager::createEmptyTexture()
 
 	std::vector<unsigned char>pixels;
 
-	int w = 16;
-	int h = 16;
+	int w = 32;
+	int h = 32;
 	int bithDepth = 3; //rgb
 
 	unsigned int size = w * h * bithDepth;
@@ -42,9 +42,9 @@ void ResourceManager::createEmptyTexture()
 
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 10, 10, 0, GL_RGB, GL_UNSIGNED_BYTE, &pixels[0]);
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
 	glGenerateMipmap(GL_TEXTURE_2D);
 

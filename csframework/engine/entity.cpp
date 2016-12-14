@@ -103,10 +103,11 @@ void Entity::setScale(Vector2 newScale)
 {
 
 	scale = newScale;
-	if (physicsBody->getBox2dBody() == NULL)
+	if (physicsBody->getBox2dBody() == NULL || physicsBody->hasCustomCollider())
 	{
 		return;
 	}
+
 	b2Body* body = physicsBody->getBox2dBody();
 	b2Fixture* fixture = body->GetFixtureList();
 	body->DestroyFixture(fixture);

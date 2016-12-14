@@ -310,50 +310,51 @@ void Renderer::renderEntity(glm::mat4 &modelmatrix, Entity* entity, Camera* came
 
 	MVP = ProjectionMatrix * camera->getViewMatrix() * modelmatrix;
 
-	if (entity->getSprite() == NULL)
-	{
-		return;
-	}
+
 	Texture* texture = NULL;
 	Mesh* mesh = NULL;
 
-	if (!entity->getSprite()->hasDynamicTexture())
+	if (entity->getSprite() != NULL)
 	{
-		if (entity->getSprite()->getFileName() == "")
+		if (!entity->getSprite()->hasDynamicTexture())
 		{
-			return;
-		}
-		bool succes = false;
+			if (entity->getSprite()->getFileName() == "")
+			{
+				return;
+			}
+			bool succes = false;
 
-		texture = ResourceManager::getInstance()->getTexture(entity->getSprite()->getFileName(), succes);
-		if (!succes)
+			texture = ResourceManager::getInstance()->getTexture(entity->getSprite()->getFileName(), succes);
+			if (!succes)
+			{
+				return;
+			}
+		}
+		else
 		{
-			return;
+
+			texture = entity->getSprite()->getDynamicTexture();
 		}
-	}
-	else
-	{
 
-		texture = entity->getSprite()->getDynamicTexture();
-	}
+		entity->getSprite()->setTextureSize(Vector2(texture->getWidth(), texture->getHeight()));
+		if (entity->getSprite()->getSpriteSize().x == 0 && entity->getSprite()->getSpriteSize().y == 0)
+		{
+			entity->getSprite()->setSpriteSize(Vector2(texture->getWidth(), texture->getHeight()));
+			entity->setScale(entity->getScale());
+		}
+		if (!entity->getSprite()->hasDynamicMesh())
+		{
+			Vector2 spriteSize = entity->getSprite()->getSpriteSize();
+			Vector2 uvSize = entity->getSprite()->getUvSize();
+			mesh = ResourceManager::getInstance()->getSpriteMesh(spriteSize.x, spriteSize.y, uvSize.x, uvSize.y);
+		}
+		else
+		{
+			mesh = entity->getSprite()->getDynamicMesh();
+		}
 
-	entity->getSprite()->setTextureSize(Vector2(texture->getWidth(), texture->getHeight()));
-	if (entity->getSprite()->getSpriteSize().x == 0 && entity->getSprite()->getSpriteSize().y == 0)
-	{
-		entity->getSprite()->setSpriteSize(Vector2(texture->getWidth(), texture->getHeight()));
-		entity->setScale(entity->getScale());
+		renderMesh(MVP, mesh, texture->getTextureBuffer(), entity->getSprite()->getUvOffset(), entity->color);
 	}
-	if (!entity->getSprite()->hasDynamicMesh())
-	{
-		Vector2 spriteSize = entity->getSprite()->getSpriteSize();
-		Vector2 uvSize = entity->getSprite()->getUvSize();
-		mesh = ResourceManager::getInstance()->getSpriteMesh(spriteSize.x, spriteSize.y, uvSize.x, uvSize.y);
-	}else
-	{
-		mesh = entity->getSprite()->getDynamicMesh();
-	}
-
-	renderMesh(MVP, mesh, texture->getTextureBuffer(), entity->getSprite()->getUvOffset(), entity->color);
 	if (entity->getPhysicsBody()->getDrawColliders())
 	{
 		entity->getPhysicsBody()->regenerateColliderMesh();

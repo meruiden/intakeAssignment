@@ -22,6 +22,9 @@ public:
 	void setPhysicsActive(bool active);
 	void setDrawColliders(bool active);
 	void setTrigger(bool active);
+	void setCollider(std::vector<Vector2> vertices);
+	void setBoxCollider(float width, float height);
+	void setCircleCollider(float radius, int segments);
 	
 
 	b2FixtureDef getFixtureDef(){return fixtureDef;}
@@ -34,6 +37,7 @@ public:
 	bool getPhysicsActive() { return physicsActive; }
 	bool getDrawColliders() { return drawColliders; }
 	bool isTrigger() { return trigger; }
+	bool hasCustomCollider() { return customCollider; }
 	int getPhysicsMode();
 
 	void regenerateColliderMesh();
@@ -47,6 +51,9 @@ private:
 	bool physicsActive;
 	Mesh* drawColliderMesh;
 	bool trigger;
+	bool customCollider;
+
+	float lastCircleRadius;
 	
 };
 

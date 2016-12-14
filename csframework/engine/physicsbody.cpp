@@ -6,6 +6,10 @@ PhysicsBody::PhysicsBody()
 	drawColliderMesh = NULL;
 	drawColliders = false;
 	trigger = false;
+	customCollider = false;
+	physicsActive = false;
+	lastCircleRadius = 0.0f;
+
 }
 
 PhysicsBody::~PhysicsBody()
@@ -16,6 +20,89 @@ PhysicsBody::~PhysicsBody()
 	}
 }
 
+void PhysicsBody::setBoxCollider(float width, float height)
+{
+	b2Body* body = box2dBody;
+	b2Fixture* fixture = body->GetFixtureList();
+	body->DestroyFixture(fixture);
+	b2PolygonShape shape;
+	shape.SetAsBox(0.02f * (abs(width / 2.0f)), 0.02f * abs((height / 2.0f)));
+
+	b2FixtureDef fixtureDef;
+	fixtureDef.shape = &shape;
+	fixtureDef.density = 1.0f;
+
+	b2Filter filter;
+	filter.maskBits = 0x0001;
+	filter.categoryBits = 0x0001;
+	fixtureDef.filter = filter;
+	fixture = body->CreateFixture(&fixtureDef);
+	fixture->SetSensor(trigger);
+
+	customCollider = true;
+
+	regenerateColliderMesh();
+
+	
+}
+
+void PhysicsBody::setCircleCollider(float radius, int segments)
+{
+	b2Body* body = box2dBody;
+	b2Fixture* fixture = body->GetFixtureList();
+	body->DestroyFixture(fixture);
+	b2CircleShape shape;
+
+	shape.m_radius = radius;
+
+	b2FixtureDef fixtureDef;
+	fixtureDef.shape = &shape;
+	fixtureDef.density = 1.0f;
+
+	b2Filter filter;
+	filter.maskBits = 0x0001;
+	filter.categoryBits = 0x0001;
+	fixtureDef.filter = filter;
+	fixture = body->CreateFixture(&fixtureDef);
+	fixture->SetSensor(trigger);
+
+	customCollider = true;
+	regenerateColliderMesh();
+	
+}
+
+
+void PhysicsBody::setCollider(std::vector<Vector2> vertices)
+{
+	std::vector<b2Vec2> b2verts;
+	for (unsigned int i = 0; i < vertices.size(); i++)
+	{
+		b2verts.push_back(b2Vec2(vertices[i].x, vertices[i].y));
+	}
+	b2Body* body = box2dBody;
+	b2Fixture* fixture = body->GetFixtureList();
+	body->DestroyFixture(fixture);
+	b2PolygonShape shape;
+
+	shape.Set(b2verts.data(), b2verts.size());
+
+	b2FixtureDef fixtureDef;
+	fixtureDef.shape = &shape;
+	fixtureDef.density = 1.0f;
+
+	b2Filter filter;
+	filter.maskBits = 0x0001;
+	filter.categoryBits = 0x0001;
+	fixtureDef.filter = filter;
+	fixture = body->CreateFixture(&fixtureDef);
+	fixture->SetSensor(trigger);
+	
+	customCollider = true;
+
+	regenerateColliderMesh();
+
+	
+}
 
 void PhysicsBody::setBox2dBody(b2Body* body, b2FixtureDef fixtureDef) 
 {
@@ -35,6 +122,7 @@ void PhysicsBody::setDrawColliders(bool active)
 
 void PhysicsBody::regenerateColliderMesh()
 {
+	bool isCircle = false;
 
 	std::vector<glm::vec3> vertices;
 	b2Shape* shape = box2dBody->GetFixtureList()->GetShape();
@@ -46,21 +134,45 @@ void PhysicsBody::regenerateColliderMesh()
 		for (unsigned int i = 0; i < poly->GetVertexCount(); i++)
 		{
 			b2Vec2 pos = poly->GetVertex(i);
-
 			pos *= 50.0f;
 			vertices.push_back(glm::vec3(pos.x, pos.y, 0.0f));
+		
 		}
+		
+	}else if (shape->GetType() == b2Shape::Type::e_circle)
+	{
 
+		b2CircleShape *poly = (b2CircleShape*)shape;
+		isCircle = true;
+		float radius = poly->m_radius;
+		radius *= 50.0f;
+		if (lastCircleRadius == radius)
+		{
+			return;
+		}
+		lastCircleRadius = radius;
+		int segments = CIRCLE_COLLIDER_DRAW_SEGMENTS;
+		for (unsigned int i = 0; i < segments; i++)
+		{
+			float angle = 2.0f * PI * float(i) / float(segments);
+			vertices.push_back(glm::vec3(cosf(angle)*radius, sinf(angle)*radius, 0.0f));
+		}
 	}
-
-	if (lastColliderVertices == vertices)
+	
+	if (lastColliderVertices == vertices && !isCircle)
 	{
 		return;
 	}
+	if (vertices.size() == 0)
+	{
+		return;
+	}
+	
 	if (drawColliderMesh != NULL)
 	{
 		delete drawColliderMesh;
 	}
+	
 
 	lastColliderVertices = vertices;
 

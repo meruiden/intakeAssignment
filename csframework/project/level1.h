@@ -23,6 +23,8 @@ private:
 	Vector2 camAcc;
 	Vector2 camVel;
 
+	Entity* test;
+
 	bool playerLeft;
 	bool playerRight;
 	bool playerJump;
