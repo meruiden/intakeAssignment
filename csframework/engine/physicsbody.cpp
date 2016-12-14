@@ -22,6 +22,7 @@ PhysicsBody::~PhysicsBody()
 
 void PhysicsBody::setBoxCollider(float width, float height)
 {
+
 	b2Body* body = box2dBody;
 	b2Fixture* fixture = body->GetFixtureList();
 	body->DestroyFixture(fixture);
@@ -46,8 +47,9 @@ void PhysicsBody::setBoxCollider(float width, float height)
 	
 }
 
-void PhysicsBody::setCircleCollider(float radius, int segments)
+void PhysicsBody::setCircleCollider(float radius)
 {
+	radius *= 0.02f;
 	b2Body* body = box2dBody;
 	b2Fixture* fixture = body->GetFixtureList();
 	body->DestroyFixture(fixture);
@@ -77,7 +79,7 @@ void PhysicsBody::setCollider(std::vector<Vector2> vertices)
 	std::vector<b2Vec2> b2verts;
 	for (unsigned int i = 0; i < vertices.size(); i++)
 	{
-		b2verts.push_back(b2Vec2(vertices[i].x, vertices[i].y));
+		b2verts.push_back(b2Vec2(vertices[i].x * 0.02f, vertices[i].y * 0.02f));
 	}
 	b2Body* body = box2dBody;
 	b2Fixture* fixture = body->GetFixtureList();

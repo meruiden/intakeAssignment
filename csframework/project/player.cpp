@@ -9,7 +9,7 @@ Player::Player(PlayerGroundTrigger* groundTrigger) : Entity()
 	this->getPhysicsBody()->setPhysicsActive(true);
 	this->getPhysicsBody()->setDrawColliders(true);
 	this->groundTrigger = groundTrigger;
-
+	this->setName("player");
 	walkAnimationFps = 10.0f;
 	idleAnimationFps = 5.0f;
 	jumpAnimationFps = 10.0f;

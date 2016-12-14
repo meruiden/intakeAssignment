@@ -24,7 +24,7 @@ public:
 	void setTrigger(bool active);
 	void setCollider(std::vector<Vector2> vertices);
 	void setBoxCollider(float width, float height);
-	void setCircleCollider(float radius, int segments);
+	void setCircleCollider(float radius);
 	
 
 	b2FixtureDef getFixtureDef(){return fixtureDef;}

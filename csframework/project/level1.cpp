@@ -33,14 +33,16 @@ Level1::Level1() : Scene()
 	addEntity(test);
 	test->getPhysicsBody()->setPhysicsActive(true);
 	test->setPosition(Vector2(100, 100));
-	test->getPhysicsBody()->setCircleCollider(1, 7);
+	test->getPhysicsBody()->setCircleCollider(50);
 	test->getPhysicsBody()->setDrawColliders(true);
+
+	player->getPhysicsBody()->setBoxCollider(100, 256);
 }
 
 void Level1::update(float deltaTime)
 {
 	handleInput();
-	playerGroundTrigger->setPosition(player->getPosition() + Vector2(0, player->getHeight()/2.0f)-playerGroundTrigger->getWidth()/2.0f);
+	playerGroundTrigger->setPosition(player->getPosition() + Vector2(0, player->getHeight()/2.0f - playerGroundTrigger->getHeight()/2.0f));
 	
 	if (playerRight || playerLeft)
 	{
@@ -122,7 +124,7 @@ void Level1::fixedUpdate()
 	if (playerJump)
 	{
 		playerJump = false;
-		player->getPhysicsBody()->addForce(Vector2(0, -14000.0f));
+		player->getPhysicsBody()->addForce(Vector2(0, -10000.0f));
 	}
 
 	if (playerRight)
