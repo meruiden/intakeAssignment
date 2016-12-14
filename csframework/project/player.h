@@ -17,11 +17,17 @@ public:
 
 	void onWalk();
 	void onIdle();
+	
 private:
 	PlayerGroundTrigger* groundTrigger;
 
 	float walkAnimationFps;
 	float idleAnimationFps;
+	float jumpAnimationFps;
 	float animationFps;
+
+	void onIsGrounded();
+
+	bool wasGrounded;
 };
 

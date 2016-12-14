@@ -90,7 +90,9 @@ void Renderer::initGL()
 	glEnable(GL_BLEND);
 
 	// Dark blue background
-	glClearColor(101.0f / 255.0f, 121.0f / 255.0f, 98.0f / 255.0f, 0.0f);
+	Color bgColor = BACKGROUND_COLOR;
+
+	glClearColor((float)bgColor.r / 255.0f, (float)bgColor.g / 255.0f, (float)bgColor.b / 255.0f, 0.0f);
 
 	// Cull triangles which normal is not towards the camera
 	glDisable(GL_CULL_FACE);

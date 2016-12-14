@@ -35,6 +35,13 @@ void Level1::update(float deltaTime)
 	handleInput();
 	playerGroundTrigger->setPosition(player->getPosition() + Vector2(0, player->getHeight()/2.0f)-playerGroundTrigger->getWidth()/2.0f);
 	
+	if (playerRight || playerLeft)
+	{
+		if (player->getSprite()->getFileName() != "assets/character_walk.png" )
+		{
+			player->onWalk();
+		}
+	}
 }
 
 void Level1::handleInput()
@@ -131,12 +138,11 @@ void Level1::fixedUpdate()
 	}
 
 	Vector2 camDir = Vector2(player->getPosition() + Vector2(250, 0), getCamera()->getPosition());
-	if (camDir.magnitude() > 50.0f)
+	if (camDir.magnitude() > 100.0f)
 	{
 		camAcc += camDir * 0.008f;
 		
 	}
-
 
 	camVel += camAcc;
 	getCamera()->setPosition(getCamera()->getPosition() + camVel);

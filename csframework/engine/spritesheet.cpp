@@ -93,6 +93,7 @@ void SpriteSheet::play()
 	playing = true;
 	paused = false;
 	animateCounter = 0.0f;
+	curFrame = startFrame;
 	setSprite(startFrame);
 }
 
@@ -101,7 +102,7 @@ void SpriteSheet::stop()
 	playing = false;
 	paused = false;
 	setSprite(endFrame);
-
+	curFrame = endFrame;
 }
 
 void SpriteSheet::pause(bool value) 

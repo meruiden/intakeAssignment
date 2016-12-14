@@ -1,7 +1,7 @@
 #pragma once
 
 #define WINDOW_WIDTH 1280
-#define WINDOW_HEIGHT 800
+#define WINDOW_HEIGHT 720
 
 #define WINDOWNAME "Project"
 
@@ -14,3 +14,5 @@
 #define GRAVITY 9.81f
 
 #define COLLIDER_DRAW_COLOR Color(22,222,0, 140)
+
+#define BACKGROUND_COLOR Color(38, 38, 38)
