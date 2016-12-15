@@ -20,7 +20,7 @@ if(UNIX)
 	set(CMAKE_CXX_FLAGS "-Wall -std=c++0x -pedantic -O2 -g -pg")
 	set(CMAKE_CXX_FLAGS "-Wall -Wstrict-aliasing -std=c++0x -O2")
 
-	set(CMAKE_CXX_FLAGS "-Wall")
+	set(CMAKE_CXX_FLAGS "-Wall -pthread")
 
 	# valgrind --leak-check=full ./demo
 	# ./demo # creates cmon.out
@@ -73,6 +73,7 @@ include_directories(
 set(ALL_LIBS
 	${OPENGL_LIBRARY}
 	engine
+	
 	Box2D
 	SDL2
 	${SDL2_MIXER_LIBRARIES}

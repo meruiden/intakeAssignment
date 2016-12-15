@@ -120,6 +120,7 @@ void PhysicsBody::regenerateColliderMesh()
 	bool isCircle = false;
 
 	std::vector<glm::vec3> vertices;
+	std::vector<glm::vec2> uvs;
 	b2Shape* shape = box2dBody->GetFixtureList()->GetShape();
 
 	if (shape->GetType() == b2Shape::Type::e_polygon)
@@ -131,7 +132,7 @@ void PhysicsBody::regenerateColliderMesh()
 			b2Vec2 pos = poly->GetVertex(i);
 			pos *= 50.0f;
 			vertices.push_back(glm::vec3(pos.x, pos.y, 0.0f));
-		
+			uvs.push_back(glm::vec2(0.5f, 0.5f));
 		}
 		
 	}else if (shape->GetType() == b2Shape::Type::e_circle)
@@ -151,6 +152,7 @@ void PhysicsBody::regenerateColliderMesh()
 		{
 			float angle = 2.0f * PI * float(i) / float(segments);
 			vertices.push_back(glm::vec3(cosf(angle)*radius, sinf(angle)*radius, 0.0f));
+			uvs.push_back(glm::vec2(0.5f, 0.5f));
 		}
 	}
 
@@ -172,7 +174,7 @@ void PhysicsBody::regenerateColliderMesh()
 	lastColliderVertices = vertices;
 
 	drawColliderMesh = new Mesh();
-	drawColliderMesh->setFromVertices(vertices);
+	drawColliderMesh->setFromVerticesAndUvs(vertices, uvs);
 	drawColliderMesh->setDrawMode(Mesh::drawModeSettings::polygons);
 	
 }

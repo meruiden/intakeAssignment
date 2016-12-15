@@ -106,33 +106,7 @@ void Level1::handleInput()
 void Level1::fixedUpdate()
 {
 
-	Vector2 playerVelocity = player->getPhysicsBody()->getVelocity();
-	if (playerVelocity.x > 10.0f)
-	{
-		player->getPhysicsBody()->setVelocity(Vector2(10.0f, playerVelocity.y));
-	}
 
-	if (playerVelocity.x < -10.0f)
-	{
-		player->getPhysicsBody()->setVelocity(Vector2(-10.0f, playerVelocity.y));
-	}
-
-	if (playerVelocity.y > 50.0f)
-	{
-		player->getPhysicsBody()->setVelocity(Vector2(playerVelocity.x, 50.0f));
-	}
-
-	if (playerVelocity.y < -50.0f)
-	{
-		player->getPhysicsBody()->setVelocity(Vector2(playerVelocity.x, 50.0f));
-	}
-	
-	if (!playerLeft && !playerRight && player->isGrounded())
-	{
-		playerVelocity = player->getPhysicsBody()->getVelocity();
-		player->getPhysicsBody()->setVelocity(Vector2(playerVelocity.x * 0.97f, playerVelocity.y));
-
-	}
 	if (!player->isGrounded())
 	{
 		player->getPhysicsBody()->addForce(Vector2(0, 300.0f));
@@ -177,6 +151,34 @@ void Level1::fixedUpdate()
 
 	camVel *= 0.9f;
 
+
+	Vector2 playerVelocity = player->getPhysicsBody()->getVelocity();
+	if (playerVelocity.x > 10.0f)
+	{
+		player->getPhysicsBody()->setVelocity(Vector2(10.0f, playerVelocity.y));
+	}
+
+	if (playerVelocity.x < -10.0f)
+	{
+		player->getPhysicsBody()->setVelocity(Vector2(-10.0f, playerVelocity.y));
+	}
+
+	if (playerVelocity.y > 50.0f)
+	{
+		player->getPhysicsBody()->setVelocity(Vector2(playerVelocity.x, 50.0f));
+	}
+
+	if (playerVelocity.y < -50.0f)
+	{
+		player->getPhysicsBody()->setVelocity(Vector2(playerVelocity.x, 50.0f));
+	}
+
+	if (!playerLeft && !playerRight && player->isGrounded())
+	{
+		playerVelocity = player->getPhysicsBody()->getVelocity();
+		player->getPhysicsBody()->setVelocity(Vector2(playerVelocity.x * 0.97f, playerVelocity.y));
+
+	}
 }
 
  

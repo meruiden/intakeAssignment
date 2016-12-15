@@ -1,5 +1,8 @@
 #pragma once
 
+#include <stdio.h>
+#include <time.h>
+
 // Include GLEW
 #include <GL/glew.h>
 
@@ -13,8 +16,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/euler_angles.hpp>
 
-#include <stdio.h>
-#include <time.h>
+
 
 //include classes from engine
 #include <engine/shader.h>
@@ -87,4 +89,5 @@ private:
 	Vector2 originalResolution;
 
 	int fullScreenFlag;
+
 };

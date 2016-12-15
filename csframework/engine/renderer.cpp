@@ -146,6 +146,9 @@ void Renderer::initGL()
 void Renderer::renderScene()
 {
 	updateDeltaTime();
+
+	
+
 	Input::getInstance()->update();
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -199,9 +202,11 @@ void Renderer::renderScene()
 	bool updateFixed = false;
 	if (fixedUpdateCounter >= 1.0 / 60.0)
 	{
+		
 		fixedUpdateCounter = fmod(fixedUpdateCounter, dt);
 		updateFixed = true;
 	}
+
 	if (COUT_FPS) {
 		showFps();
 	}
