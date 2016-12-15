@@ -4,9 +4,10 @@ PlayerGroundTrigger::PlayerGroundTrigger()
 {
 	this->color = Color(0, 0, 0, 0);
 	this->addSprite("assets/square.png");
-	groundedCollisions = 0;
-	this->setScale(Vector2(1.8f, 1.0));
-	getPhysicsBody()->setPhysicsActive(true);
+	this->groundedCollisions = 0;
+	this->setScale(Vector2(1.9f, 1.0));
+	this->getPhysicsBody()->setPhysicsActive(true);
+
 }
 
 

@@ -145,7 +145,10 @@ void Renderer::initGL()
 
 void Renderer::renderScene()
 {
+	updateDeltaTime();
+	Input::getInstance()->update();
 
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	Vector2 curWindowSize = Camera::getWindowSize();
 
 	if (lastWindowSize != curWindowSize)
@@ -188,7 +191,7 @@ void Renderer::renderScene()
 
 	}
 
-	updateDeltaTime();
+	
 	Scene* scene;
 	scene = SceneManager::getCurrentScene();
 
@@ -202,9 +205,6 @@ void Renderer::renderScene()
 	if (COUT_FPS) {
 		showFps();
 	}
-	Input::getInstance()->update();
-
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	if (scene != NULL) {
 		if(updateFixed)
