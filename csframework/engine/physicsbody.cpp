@@ -33,10 +33,6 @@ void PhysicsBody::setBoxCollider(float width, float height)
 	fixtureDef.shape = &shape;
 	fixtureDef.density = 1.0f;
 
-	b2Filter filter;
-	filter.maskBits = 0x0001;
-	filter.categoryBits = 0x0001;
-	fixtureDef.filter = filter;
 	fixture = body->CreateFixture(&fixtureDef);
 	fixture->SetSensor(trigger);
 
@@ -61,10 +57,6 @@ void PhysicsBody::setCircleCollider(float radius)
 	fixtureDef.shape = &shape;
 	fixtureDef.density = 1.0f;
 
-	b2Filter filter;
-	filter.maskBits = 0x0001;
-	filter.categoryBits = 0x0001;
-	fixtureDef.filter = filter;
 	fixture = body->CreateFixture(&fixtureDef);
 	fixture->SetSensor(trigger);
 
@@ -92,10 +84,6 @@ void PhysicsBody::setCollider(std::vector<Vector2> vertices)
 	fixtureDef.shape = &shape;
 	fixtureDef.density = 1.0f;
 
-	b2Filter filter;
-	filter.maskBits = 0x0001;
-	filter.categoryBits = 0x0001;
-	fixtureDef.filter = filter;
 	fixture = body->CreateFixture(&fixtureDef);
 	fixture->SetSensor(trigger);
 	
@@ -160,7 +148,7 @@ void PhysicsBody::regenerateColliderMesh()
 			vertices.push_back(glm::vec3(cosf(angle)*radius, sinf(angle)*radius, 0.0f));
 		}
 	}
-	
+
 	if (lastColliderVertices == vertices && !isCircle)
 	{
 		return;
@@ -282,21 +270,6 @@ void PhysicsBody::setPhysicsActive(bool active)
 	{
 		return;
 	}
-	for (b2Fixture* f = box2dBody->GetFixtureList(); f; f = f->GetNext())
-	{
-		b2Filter filter = f->GetFilterData();
-		if (active)
-		{
-			filter.categoryBits = 0x0001;
-			setPhysicsMode(PhysicsBody::DYNAMIC);
-		}
-		else
-		{
-			filter.categoryBits = 0x0002;
-			setPhysicsMode(PhysicsBody::STATIC);
-		}
-		
-		f->SetFilterData(filter);
-	}
+	box2dBody->SetActive(active);
 }
 

@@ -7,7 +7,6 @@ Player::Player(PlayerGroundTrigger* groundTrigger) : Entity()
 	this->getSpriteSheet()->play();
 	this->getSpriteSheet()->setLoop(true);
 	this->getPhysicsBody()->setPhysicsActive(true);
-	this->getPhysicsBody()->setDrawColliders(true);
 	this->groundTrigger = groundTrigger;
 	this->setName("player");
 	walkAnimationFps = 10.0f;

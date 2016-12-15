@@ -23,7 +23,7 @@ private:
 	Vector2 camAcc;
 	Vector2 camVel;
 
-	Entity* test;
+	std::vector<Entity*> smilies;
 
 	bool playerLeft;
 	bool playerRight;

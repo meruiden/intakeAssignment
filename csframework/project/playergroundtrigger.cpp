@@ -6,7 +6,7 @@ PlayerGroundTrigger::PlayerGroundTrigger()
 	this->addSprite("assets/square.png");
 	groundedCollisions = 0;
 	this->setScale(Vector2(1.8f, 1.0));
-	getPhysicsBody()->setDrawColliders(true);
+	getPhysicsBody()->setPhysicsActive(true);
 }
 
 

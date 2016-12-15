@@ -29,13 +29,7 @@ Level1::Level1() : Scene()
 	camAcc = Vector2();
 	camVel = Vector2();
 	
-	test = new Entity();
-	addEntity(test);
-	test->getPhysicsBody()->setPhysicsActive(true);
-	test->setPosition(Vector2(100, 100));
-	test->getPhysicsBody()->setCircleCollider(50);
-	test->getPhysicsBody()->setDrawColliders(true);
-
+	
 	player->getPhysicsBody()->setBoxCollider(100, 256);
 }
 
@@ -92,6 +86,19 @@ void Level1::handleInput()
 		}
 	}
 	
+	if (input()->getMouseButtonDown(1))
+	{
+		Entity* smiley = new Entity();;
+		addEntity(smiley);
+		smiley->getPhysicsBody()->setPhysicsActive(true);
+		smiley->setPosition(getCamera()->screenToWorldSpace(input()->getMousePosition()));
+
+		smiley->getPhysicsBody()->setCircleCollider(64);
+		smiley->addSprite("assets/smiley.png");
+		smiley->setScale(Vector2(0.5f, 0.5f));
+		smiley->getPhysicsBody()->setDrawColliders(true);
+		smilies.push_back(smiley);
+	}
 	
 }
 
@@ -108,6 +115,16 @@ void Level1::fixedUpdate()
 	if (playerVelocity.x < -10.0f)
 	{
 		player->getPhysicsBody()->setVelocity(Vector2(-10.0f, playerVelocity.y));
+	}
+
+	if (playerVelocity.y > 50.0f)
+	{
+		player->getPhysicsBody()->setVelocity(Vector2(playerVelocity.x, 50.0f));
+	}
+
+	if (playerVelocity.y < -50.0f)
+	{
+		player->getPhysicsBody()->setVelocity(Vector2(playerVelocity.x, 50.0f));
 	}
 	
 	if (!playerLeft && !playerRight && player->isGrounded())
@@ -166,7 +183,12 @@ void Level1::fixedUpdate()
  
 Level1::~Level1()
 {
-	delete test;
+	for (int i = 0; i < smilies.size(); i++)
+	{
+		removeEntity(smilies[i]);
+		delete smilies[i];
+	}
+	smilies.clear();
 	delete ground;
 	delete playerGroundTrigger;
 	delete player;
