@@ -28,7 +28,7 @@ Level1::Level1() : Scene()
 
 	camAcc = Vector2();
 	camVel = Vector2();
-	
+	player->getPhysicsBody()->setFixedRotation(true);
 	
 	player->getPhysicsBody()->setBoxCollider(100, 256);
 }
@@ -177,7 +177,6 @@ void Level1::fixedUpdate()
 
 	camVel *= 0.9f;
 
-	player->setRotation(0);
 }
 
  

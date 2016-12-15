@@ -9,7 +9,7 @@ PhysicsBody::PhysicsBody()
 	customCollider = false;
 	physicsActive = false;
 	lastCircleRadius = 0.0f;
-
+	fixedRotation = false;
 }
 
 PhysicsBody::~PhysicsBody()
@@ -90,7 +90,6 @@ void PhysicsBody::setCollider(std::vector<Vector2> vertices)
 	customCollider = true;
 
 	regenerateColliderMesh();
-
 	
 }
 
@@ -103,6 +102,12 @@ void PhysicsBody::setBox2dBody(b2Body* body, b2FixtureDef fixtureDef)
 	{
 		setPhysicsActive(physicsActive);
 	}
+}
+
+void PhysicsBody::setFixedRotation(bool active)
+{
+	fixedRotation = active;
+	box2dBody->SetFixedRotation(active);
 }
 
 void PhysicsBody::setDrawColliders(bool active)

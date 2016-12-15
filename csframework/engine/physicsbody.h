@@ -25,6 +25,7 @@ public:
 	void setCollider(std::vector<Vector2> vertices);
 	void setBoxCollider(float width, float height);
 	void setCircleCollider(float radius);
+	void setFixedRotation(bool active);
 	
 
 	b2FixtureDef getFixtureDef(){return fixtureDef;}
@@ -38,6 +39,7 @@ public:
 	bool getDrawColliders() { return drawColliders; }
 	bool isTrigger() { return trigger; }
 	bool hasCustomCollider() { return customCollider; }
+	bool isRotationFixed() { return fixedRotation; }
 	int getPhysicsMode();
 
 	void regenerateColliderMesh();
@@ -52,6 +54,7 @@ private:
 	Mesh* drawColliderMesh;
 	bool trigger;
 	bool customCollider;
+	bool fixedRotation;
 
 	float lastCircleRadius;
 	
