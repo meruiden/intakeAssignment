@@ -19,9 +19,8 @@ MenuScene::MenuScene() : Scene()
 
 }
 
-void MenuScene::update(float deletaTime)
+void MenuScene::update(float deltaTime)
 {
-
 	Vector2 mousePos = Vector2();
 	mousePos = Input::getInstance()->getMousePosition();
 

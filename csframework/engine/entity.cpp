@@ -101,7 +101,10 @@ float Entity::getRotation()
 
 void Entity::setScale(Vector2 newScale)
 {
-
+	if (scale == newScale)
+	{
+		return;
+	}
 	scale = newScale;
 	if (physicsBody->getBox2dBody() == NULL || physicsBody->hasCustomCollider())
 	{

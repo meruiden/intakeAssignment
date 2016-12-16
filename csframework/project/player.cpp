@@ -79,6 +79,8 @@ void Player::onIdle()
 	this->getSpriteSheet()->play();
 	this->getSpriteSheet()->setLoop(true);
 	animationFps = idleAnimationFps;
+
+	setLayer(2);
 }
 
 void Player::onIsGrounded()

@@ -214,8 +214,8 @@ void Renderer::renderScene()
 	if (scene != NULL) {
 		if(updateFixed)
 		{
-			scene->fixedUpdate();
 			scene->getPhysicsWorld()->Step(1.0 / 60.0, 8, 5);
+			scene->fixedUpdate();
 		}
 		scene->update(dt);
 		std::vector<Entity*> entities = scene->getEntities();
@@ -357,14 +357,16 @@ void Renderer::renderEntity(glm::mat4 &modelmatrix, Entity* entity, Camera* came
 		{
 			mesh = entity->getSprite()->getDynamicMesh();
 		}
-
+	
 		renderMesh(MVP, mesh, texture->getTextureBuffer(), entity->getSprite()->getUvOffset(), entity->color);
 	}
 	if (entity->getPhysicsBody()->getDrawColliders())
 	{
-		entity->getPhysicsBody()->regenerateColliderMesh();
-		glm::mat4 colliderModerMVP = ProjectionMatrix * camera->getViewMatrix() * getModelMatrix(entity->getPosition() , Vector2(1, 1), entity->getRotation()) ;
+		//entity->getPhysicsBody()->regenerateColliderMesh();
+		glm::mat4 colliderModel = getModelMatrix(entity->getPosition(), Vector2(1, 1), entity->getRotation());
+		glm::mat4 colliderModerMVP = ProjectionMatrix * camera->getViewMatrix() * colliderModel ;
 		renderMesh(colliderModerMVP, entity->getPhysicsBody()->getColliderDrawMesh(), ResourceManager::getInstance()->getEmptyTexture(), Vector2(0, 0), COLLIDER_DRAW_COLOR);
+		
 	}
 	std::vector<Entity*>children = entity->getChildren();
 	std::vector<Entity*>::iterator it = children.begin();
@@ -494,6 +496,7 @@ void Renderer::renderMesh(glm::mat4 matrix, Mesh* mesh, GLuint textureBuffer, Ve
 	glDisableVertexAttribArray(vertexPosition_modelspaceID);
 	glDisableVertexAttribArray(vertexUVID);
 }
+
 
 glm::mat4 Renderer::getModelMatrix(Vector2 pos, Vector2 scal, float rot)
 {

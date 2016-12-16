@@ -55,8 +55,11 @@ private:
 	bool trigger;
 	bool customCollider;
 	bool fixedRotation;
+	
 
 	float lastCircleRadius;
+
+	int curPhysicsMode;
 	
 };
 

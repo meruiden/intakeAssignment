@@ -2,8 +2,9 @@
 
 Ground::Ground()
 {
-	this->addSprite("assets/square.png");
+	this->addSprite("assets/grass_tile.png");
 	this->setName("ground");
+
 }
 
 

@@ -49,7 +49,7 @@ void HudElement::setScale(Vector2 newScale)
 
 void HudElement::setRotation(float newRotation)
 {
-	rotation = rotation;
+	rotation = newRotation;
 }
 
 void HudElement::update(float deltaTime)

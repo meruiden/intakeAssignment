@@ -23,7 +23,7 @@ public:
 	Vector2 getAnchoredPosition();
 	Vector2 getGlobalPosition();
 
-	int getRotation() { return rotation; }
+	float getRotation() { return rotation; }
 	int getLayer() { return layer; }
 	float getWidth();
 	float getHeight();

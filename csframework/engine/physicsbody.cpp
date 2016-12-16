@@ -10,6 +10,7 @@ PhysicsBody::PhysicsBody()
 	physicsActive = false;
 	lastCircleRadius = 0.0f;
 	fixedRotation = false;
+	curPhysicsMode = PhysicsBody::DYNAMIC;
 }
 
 PhysicsBody::~PhysicsBody()
@@ -101,6 +102,7 @@ void PhysicsBody::setBox2dBody(b2Body* body, b2FixtureDef fixtureDef)
 	if (body != NULL)
 	{
 		setPhysicsActive(physicsActive);
+		setPhysicsMode(curPhysicsMode);
 	}
 }
 
@@ -180,6 +182,7 @@ void PhysicsBody::regenerateColliderMesh()
 }
 void PhysicsBody::setPhysicsMode(int mode)
 {
+	curPhysicsMode = mode;
 	if (box2dBody == NULL) {
 		return;
 	}
@@ -199,6 +202,7 @@ void PhysicsBody::setPhysicsMode(int mode)
 		break;
 	}
 	box2dBody->SetType(type);
+
 
 }
 
@@ -238,8 +242,9 @@ void PhysicsBody::setVelocity(Vector2 newVelocity)
 
 int PhysicsBody::getPhysicsMode()
 {
+	
 	if (box2dBody == NULL) {
-		return STATIC;
+		return curPhysicsMode;
 	}
 	int mode = STATIC;
 	b2BodyType type = box2dBody->GetType();

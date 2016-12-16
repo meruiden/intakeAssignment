@@ -92,6 +92,8 @@ void Mesh::setFromVertices(std::vector<glm::vec3> vertices)
 		}
 	}
 	
+	this->width = abs(min.x) + abs(max.x);
+	this->height = abs(min.y) + abs(max.y);
 	Vector2 scalar = Vector2(1.0f / (max.x - min.x), 1.0f / (max.y - min.y));
 
 	
@@ -105,6 +107,35 @@ void Mesh::setFromVertices(std::vector<glm::vec3> vertices)
 
 void Mesh::setFromVerticesAndUvs(std::vector<glm::vec3> vertices, std::vector<glm::vec2> uvs)
 {
+	Vector2 min;
+	Vector2 max;
+
+	for (unsigned int i = 0; i < vertices.size(); i++)
+	{
+		if (vertices[i].x < min.x)
+		{
+			min.x = vertices[i].x;
+		}
+
+		if (vertices[i].y < min.y)
+		{
+			min.y = vertices[i].y;
+		}
+
+		if (vertices[i].x > max.x)
+		{
+			max.x = vertices[i].x;
+		}
+
+		if (vertices[i].y > max.y)
+		{
+			max.y = vertices[i].y;
+		}
+	}
+
+	this->width = abs(min.x) + abs(max.x);
+	this->height = abs(min.y) + abs(max.y);
+
 	numVerts = vertices.size();
 	generateBuffers(vertices, uvs);
 }
@@ -118,3 +149,4 @@ GLuint Mesh::getDrawMode()
 {
 	return drawMode;
 }
+

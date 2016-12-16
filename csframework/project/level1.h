@@ -15,15 +15,21 @@ public:
 
 private:
 	void handleInput();
+	void createMap();
+
+	int mapWidth;
+	int mapHeight;
 
 	Player* player;
 	PlayerGroundTrigger* playerGroundTrigger;
-	Ground* ground;
+	
 
 	Vector2 camAcc;
 	Vector2 camVel;
 
 	std::vector<Entity*> smilies;
+	std::vector<Ground*> groundTiles;
+	Entity* groundCollider;
 
 	bool playerLeft;
 	bool playerRight;

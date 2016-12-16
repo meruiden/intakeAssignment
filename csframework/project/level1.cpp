@@ -7,20 +7,11 @@ Level1::Level1() : Scene()
 	addEntity(player);
 
 	player->setPosition(Vector2(0, -200));
-	
-	
+
 	addEntity(playerGroundTrigger);
 
-	
 	playerGroundTrigger->getPhysicsBody()->setPhysicsMode(PhysicsBody::DYNAMIC);
 	playerGroundTrigger->getPhysicsBody()->setTrigger(true);
-
-	ground = new Ground();
-	addEntity(ground);
-	ground->getPhysicsBody()->setPhysicsActive(true);
-	ground->getPhysicsBody()->setPhysicsMode(PhysicsBody::STATIC);
-	ground->setPosition(Vector2(0, 200));
-	ground->setScale(Vector2(20, 1));
 
 	this->playerJump = false;
 	this->playerRight = false;
@@ -31,6 +22,37 @@ Level1::Level1() : Scene()
 	player->getPhysicsBody()->setFixedRotation(true);
 	
 	player->getPhysicsBody()->setBoxCollider(100, 256);
+	groundCollider = new Entity();
+	mapWidth = 200;
+	mapHeight = 8;
+	createMap();
+	
+}
+
+Level1::~Level1()
+{
+	for (int i = 0; i < smilies.size(); i++)
+	{
+		removeEntity(smilies[i]);
+		delete smilies[i];
+	}
+	smilies.clear();
+
+	for (int i = 0; i < groundTiles.size(); i++)
+	{
+		removeEntity(groundTiles[i]);
+		delete groundTiles[i];
+	}
+	groundTiles.clear();
+
+	removeEntity(groundCollider);
+	delete groundCollider;
+
+	removeEntity(playerGroundTrigger);
+	delete playerGroundTrigger;
+
+	removeEntity(player);
+	delete player;
 }
 
 void Level1::update(float deltaTime)
@@ -181,16 +203,26 @@ void Level1::fixedUpdate()
 	}
 }
 
- 
-Level1::~Level1()
+void Level1::createMap()
 {
-	for (int i = 0; i < smilies.size(); i++)
+	int groundCollSize = 0;
+	for (int i = 0; i < mapWidth; i++)
 	{
-		removeEntity(smilies[i]);
-		delete smilies[i];
+		Ground* groundTile = new Ground();
+		groundTile->setPosition(Vector2(-200, 300));
+		groundTile->getPhysicsBody()->setPhysicsActive(false);
+		groundTile->setPosition(groundTile->getPosition() + Vector2(i * (60), 0));
+		groundTiles.push_back(groundTile);
+		groundCollSize += 60;
+		addEntity(groundTile);
+		
+
 	}
-	smilies.clear();
-	delete ground;
-	delete playerGroundTrigger;
-	delete player;
+
+	addEntity(groundCollider);
+	
+	groundCollider->getPhysicsBody()->setPhysicsActive(true);
+	groundCollider->getPhysicsBody()->setPhysicsMode(PhysicsBody::STATIC);
+	groundCollider->getPhysicsBody()->setBoxCollider(groundCollSize, 10);
+	groundCollider->setPosition(Vector2(groundTiles[mapWidth/2-1]->getPosition().x + 30, 300));
 }
