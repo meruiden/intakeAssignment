@@ -7,6 +7,7 @@ vs2015/intakeAssignment/Debug
 vs2015/intakeAssignment/Release
 vs2015/csframework/csframework/Debug
 vs2015/csframework/csframework/Release
+external/Box2D/Box2D/obj
 documentation/html
 
 *.obj
