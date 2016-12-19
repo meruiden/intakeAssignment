@@ -57,6 +57,7 @@ Level1::~Level1()
 
 void Level1::update(float deltaTime)
 {
+	
 	handleInput();
 	playerGroundTrigger->setPosition(player->getPosition() + Vector2(0, player->getHeight()/2.0f - playerGroundTrigger->getHeight()/2.0f));
 	

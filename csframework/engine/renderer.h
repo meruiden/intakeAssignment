@@ -83,6 +83,7 @@ private:
 	double fixedUpdateCounter;
 
 	bool setFullScreenFix;
+	bool isMeshVisable(glm::mat4 modelMatrix, Vector2 size, Vector2 cameraPos);
 	float fpsCounter;
 	int fps;
 
@@ -91,4 +92,5 @@ private:
 
 	int fullScreenFlag;
 
+	Texture* lastRenderedTexture;
 };

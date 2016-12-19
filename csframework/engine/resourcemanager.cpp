@@ -86,21 +86,22 @@ Texture* ResourceManager::getTexture(std::string path, bool &succes)
 {
 	succes = true;
 
-	std::map<std::string, Texture*>::iterator it;
-	it = loadedTextures.find(path);
+	Texture* texture = NULL;
+	texture = loadedTextures[path];
 
-	if (it != loadedTextures.end()) {
-		return it->second;
+	if (texture != NULL)
+	{
+		return texture;
 	}
 
 	bool imageloadSucces = false;
-	Texture* newImage = new Texture();
-	imageloadSucces = newImage->loadTexture(path);
+	texture = new Texture();
+	imageloadSucces = texture->loadTexture(path);
 
 	if (imageloadSucces) 
 	{
-		loadedTextures.emplace(path, newImage);
-		return newImage;
+		loadedTextures[path] = texture;
+		return texture;
 	}
 
 	succes = false;
@@ -109,28 +110,23 @@ Texture* ResourceManager::getTexture(std::string path, bool &succes)
 
 Mesh* ResourceManager::getSpriteMesh(int width, int height, float uvWidth, float uvHeight)
 {
-	std::stringstream ss;
-	ss << width;
-	ss << ",";
-	ss << height;
-	ss << ",";
-	ss << uvWidth;
-	ss << ",";
-	ss << uvHeight;
+	char buf[64];
+	sprintf(buf, "%d,%d,%f,%f", width, height, uvWidth, uvHeight);
+	std::string meshname(buf);
 
-
-	std::map<std::string, Mesh*>::iterator it;
-	it = loadedSpriteMeshes.find(ss.str());
-
-	if (it != loadedSpriteMeshes.end()) {
-		return it->second;
+	Mesh* mesh = NULL;
+	
+	mesh = loadedSpriteMeshes[meshname];
+	if (mesh != NULL)
+	{
+		return mesh;
 	}
 
-	Mesh* newMesh = new Mesh();
-	newMesh->setAsSquare(width, height, uvWidth, uvHeight);
-	loadedSpriteMeshes.emplace(ss.str(), newMesh);
+	mesh = new Mesh();
+	mesh->setAsSquare(width, height, uvWidth, uvHeight);
+	loadedSpriteMeshes[meshname] = mesh;
 
-	return newMesh;
+	return mesh;
 }
 
 TTF_Font* ResourceManager::getLoadedFont(std::string path, bool &succes)

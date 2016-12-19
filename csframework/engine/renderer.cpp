@@ -27,6 +27,8 @@ Renderer::Renderer()
 	SDL_GetCurrentDisplayMode(0, &current);
 
 	originalResolution = Vector2(current.w, current.h);
+
+	lastRenderedTexture = NULL;
 }
 
 bool Renderer::mustQuit()
@@ -147,8 +149,6 @@ void Renderer::renderScene()
 {
 	updateDeltaTime();
 
-	
-
 	Input::getInstance()->update();
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -227,7 +227,8 @@ void Renderer::renderScene()
 
 		while (needHigherLayer) {
 			needHigherLayer = false;
-			for (unsigned int i = 0; i < entities.size(); i++)
+			int numEntities = entities.size();
+			for (unsigned int i = 0; i < numEntities; i++)
 			{
 				if (entities[i]->getLayer() == curLayer) {
 					entities[i]->update(dt);
@@ -285,10 +286,9 @@ void Renderer::renderScene()
 
 		while (needHigherLayer) {
 			needHigherLayer = false;
-			for (unsigned int i = 0; i < hudElements.size(); i++)
+			int numHudElements = hudElements.size();
+			for (unsigned int i = 0; i < numHudElements; i++)
 			{
-				
-
 				if (hudElements[i]->getLayer() == curLayer) {
 					hudElements[i]->update(dt);
 					renderHudElement(hudElements[i]);
@@ -318,47 +318,67 @@ void Renderer::renderEntity(glm::mat4 &modelmatrix, Entity* entity, Camera* came
 
 	Texture* texture = NULL;
 	Mesh* mesh = NULL;
+	bool isVisable = false;
+
 
 	if (entity->getSprite() != NULL)
 	{
-		if (!entity->getSprite()->hasDynamicTexture())
-		{
-			if (entity->getSprite()->getFileName() == "")
-			{
-				return;
-			}
-			bool succes = false;
 
-			texture = ResourceManager::getInstance()->getTexture(entity->getSprite()->getFileName(), succes);
-			if (!succes)
-			{
-				return;
-			}
+		if (entity->getSprite()->hasDynamicMesh())
+		{
+			isVisable = isMeshVisable(modelmatrix, Vector2(entity->getSprite()->getDynamicMesh()->getWidth(), entity->getSprite()->getDynamicMesh()->getHeight()), camera->getPosition());
 		}
 		else
 		{
-
-			texture = entity->getSprite()->getDynamicTexture();
+			isVisable = isMeshVisable(modelmatrix, entity->getSprite()->getSpriteSize(), camera->getPosition());
 		}
 
-		entity->getSprite()->setTextureSize(Vector2(texture->getWidth(), texture->getHeight()));
-		if (entity->getSprite()->getSpriteSize().x == 0 && entity->getSprite()->getSpriteSize().y == 0)
+		if (entity->getSprite()->getSpriteSize().magnitude() == 0)
 		{
-			entity->getSprite()->setSpriteSize(Vector2(texture->getWidth(), texture->getHeight()));
-			entity->setScale(entity->getScale());
+			isVisable = true;
 		}
-		if (!entity->getSprite()->hasDynamicMesh())
+
+		if (isVisable)
 		{
-			Vector2 spriteSize = entity->getSprite()->getSpriteSize();
-			Vector2 uvSize = entity->getSprite()->getUvSize();
-			mesh = ResourceManager::getInstance()->getSpriteMesh(spriteSize.x, spriteSize.y, uvSize.x, uvSize.y);
+			if (!entity->getSprite()->hasDynamicTexture())
+			{
+				if (entity->getSprite()->getFileName() == "")
+				{
+					return;
+				}
+				bool succes = false;
+				texture = ResourceManager::getInstance()->getTexture(entity->getSprite()->getFileName(), succes);
+				if (!succes)
+				{
+					return;
+				}
+			}
+			else
+			{
+
+				texture = entity->getSprite()->getDynamicTexture();
+			}
+
+			entity->getSprite()->setTextureSize(Vector2(texture->getWidth(), texture->getHeight()));
+
+			if (entity->getSprite()->getSpriteSize().x == 0 && entity->getSprite()->getSpriteSize().y == 0)
+			{
+				entity->getSprite()->setSpriteSize(Vector2(texture->getWidth(), texture->getHeight()));
+				entity->setScale(entity->getScale());
+			}
+			if (!entity->getSprite()->hasDynamicMesh())
+			{
+				Vector2 spriteSize = entity->getSprite()->getSpriteSize();
+				Vector2 uvSize = entity->getSprite()->getUvSize();
+				mesh = ResourceManager::getInstance()->getSpriteMesh(spriteSize.x, spriteSize.y, uvSize.x, uvSize.y);
+			}
+			else
+			{
+				mesh = entity->getSprite()->getDynamicMesh();
+			}
+
+			renderMesh(MVP, mesh, texture->getTextureBuffer(), entity->getSprite()->getUvOffset(), entity->color);
 		}
-		else
-		{
-			mesh = entity->getSprite()->getDynamicMesh();
-		}
-	
-		renderMesh(MVP, mesh, texture->getTextureBuffer(), entity->getSprite()->getUvOffset(), entity->color);
 	}
 	if (entity->getPhysicsBody()->getDrawColliders())
 	{
@@ -403,44 +423,62 @@ void Renderer::renderHudElement(HudElement* hudelement)
 
 	Texture* texture = NULL;
 	Mesh* mesh = NULL;
-	if (!hudelement->getSprite()->hasDynamicTexture())
+	bool isVisable = false;
+
+	if (hudelement->getSprite()->hasDynamicMesh())
 	{
-		if (hudelement->getSprite()->getFileName() == "")
+		isVisable = isMeshVisable(modelmatrix, Vector2(hudelement->getSprite()->getDynamicMesh()->getWidth(), hudelement->getSprite()->getDynamicMesh()->getHeight()), Camera::getWindowSize() * 0.5f);
+	}
+	else 
+	{
+		isVisable = isMeshVisable(modelmatrix, hudelement->getSprite()->getSpriteSize(), Camera::getWindowSize() * 0.5f);
+	}
+
+	if (hudelement->getSprite()->getSpriteSize().magnitude() == 0)
+	{
+		isVisable = true;
+	}
+
+	if (isVisable)
+	{
+		if (!hudelement->getSprite()->hasDynamicTexture())
 		{
-			return;
-		}
-		bool succes = false;
+			if (hudelement->getSprite()->getFileName() == "")
+			{
+				return;
+			}
+			bool succes = false;
 
-		texture = ResourceManager::getInstance()->getTexture(hudelement->getSprite()->getFileName(), succes);
-		if (!succes)
+			texture = ResourceManager::getInstance()->getTexture(hudelement->getSprite()->getFileName(), succes);
+			if (!succes)
+			{
+				return;
+			}
+		}
+		else
 		{
-			return;
+			texture = hudelement->getSprite()->getDynamicTexture();
 		}
-	}
-	else
-	{
-		texture = hudelement->getSprite()->getDynamicTexture();
-	}
 
+		hudelement->getSprite()->setTextureSize(Vector2(texture->getWidth(), texture->getHeight()));
+		if (hudelement->getSprite()->getSpriteSize().x == 0 && hudelement->getSprite()->getSpriteSize().y == 0)
+		{
+			hudelement->getSprite()->setSpriteSize(Vector2(texture->getWidth(), texture->getHeight()));
+		}
 
-	hudelement->getSprite()->setTextureSize(Vector2(texture->getWidth(), texture->getHeight()));
-	if (hudelement->getSprite()->getSpriteSize().x == 0 && hudelement->getSprite()->getSpriteSize().y == 0)
-	{
-		hudelement->getSprite()->setSpriteSize(Vector2(texture->getWidth(), texture->getHeight()));
-	}
+		if (!hudelement->getSprite()->hasDynamicMesh())
+		{
+			Vector2 spriteSize = hudelement->getSprite()->getSpriteSize();
+			Vector2 uvSize = hudelement->getSprite()->getUvSize();
+			mesh = ResourceManager::getInstance()->getSpriteMesh(spriteSize.x, spriteSize.y, uvSize.x, uvSize.y);
+		}
+		else
+		{
+			mesh = hudelement->getSprite()->getDynamicMesh();
+		}
 
-	if (!hudelement->getSprite()->hasDynamicMesh())
-	{
-		Vector2 spriteSize = hudelement->getSprite()->getSpriteSize();
-		Vector2 uvSize = hudelement->getSprite()->getUvSize();
-		mesh = ResourceManager::getInstance()->getSpriteMesh(spriteSize.x, spriteSize.y, uvSize.x, uvSize.y);
+		renderMesh(MVP, mesh, texture->getTextureBuffer(), hudelement->getSprite()->getUvOffset(), hudelement->color);
 	}
-	else
-	{
-		mesh = hudelement->getSprite()->getDynamicMesh();
-	}
-
-	renderMesh(MVP, mesh, texture->getTextureBuffer(), hudelement->getSprite()->getUvOffset(), hudelement->color);
 }
 
 
@@ -456,12 +494,12 @@ void Renderer::renderMesh(glm::mat4 matrix, Mesh* mesh, GLuint textureBuffer, Ve
 	
 	glUniform3f(rgbVec, (1.0f / 255.0f) * (float)color.r, (1.0f / 255.0f) * (float)color.g, (1.0f / 255.0f) * (float)color.b);
 
+
 	// Bind our texture in Texture Unit 0
 	glActiveTexture(GL_TEXTURE0);
 
 	glBindTexture(GL_TEXTURE_2D, textureBuffer);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
 	// Set our "myTextureSampler" sampler to user Texture Unit 0
 	glUniform1i(textureID, 0);
 
@@ -490,13 +528,35 @@ void Renderer::renderMesh(glm::mat4 matrix, Mesh* mesh, GLuint textureBuffer, Ve
 	);
 
 	// Draw the triangles !
-
+	
 	glDrawArrays(mesh->getDrawMode(), 0, mesh->getNumVerts());
 
 	glDisableVertexAttribArray(vertexPosition_modelspaceID);
 	glDisableVertexAttribArray(vertexUVID);
 }
 
+bool Renderer::isMeshVisable(glm::mat4 modelMatrix, Vector2 size, Vector2 cameraPos)
+{
+	glm::vec3 scale;
+	glm::quat rotation;
+	glm::vec3 position;
+	glm::vec3 skew;
+	glm::vec4 perspective;
+	glm::decompose(modelMatrix, scale, rotation, position, skew, perspective);
+
+	float meshSize = std::max(size.x * scale.x, size.y * scale.y); //if the mesh is rotated and the width and height are not the same, it may be visable but not detectable as visable if this is not applied
+	meshSize *= 0.5f;
+
+	Vector2 windowSize = Camera::getWindowSize();
+
+	if ((abs(position.x - cameraPos.x) * 2 < (meshSize + windowSize.x)) &&
+		(abs(position.y - cameraPos.y) * 2 < (meshSize + windowSize.y)))
+	{
+		return true;
+	}
+
+	return false;
+}
 
 glm::mat4 Renderer::getModelMatrix(Vector2 pos, Vector2 scal, float rot)
 {
