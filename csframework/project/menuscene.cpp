@@ -64,7 +64,6 @@ void MenuScene::update(float deltaTime)
 	{
 		quitButton->color = WHITE;
 	}
-	startButton->setPosition(input()->getMousePosition());
 }
 
 

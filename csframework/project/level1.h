@@ -1,6 +1,7 @@
 #pragma once
 
 #include <engine/scene.h>
+#include <engine/textmesh.h>
 #include <project/player.h>
 #include <project/playergroundtrigger.h>
 #include <project/ground.h>
@@ -22,10 +23,7 @@ private:
 
 	Player* player;
 	PlayerGroundTrigger* playerGroundTrigger;
-	
-
-	Vector2 camAcc;
-	Vector2 camVel;
+	TextMesh* info;
 
 	std::vector<Entity*> smilies;
 	std::vector<Ground*> groundTiles;

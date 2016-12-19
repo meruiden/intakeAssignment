@@ -11,7 +11,6 @@ Renderer::Renderer()
 
 	window_width = WINDOW_WIDTH;
 	window_height = WINDOW_HEIGHT;
-	fixedUpdateCounter = 0.0;
 	fpsCounter = 0.0f;
 	setFullScreenFix = false;
 	fps = 0;
@@ -28,7 +27,8 @@ Renderer::Renderer()
 
 	originalResolution = Vector2(current.w, current.h);
 
-	lastRenderedTexture = NULL;
+	lastRenderedTexture = 0;
+	fixedUpdateCounter = 0.0;
 }
 
 bool Renderer::mustQuit()
@@ -148,6 +148,17 @@ void Renderer::initGL()
 void Renderer::renderScene()
 {
 	updateDeltaTime();
+	Scene* scene;
+	scene = SceneManager::getCurrentScene();
+	fixedUpdateCounter += dt;
+	if (fixedUpdateCounter >= 1.0 / 60.0)
+	{
+		scene->fixedUpdate();
+		scene->getPhysicsWorld()->Step(1.0 / 60.0, 8, 5);
+		fixedUpdateCounter = fmod(fixedUpdateCounter, dt);
+	}
+	
+	
 
 	Input::getInstance()->update();
 
@@ -156,7 +167,6 @@ void Renderer::renderScene()
 
 	if (lastWindowSize != curWindowSize)
 	{
-
 		window_width = curWindowSize.x;
 		window_height = curWindowSize.y;
 
@@ -194,29 +204,13 @@ void Renderer::renderScene()
 
 	}
 
-	
-	Scene* scene;
-	scene = SceneManager::getCurrentScene();
-
-	fixedUpdateCounter += dt;
-	bool updateFixed = false;
-	if (fixedUpdateCounter >= 1.0 / 60.0)
-	{
-		
-		fixedUpdateCounter = fmod(fixedUpdateCounter, dt);
-		updateFixed = true;
-	}
-
 	if (COUT_FPS) {
 		showFps();
 	}
 
 	if (scene != NULL) {
-		if(updateFixed)
-		{
-			scene->getPhysicsWorld()->Step(1.0 / 60.0, 8, 5);
-			scene->fixedUpdate();
-		}
+
+		
 		scene->update(dt);
 		std::vector<Entity*> entities = scene->getEntities();
 
@@ -233,40 +227,6 @@ void Renderer::renderScene()
 				if (entities[i]->getLayer() == curLayer) {
 					entities[i]->update(dt);
 					glm::mat4 modelmatrix = glm::mat4(1.0f);
-					/*if (updateFixed) {
-						std::vector<Entity*> entityChildren = entities[i]->getChildren();
-						b2Body* body = entities[i]->getPhysicsBody()->getBox2dBody();
-						for (int c = 0; c < entityChildren.size(); c++)
-						{
-
-							int childsFound = 0;
-
-							while (childsFound != entityChildren.size())
-							{
-
-								int fixtureLoopCounter = 0;
-								for (b2Fixture* f = body->GetFixtureList(); f; f = f->GetNext())
-								{
-									if (fixtureLoopCounter == entities[c]->getFixtureIndex())
-									{
-										body->DestroyFixture(f);
-										b2PolygonShape newshape;
-										b2Vec2 position = b2Vec2(entities[c]->getPosition().x * 0.02f, entities[c]->getPosition().y * 0.02f);
-										newshape.SetAsBox(0.02f * (entities[c]->getWidth() / 2.0f), 0.02f * (entities[c]->getHeight() / 2.0f), position, entities[i]->getRotation() * DEG_TO_RAD);
-
-										b2FixtureDef fixture;
-										fixture.shape = &newshape;
-										fixture.density = 1.0f;
-										body->SetUserData(body);
-										body->CreateFixture(&fixture);
-										childsFound++;
-									}
-
-									fixedUpdateCounter++;
-								}
-							}
-						}
-					}*/
 					renderEntity(modelmatrix, entities[i], scene->getCamera());
 				}
 
@@ -496,10 +456,13 @@ void Renderer::renderMesh(glm::mat4 matrix, Mesh* mesh, GLuint textureBuffer, Ve
 
 
 	// Bind our texture in Texture Unit 0
-	glActiveTexture(GL_TEXTURE0);
+	if (lastRenderedTexture != textureBuffer)
+	{
+		glActiveTexture(GL_TEXTURE0);
 
-	glBindTexture(GL_TEXTURE_2D, textureBuffer);
-
+		glBindTexture(GL_TEXTURE_2D, textureBuffer);
+		lastRenderedTexture = textureBuffer;
+	}
 	// Set our "myTextureSampler" sampler to user Texture Unit 0
 	glUniform1i(textureID, 0);
 
@@ -545,7 +508,6 @@ bool Renderer::isMeshVisable(glm::mat4 modelMatrix, Vector2 size, Vector2 camera
 	glm::decompose(modelMatrix, scale, rotation, position, skew, perspective);
 
 	float meshSize = std::max(size.x * scale.x, size.y * scale.y); //if the mesh is rotated and the width and height are not the same, it may be visable but not detectable as visable if this is not applied
-	meshSize *= 0.5f;
 
 	Vector2 windowSize = Camera::getWindowSize();
 

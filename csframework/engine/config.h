@@ -9,7 +9,7 @@
 
 #define MAX_AUDIO_PLAYING 100
 
-#define FONT_SIZE 30
+#define FONT_SIZE 32
 
 #define GRAVITY 9.81f
 

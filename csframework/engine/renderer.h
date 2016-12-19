@@ -10,14 +10,13 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_mixer.h>
+#include <SDL_thread.h>
 
 // Include GLM
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/euler_angles.hpp>
 #include <glm/gtx/matrix_decompose.hpp>
-
-
 
 //include classes from engine
 #include <engine/shader.h>
@@ -41,7 +40,6 @@ public:
 
 	virtual ~Renderer();
 
-	//Init openGL and SDL here
 	void renderScene();
 
 	void initGL();
@@ -79,7 +77,6 @@ private:
 
 	double currentTime;
 	double dt;
-
 	double fixedUpdateCounter;
 
 	bool setFullScreenFix;
@@ -92,5 +89,6 @@ private:
 
 	int fullScreenFlag;
 
-	Texture* lastRenderedTexture;
+	GLuint lastRenderedTexture;
+
 };

@@ -2,7 +2,7 @@
 
 #include <engine/entity.h>
 #include <project/playergroundtrigger.h>
-
+#include <engine/sound.h>
 class Player : public Entity
 {
 public:
@@ -20,7 +20,7 @@ public:
 	
 private:
 	PlayerGroundTrigger* groundTrigger;
-
+	Sound* landsound;
 	float walkAnimationFps;
 	float idleAnimationFps;
 	float jumpAnimationFps;

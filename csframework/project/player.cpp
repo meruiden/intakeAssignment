@@ -15,11 +15,13 @@ Player::Player(PlayerGroundTrigger* groundTrigger) : Entity()
 
 	animationFps = idleAnimationFps;
 	wasGrounded = false;
+
+	landsound = new Sound("assets/footStep.wav");
 }
 
 Player::~Player()
 {
-
+	delete landsound;
 }
 
 void Player::update(float deltaTime)
@@ -86,6 +88,7 @@ void Player::onIdle()
 void Player::onIsGrounded()
 {
 	onIdle();
+	landsound->play();
 }
 
 

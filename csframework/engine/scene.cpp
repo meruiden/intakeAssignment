@@ -1,4 +1,4 @@
- #include <engine/scene.h>
+#include <engine/scene.h>
 
 Scene::Scene()
 {
@@ -11,12 +11,6 @@ Scene::Scene()
 
 void Scene::update(float deltaTime) 
 {
-
-}
-
-void Scene::fixedUpdate()
-{
-	
 
 }
 
@@ -50,6 +44,10 @@ void Scene::createPhysicsFor(Entity* entity)
 	physicBodies.push_back(body);
 }
 
+void Scene::fixedUpdate()
+{
+
+}
 
 void Scene::removePhysicsFor(Entity* entity)
 {

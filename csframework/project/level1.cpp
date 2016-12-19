@@ -17,16 +17,19 @@ Level1::Level1() : Scene()
 	this->playerRight = false;
 	this->playerLeft = false;
 
-	camAcc = Vector2();
-	camVel = Vector2();
 	player->getPhysicsBody()->setFixedRotation(true);
 	
 	player->getPhysicsBody()->setBoxCollider(100, 256);
 	groundCollider = new Entity();
-	mapWidth = 200;
-	mapHeight = 8;
+	mapWidth = 50;
+	mapHeight = 80;
 	createMap();
 	
+	info = new TextMesh();
+	info->loadFont("assets/arial.ttf");
+	info->setText("Jump down to see how many blocks\nthere actualy are in the scene :)");
+	addEntity(info);
+	info->setPosition(Vector2(2300, 100));
 }
 
 Level1::~Level1()
@@ -53,6 +56,9 @@ Level1::~Level1()
 
 	removeEntity(player);
 	delete player;
+
+	removeEntity(info);
+	delete info;
 }
 
 void Level1::update(float deltaTime)
@@ -129,7 +135,6 @@ void Level1::handleInput()
 void Level1::fixedUpdate()
 {
 
-
 	if (!player->isGrounded())
 	{
 		player->getPhysicsBody()->addForce(Vector2(0, 300.0f));
@@ -138,12 +143,11 @@ void Level1::fixedUpdate()
 	if (playerJump)
 	{
 		playerJump = false;
-		player->getPhysicsBody()->addForce(Vector2(0, -10000.0f));
+		player->getPhysicsBody()->addForce(Vector2(0, -10000) );
 	}
 
 	if (playerRight)
 	{
-		
 		player->getPhysicsBody()->addForce(Vector2(400.0f, 0));
 		if (player->getScale() != Vector2(1, 1))
 		{
@@ -160,20 +164,7 @@ void Level1::fixedUpdate()
 		player->getPhysicsBody()->addForce(Vector2(-400.0f, 0));
 	}
 
-	Vector2 camDir = Vector2(player->getPosition() + Vector2(250, 0), getCamera()->getPosition());
-	if (camDir.magnitude() > 100.0f)
-	{
-		camAcc += camDir * 0.008f;
-		
-	}
-
-	camVel += camAcc;
-	getCamera()->setPosition(getCamera()->getPosition() + camVel);
-
-	camAcc *= 0;
-
-	camVel *= 0.9f;
-
+	getCamera()->setPosition(player->getPosition() + Vector2(250, 0));
 
 	Vector2 playerVelocity = player->getPhysicsBody()->getVelocity();
 	if (playerVelocity.x > 10.0f)
@@ -207,17 +198,25 @@ void Level1::fixedUpdate()
 void Level1::createMap()
 {
 	int groundCollSize = 0;
-	for (int i = 0; i < mapWidth; i++)
+	for (int w = 0; w < mapWidth; w++)
 	{
 		Ground* groundTile = new Ground();
 		groundTile->setPosition(Vector2(-200, 300));
 		groundTile->getPhysicsBody()->setPhysicsActive(false);
-		groundTile->setPosition(groundTile->getPosition() + Vector2(i * (60), 0));
+		groundTile->setPosition(groundTile->getPosition() + Vector2(w * 60, 0));
 		groundTiles.push_back(groundTile);
 		groundCollSize += 60;
 		addEntity(groundTile);
 		
-
+		for (int h = 1; h < mapHeight; h++)
+		{
+			Ground* groundTile = new Ground();
+			groundTile->setPosition(Vector2(-200, 300));
+			groundTile->getPhysicsBody()->setPhysicsActive(false);
+			groundTile->setPosition(groundTile->getPosition() + Vector2(w * 60, h * 60));
+			groundTiles.push_back(groundTile);
+			addEntity(groundTile);
+		}
 	}
 
 	addEntity(groundCollider);
@@ -225,5 +224,6 @@ void Level1::createMap()
 	groundCollider->getPhysicsBody()->setPhysicsActive(true);
 	groundCollider->getPhysicsBody()->setPhysicsMode(PhysicsBody::STATIC);
 	groundCollider->getPhysicsBody()->setBoxCollider(groundCollSize, 10);
-	groundCollider->setPosition(Vector2(groundTiles[mapWidth/2-1]->getPosition().x + 30, 300));
+	groundCollider->setPosition(Vector2(groundTiles[0]->getPosition().x - 30 + groundCollSize/2, 300));
+	groundCollider->getPhysicsBody()->setDrawColliders(true);
 }
