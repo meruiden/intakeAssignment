@@ -21,8 +21,8 @@ Level1::Level1() : Scene()
 	
 	player->getPhysicsBody()->setBoxCollider(100, 256);
 	groundCollider = new Entity();
-	mapWidth = 50;
-	mapHeight = 80;
+	mapWidth = 70;
+	mapHeight = 2;
 	createMap();
 	
 	info = new TextMesh();
