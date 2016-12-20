@@ -8,7 +8,8 @@ Windows: <br>
 
 	  Open the intakeAssignment.sln in the vs2015 folder.
 	  You dont need to install anything at all. Everything is pre linked and included
-	  <h2>NOTE: It is strongly recommended to use the Release configuration instead of Debug since the Debug version has a VERY low FPS.</h2>
+
+<h2>NOTE: It is strongly recommended to use the Release configuration instead of Debug since the Debug version has a VERY low FPS.</h2>
 	  
 Unix: <br>
 
