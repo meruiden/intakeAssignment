@@ -36,6 +36,7 @@ Level1::Level1() : Scene()
 	clickCollider->getPhysicsBody()->setPhysicsMode(PhysicsBody::STATIC);
 	updateColCounter = 0;
 	rightClicked = false;
+	leftClicked = false;
 }
 
 Level1::~Level1()

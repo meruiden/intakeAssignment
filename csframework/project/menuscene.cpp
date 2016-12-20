@@ -51,7 +51,6 @@ void MenuScene::update(float deltaTime)
 		settingsButton->color = WHITE;
 	}
 
-
 	if (quitButton->overLapsWithPoint(mousePos))
 	{
 		quitButton->color = GREY;
