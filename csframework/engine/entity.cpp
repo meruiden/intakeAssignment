@@ -123,7 +123,7 @@ void Entity::setScale(Vector2 newScale)
 	
 	fixture = body->CreateFixture(&fixtureDef);
 	fixture->SetSensor(getPhysicsBody()->isTrigger());
-
+	
 }
 
 

@@ -12,7 +12,6 @@ documentation/html
 
 *.obj
 *.suo
-*.user
 *.userosscache
 *.sln.docstates
 *.aps
