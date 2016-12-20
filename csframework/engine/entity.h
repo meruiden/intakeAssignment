@@ -28,11 +28,13 @@ public:
 	void setName(std::string newName);
 	void addSprite(std::string path);
 	void addSpriteAsSpriteSheet(std::string path, int spriteWidth, int spriteHeight, int spritesPerRow, int rows);
+	void setGlobals(Vector2 pos, Vector2 scal, float rot);
 
 	
 	float getWidth();
 	float getHeight();
 	float getRotation();
+	float getGlobalRotation() {}
 	int getLayer() { return layer; }
 
 	Color color;
@@ -42,6 +44,8 @@ public:
 
 	Vector2 getPosition();
 	Vector2 getScale() { return scale; }
+	Vector2 getGlobalPosition(){}
+	Vector2 getGlobalScale() {}
 
 	std::vector<Entity*> getChildren() { return children; }
 	Entity* getParent() { return parent; }
@@ -62,8 +66,11 @@ private:
 
 	Vector2 scale;
 	Vector2 position;
+	Vector2 globalScale;
+	Vector2 globalPosition;
 
 	float rotation;
+	float globalRotation;
 
 	std::string name;
 

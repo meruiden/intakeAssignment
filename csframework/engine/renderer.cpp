@@ -285,13 +285,22 @@ void Renderer::renderEntity(glm::mat4 &modelmatrix, Entity* entity, Camera* came
 	if (entity->getSprite() != NULL)
 	{
 
+		// Get the globals
+		glm::vec3 scale;
+		glm::quat rotation;
+		glm::vec3 position;
+		glm::vec3 skew;
+		glm::vec4 perspective;
+		glm::decompose(modelmatrix, scale, rotation, position, skew, perspective);
+
+		entity->setGlobals(Vector2(position.x, position.y), Vector2(scale.x, scale.y), rotation.z * DEG_TO_RAD);
 		if (entity->getSprite()->hasDynamicMesh())
 		{
-			isVisable = isMeshVisable(modelmatrix, Vector2(entity->getSprite()->getDynamicMesh()->getWidth(), entity->getSprite()->getDynamicMesh()->getHeight()), camera->getPosition());
+			isVisable = isMeshVisable(Vector2(position.x, position.y), Vector2(scale.x, scale.y), Vector2(entity->getSprite()->getDynamicMesh()->getWidth(), entity->getSprite()->getDynamicMesh()->getHeight()), camera->getPosition());
 		}
 		else
 		{
-			isVisable = isMeshVisable(modelmatrix, entity->getSprite()->getSpriteSize(), camera->getPosition());
+			isVisable = isMeshVisable(Vector2(position.x, position.y), Vector2(scale.x, scale.y), entity->getSprite()->getSpriteSize(), camera->getPosition());
 		}
 
 		if (entity->getSprite()->getSpriteSize().magnitude() == 0)
@@ -388,13 +397,21 @@ void Renderer::renderHudElement(HudElement* hudelement)
 	Mesh* mesh = NULL;
 	bool isVisable = false;
 
+	// Get the globals
+	glm::vec3 scale;
+	glm::quat rotation;
+	glm::vec3 pos;
+	glm::vec3 skew;
+	glm::vec4 perspective;
+	glm::decompose(modelmatrix, scale, rotation, pos, skew, perspective);
+
 	if (hudelement->getSprite()->hasDynamicMesh())
 	{
-		isVisable = isMeshVisable(modelmatrix, Vector2(hudelement->getSprite()->getDynamicMesh()->getWidth(), hudelement->getSprite()->getDynamicMesh()->getHeight()), Camera::getWindowSize() * 0.5f);
+		isVisable = isMeshVisable(Vector2(pos.x, pos.y), Vector2(scale.x, scale.y), Vector2(hudelement->getSprite()->getDynamicMesh()->getWidth(), hudelement->getSprite()->getDynamicMesh()->getHeight()), Camera::getWindowSize() * 0.5f);
 	}
 	else 
 	{
-		isVisable = isMeshVisable(modelmatrix, hudelement->getSprite()->getSpriteSize(), Camera::getWindowSize() * 0.5f);
+		isVisable = isMeshVisable(Vector2(pos.x, pos.y), Vector2(scale.x, scale.y), hudelement->getSprite()->getSpriteSize(), Camera::getWindowSize() * 0.5f);
 	}
 
 	if (hudelement->getSprite()->getSpriteSize().magnitude() == 0)
@@ -501,15 +518,8 @@ void Renderer::renderMesh(glm::mat4 matrix, Mesh* mesh, GLuint textureBuffer, Ve
 	glDisableVertexAttribArray(vertexUVID);
 }
 
-bool Renderer::isMeshVisable(glm::mat4 modelMatrix, Vector2 size, Vector2 cameraPos)
+bool Renderer::isMeshVisable(Vector2 position, Vector2 scale, Vector2 size, Vector2 cameraPos)
 {
-	glm::vec3 scale;
-	glm::quat rotation;
-	glm::vec3 position;
-	glm::vec3 skew;
-	glm::vec4 perspective;
-	glm::decompose(modelMatrix, scale, rotation, position, skew, perspective);
-
 	float meshSize = std::max(size.x * scale.x, size.y * scale.y); //if the mesh is rotated and the width and height are not the same, it may be visable but not detectable as visable if this is not applied
 
 	Vector2 windowSize = Camera::getWindowSize();

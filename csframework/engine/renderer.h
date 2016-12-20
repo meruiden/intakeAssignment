@@ -80,7 +80,7 @@ private:
 	double fixedUpdateCounter;
 
 	bool setFullScreenFix;
-	bool isMeshVisable(glm::mat4 modelMatrix, Vector2 size, Vector2 cameraPos);
+	bool isMeshVisable(Vector2 position, Vector2 scale, Vector2 size, Vector2 cameraPos);
 	float fpsCounter;
 	int fps;
 

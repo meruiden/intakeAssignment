@@ -12,6 +12,10 @@ Entity::Entity()
 	name = "No Name";
 	physicsBody = new PhysicsBody();
 	spritesheet = new SpriteSheet();
+
+	globalPosition = Vector2();
+	globalScale = Vector2(1, 1);
+	globalRotation = 0.0f;
 }
 
 Entity::~Entity()
