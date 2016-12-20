@@ -24,6 +24,13 @@ Vector2 Camera::screenToWorldSpace(Vector2 screenSpace)
 	return worldSpace;
 }
 
+Vector2 Camera::worldToScreenSpace(Vector2 worldSpace)
+{
+	Vector2 screenSpace = worldSpace;
+	screenSpace -= getPosition();
+	return worldSpace;
+}
+
 void Camera::setPosition(Vector2 newPos)
 {
 	position = newPos;

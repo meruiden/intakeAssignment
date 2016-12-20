@@ -150,6 +150,8 @@ add_executable(project
 	"${FRAMEWORK_DIR}/project/ground.h"
 	"${FRAMEWORK_DIR}/project/menuscene.cpp"
 	"${FRAMEWORK_DIR}/project/menuscene.h"
+	"${FRAMEWORK_DIR}/project/worldedit.cpp"
+	"${FRAMEWORK_DIR}/project/worldedit.h"
 	"${FRAMEWORK_DIR}/project/settingsbutton.cpp"
 	"${FRAMEWORK_DIR}/project/settingsbutton.h"
 	"${FRAMEWORK_DIR}/project/playergroundtrigger.cpp"

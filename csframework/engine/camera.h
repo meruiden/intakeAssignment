@@ -26,6 +26,7 @@ public:
 	void setPosition(Vector2 newPos);
 	
 	Vector2 screenToWorldSpace(Vector2 screenSpace);
+	Vector2 worldToScreenSpace(Vector2 worldSpace);
 	Vector2 getPosition() { return position; }
 	
 	static std::vector<Vector2> getAvailableResolutions();

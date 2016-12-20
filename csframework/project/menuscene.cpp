@@ -63,6 +63,11 @@ void MenuScene::update(float deltaTime)
 	{
 		quitButton->color = WHITE;
 	}
+
+	if (input()->getKeyUp(SDLK_BACKSLASH))
+	{
+		SceneManager::loadScene("mapedit");
+	}
 }
 
 

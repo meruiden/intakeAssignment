@@ -39,6 +39,9 @@
     <ClCompile Include="..\..\csframework\project\ground.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\csframework\project\mapeditor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\csframework\project\menuscene.h">
@@ -60,6 +63,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\csframework\project\ground.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\csframework\project\mapeditor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
