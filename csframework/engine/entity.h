@@ -33,7 +33,7 @@ public:
 	float getWidth();
 	float getHeight();
 	float getRotation();
-	float getGlobalRotation() {}
+	float getGlobalRotation() { return globalRotation; }
 	int getLayer() { return layer; }
 
 	Color color;
@@ -43,8 +43,8 @@ public:
 
 	Vector2 getPosition();
 	Vector2 getScale() { return scale; }
-	Vector2 getGlobalPosition(){}
-	Vector2 getGlobalScale() {}
+	Vector2 getGlobalPosition() { return globalPosition; }
+	Vector2 getGlobalScale() { return globalScale; }
 
 	std::vector<Entity*> getChildren() { return children; }
 	Entity* getParent() { return parent; }
