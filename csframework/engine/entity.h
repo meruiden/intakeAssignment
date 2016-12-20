@@ -30,7 +30,6 @@ public:
 	void addSpriteAsSpriteSheet(std::string path, int spriteWidth, int spriteHeight, int spritesPerRow, int rows);
 	void setGlobals(Vector2 pos, Vector2 scal, float rot);
 
-	
 	float getWidth();
 	float getHeight();
 	float getRotation();
@@ -55,7 +54,7 @@ public:
 
 	std::string getName() { return name; }
 	
-	
+	bool overLapsWithPoint(Vector2 point);
 private:
 	int layer;
 

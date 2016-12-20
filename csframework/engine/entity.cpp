@@ -92,6 +92,26 @@ void Entity::setRotation(float newRotation)
 
 }
 
+bool Entity::overLapsWithPoint(Vector2 point)
+{
+	if (sprite == NULL)
+	{
+		return false;
+	}
+
+	bool overlaps = false;
+	if (point.x < (getGlobalPosition().x + globalScale.x * sprite->getSpriteSize().x / 2.0f)
+		&& point.x >(getGlobalPosition().x - globalScale.x * sprite->getSpriteSize().x / 2.0f)
+		&& point.y < (getGlobalPosition().y + globalScale.y * sprite->getSpriteSize().y / 2.0f)
+		&& point.y >(getGlobalPosition().y - globalScale.y * sprite->getSpriteSize().y / 2.0f)
+		)
+	{
+		overlaps = true;
+	}
+
+	return overlaps;
+}
+
 float Entity::getRotation()
 {
 	if (physicsBody->getBox2dBody() != NULL)
@@ -187,13 +207,6 @@ void Entity::setParent(Entity* entity)
 	}
 
 	this->parent = entity;
-	/*int fixtureCounter = 0;
-	for (b2Fixture* f = physicsBody->getBox2dBody()->GetFixtureList(); f; f = f->GetNext())
-	{
-		fixtureCounter++;
-	}
-	fixtureIndex = fixtureCounter;
-	*/
 	bool alreadyChild = false;
 	std::vector<Entity*> children = entity->getChildren();
 	std::vector< Entity* >::iterator it = children.begin();
@@ -246,5 +259,12 @@ void Entity::addSpriteAsSpriteSheet(std::string path, int spriteWidth, int sprit
 {
 	spritesheet->setUpSpriteSheet(path, spriteWidth, spriteHeight, spritesPerRow, rows);
 	this->sprite = spritesheet->getSprite();
+}
+
+void Entity::setGlobals(Vector2 pos, Vector2 scal, float rot)
+{
+	this->globalPosition = pos;
+	this->globalScale = scale;
+	this->globalRotation = rot;
 }
 
