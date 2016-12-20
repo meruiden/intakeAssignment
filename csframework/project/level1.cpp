@@ -143,7 +143,10 @@ void Level1::fixedUpdate()
 		}
 		
 		clickColVerts.push_back(getCamera()->screenToWorldSpace(input()->getMousePosition()));
-
+		if (clickColVerts.size() == 10)
+		{
+			clickColVerts.erase(clickColVerts.begin());
+		}
 		mustSecondClick = true;
 	}
 
