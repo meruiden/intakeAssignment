@@ -6,7 +6,7 @@ Level1::Level1() : Scene()
 	player = new Player(playerGroundTrigger);
 	addEntity(player);
 
-	player->setPosition(Vector2(0, -200));
+	player->setPosition(Vector2(0, 100));
 
 	addEntity(playerGroundTrigger);
 
@@ -29,18 +29,18 @@ Level1::Level1() : Scene()
 	info->loadFont("assets/arial.ttf");
 	info->setText("Jump down to see how many blocks\nthere actualy are in the scene :)");
 	addEntity(info);
-	info->setPosition(Vector2(2300, 100));
+	info->setPosition(Vector2(2400, 0));
+	mustSecondClick = false;
+	clickCollider = new Entity();
+	addEntity(clickCollider);
+	clickCollider->getPhysicsBody()->setPhysicsMode(PhysicsBody::STATIC);
+	updateColCounter = 0;
+	rightClicked = false;
 }
 
 Level1::~Level1()
 {
-	for (int i = 0; i < smilies.size(); i++)
-	{
-		removeEntity(smilies[i]);
-		delete smilies[i];
-	}
-	smilies.clear();
-
+	delete clickCollider;
 	for (int i = 0; i < groundTiles.size(); i++)
 	{
 		removeEntity(groundTiles[i]);
@@ -114,27 +114,51 @@ void Level1::handleInput()
 			player->onIdle();
 		}
 	}
-	
 	if (input()->getMouseButtonDown(1))
 	{
-		Entity* smiley = new Entity();;
-		addEntity(smiley);
-		smiley->getPhysicsBody()->setPhysicsActive(true);
-		smiley->setPosition(getCamera()->screenToWorldSpace(input()->getMousePosition()));
-
-		smiley->getPhysicsBody()->setCircleCollider(64);
-		smiley->addSprite("assets/smiley.png");
-		smiley->setScale(Vector2(0.5f, 0.5f));
-		smiley->getPhysicsBody()->setDrawColliders(true);
-		smilies.push_back(smiley);
+		leftClicked = true;
 	}
-	
+
+	if (input()->getMouseButtonDown(3))
+	{
+		rightClicked = true;
+	}
 }
 
 
 void Level1::fixedUpdate()
 {
 
+	updateColCounter += 1.0f / 60.0f;
+	static bool initClickCollider = true;
+	if (leftClicked)
+	{
+		leftClicked = false;
+		if (initClickCollider)
+		{
+			initClickCollider = false;
+			clickCollider->getPhysicsBody()->setPhysicsActive(true);
+			clickCollider->getPhysicsBody()->setDrawColliders(true);
+			clickColVerts.push_back(getCamera()->screenToWorldSpace(input()->getMousePosition()));
+		}
+		
+		clickColVerts.push_back(getCamera()->screenToWorldSpace(input()->getMousePosition()));
+
+		mustSecondClick = true;
+	}
+
+	if (mustSecondClick && updateColCounter >= 0.01f)
+	{
+		clickColVerts[clickColVerts.size() - 1] = getCamera()->screenToWorldSpace(input()->getMousePosition());
+		clickCollider->getPhysicsBody()->setEdgeCollider(clickColVerts);
+
+		updateColCounter = 0;
+	}
+	if (rightClicked)
+	{
+		rightClicked = false;
+		mustSecondClick = false;
+	}
 	if (!player->isGrounded())
 	{
 		player->getPhysicsBody()->addForce(Vector2(0, 300.0f));
@@ -223,7 +247,15 @@ void Level1::createMap()
 	
 	groundCollider->getPhysicsBody()->setPhysicsActive(true);
 	groundCollider->getPhysicsBody()->setPhysicsMode(PhysicsBody::STATIC);
-	groundCollider->getPhysicsBody()->setBoxCollider(groundCollSize, 10);
-	groundCollider->setPosition(Vector2(groundTiles[0]->getPosition().x - 30 + groundCollSize/2, 300));
+	std::vector<Vector2> verts;
+	verts.push_back(Vector2(0, 0));
+	verts.push_back(Vector2(groundCollSize/2, 0));
+	verts.push_back(Vector2(groundCollSize / 2 + 200, -100));
+	verts.push_back(Vector2(groundCollSize / 2 + 400, -100));
+	verts.push_back(Vector2(groundCollSize / 2 + 600, 0));
+	verts.push_back(Vector2(groundCollSize, 0));
+
+	groundCollider->getPhysicsBody()->setEdgeCollider(verts);
+	groundCollider->setPosition(Vector2(-230, 300));
 	groundCollider->getPhysicsBody()->setDrawColliders(true);
 }

@@ -26,6 +26,7 @@ public:
 	void setBoxCollider(float width, float height);
 	void setCircleCollider(float radius);
 	void setFixedRotation(bool active);
+	void setEdgeCollider(std::vector<Vector2> vertices);
 	
 
 	b2FixtureDef getFixtureDef(){return fixtureDef;}
@@ -44,6 +45,8 @@ public:
 
 	void regenerateColliderMesh();
 private:
+	void destroyCollider();
+
 	std::vector<glm::vec3>lastColliderVertices;
 
 	b2Body* box2dBody;
@@ -56,7 +59,6 @@ private:
 	bool customCollider;
 	bool fixedRotation;
 	
-
 	float lastCircleRadius;
 
 	int curPhysicsMode;

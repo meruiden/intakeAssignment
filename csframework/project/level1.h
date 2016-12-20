@@ -25,11 +25,19 @@ private:
 	PlayerGroundTrigger* playerGroundTrigger;
 	TextMesh* info;
 
-	std::vector<Entity*> smilies;
 	std::vector<Ground*> groundTiles;
 	Entity* groundCollider;
 
 	bool playerLeft;
 	bool playerRight;
 	bool playerJump;
+
+	std::vector<Vector2> clickColVerts;
+	Entity* clickCollider;
+	bool mustSecondClick;
+
+	float updateColCounter;
+
+	bool leftClicked;
+	bool rightClicked;
 };

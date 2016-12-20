@@ -143,6 +143,7 @@ void Renderer::initGL()
 		fullScreenFlag = SDL_WINDOW_FULLSCREEN_DESKTOP;
 	}
 
+	glLineWidth(3.0f);
 }
 
 void Renderer::renderScene()
@@ -342,11 +343,12 @@ void Renderer::renderEntity(glm::mat4 &modelmatrix, Entity* entity, Camera* came
 	}
 	if (entity->getPhysicsBody()->getDrawColliders())
 	{
-		//entity->getPhysicsBody()->regenerateColliderMesh();
-		glm::mat4 colliderModel = getModelMatrix(entity->getPosition(), Vector2(1, 1), entity->getRotation());
-		glm::mat4 colliderModerMVP = ProjectionMatrix * camera->getViewMatrix() * colliderModel ;
-		renderMesh(colliderModerMVP, entity->getPhysicsBody()->getColliderDrawMesh(), ResourceManager::getInstance()->getEmptyTexture(), Vector2(0, 0), COLLIDER_DRAW_COLOR);
-		
+		if (entity->getPhysicsBody()->getColliderDrawMesh() != NULL)
+		{
+			glm::mat4 colliderModel = getModelMatrix(entity->getPosition(), Vector2(1, 1), entity->getRotation());
+			glm::mat4 colliderModerMVP = ProjectionMatrix * camera->getViewMatrix() * colliderModel;
+			renderMesh(colliderModerMVP, entity->getPhysicsBody()->getColliderDrawMesh(), ResourceManager::getInstance()->getEmptyTexture(), Vector2(0, 0), COLLIDER_DRAW_COLOR);
+		}
 	}
 	std::vector<Entity*>children = entity->getChildren();
 	std::vector<Entity*>::iterator it = children.begin();

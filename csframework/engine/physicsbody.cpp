@@ -25,8 +25,7 @@ void PhysicsBody::setBoxCollider(float width, float height)
 {
 
 	b2Body* body = box2dBody;
-	b2Fixture* fixture = body->GetFixtureList();
-	body->DestroyFixture(fixture);
+	destroyCollider();
 	b2PolygonShape shape;
 	shape.SetAsBox(0.02f * (abs(width / 2.0f)), 0.02f * abs((height / 2.0f)));
 
@@ -34,7 +33,7 @@ void PhysicsBody::setBoxCollider(float width, float height)
 	fixtureDef.shape = &shape;
 	fixtureDef.density = 1.0f;
 
-	fixture = body->CreateFixture(&fixtureDef);
+	b2Fixture* fixture = body->CreateFixture(&fixtureDef);
 	fixture->SetSensor(trigger);
 
 	customCollider = true;
@@ -48,8 +47,7 @@ void PhysicsBody::setCircleCollider(float radius)
 {
 	radius *= 0.02f;
 	b2Body* body = box2dBody;
-	b2Fixture* fixture = body->GetFixtureList();
-	body->DestroyFixture(fixture);
+	destroyCollider();
 	b2CircleShape shape;
 
 	shape.m_radius = radius;
@@ -58,7 +56,7 @@ void PhysicsBody::setCircleCollider(float radius)
 	fixtureDef.shape = &shape;
 	fixtureDef.density = 1.0f;
 
-	fixture = body->CreateFixture(&fixtureDef);
+	b2Fixture* fixture = body->CreateFixture(&fixtureDef);
 	fixture->SetSensor(trigger);
 
 	customCollider = true;
@@ -75,8 +73,7 @@ void PhysicsBody::setCollider(std::vector<Vector2> vertices)
 		b2verts.push_back(b2Vec2(vertices[i].x * 0.02f, vertices[i].y * 0.02f));
 	}
 	b2Body* body = box2dBody;
-	b2Fixture* fixture = body->GetFixtureList();
-	body->DestroyFixture(fixture);
+	destroyCollider();
 	b2PolygonShape shape;
 
 	shape.Set(b2verts.data(), b2verts.size());
@@ -85,13 +82,36 @@ void PhysicsBody::setCollider(std::vector<Vector2> vertices)
 	fixtureDef.shape = &shape;
 	fixtureDef.density = 1.0f;
 
-	fixture = body->CreateFixture(&fixtureDef);
+	b2Fixture* fixture = body->CreateFixture(&fixtureDef);
 	fixture->SetSensor(trigger);
 	
 	customCollider = true;
 
 	regenerateColliderMesh();
 	
+}
+
+void PhysicsBody::setEdgeCollider(std::vector<Vector2> vertices)
+{
+	b2Body* body = box2dBody;
+	destroyCollider();
+	b2EdgeShape shape;
+	b2FixtureDef fixtureDef;
+	fixtureDef.shape = &shape;
+	fixtureDef.density = 1.0f;
+
+	
+	for (unsigned int i = 0; i < vertices.size()-1; i++)
+	{
+		shape.Set(b2Vec2(vertices[i].x * 0.02f, vertices[i].y * 0.02f), b2Vec2(vertices[i+1].x * 0.02f, vertices[i+1].y * 0.02f));
+		b2Fixture* fixture = body->CreateFixture(&fixtureDef);
+		fixture->SetSensor(trigger);
+
+	}
+
+	customCollider = true;
+	
+	regenerateColliderMesh();
 }
 
 void PhysicsBody::setBox2dBody(b2Body* body, b2FixtureDef fixtureDef) 
@@ -120,6 +140,8 @@ void PhysicsBody::setDrawColliders(bool active)
 void PhysicsBody::regenerateColliderMesh()
 {
 	bool isCircle = false;
+	bool isEdge = false;
+	
 
 	std::vector<glm::vec3> vertices;
 	std::vector<glm::vec2> uvs;
@@ -136,6 +158,7 @@ void PhysicsBody::regenerateColliderMesh()
 			vertices.push_back(glm::vec3(pos.x, pos.y, 0.0f));
 			uvs.push_back(glm::vec2(0.5f, 0.5f));
 		}
+
 		
 	}else if (shape->GetType() == b2Shape::Type::e_circle)
 	{
@@ -157,6 +180,29 @@ void PhysicsBody::regenerateColliderMesh()
 			uvs.push_back(glm::vec2(0.5f, 0.5f));
 		}
 	}
+	else if (shape->GetType() == b2Shape::Type::e_edge)
+	{
+		int ii = 0;
+		for (b2Fixture* f = box2dBody->GetFixtureList(); f; f = f->GetNext())
+		{
+			b2Shape* s = f->GetShape();
+			b2EdgeShape *edge = (b2EdgeShape*)s;
+			b2Vec2 pos1 = edge->m_vertex1;
+			b2Vec2 pos2 = edge->m_vertex2;
+			pos1 *= 50.0f;
+			pos2 *= 50.0f;
+			vertices.push_back(glm::vec3(pos1.x, pos1.y, 0.0f));
+			vertices.push_back(glm::vec3(pos2.x, pos2.y, 0.0f));
+			uvs.push_back(glm::vec2(0.5f, 0.5f));
+			uvs.push_back(glm::vec2(0.5f, 0.5f));
+			ii++;
+			
+		}
+
+		vertices.push_back(vertices[vertices.size()-1]);
+		uvs.push_back(glm::vec2(0.5f, 0.5f));
+		isEdge = true;
+	}
 
 	if (lastColliderVertices == vertices && !isCircle)
 	{
@@ -164,21 +210,49 @@ void PhysicsBody::regenerateColliderMesh()
 	}
 	if (vertices.size() == 0)
 	{
+		if (drawColliderMesh != NULL)
+		{
+			delete drawColliderMesh;
+			drawColliderMesh = NULL;
+		}
 		return;
 	}
 	
 	if (drawColliderMesh != NULL)
 	{
 		delete drawColliderMesh;
+		drawColliderMesh = NULL;
 	}
-	
 
 	lastColliderVertices = vertices;
 
+
+
 	drawColliderMesh = new Mesh();
 	drawColliderMesh->setFromVerticesAndUvs(vertices, uvs);
-	drawColliderMesh->setDrawMode(Mesh::drawModeSettings::polygons);
+	if (isEdge)
+	{
+		drawColliderMesh->setDrawMode(Mesh::drawModeSettings::lines);
+	}
+	else
+	{
+		drawColliderMesh->setDrawMode(Mesh::drawModeSettings::polygons);
+	}
 	
+	
+}
+void PhysicsBody::destroyCollider()
+{
+	std::vector<b2Fixture*> toDestroy;
+	for (b2Fixture* f = box2dBody->GetFixtureList(); f; f = f->GetNext())
+	{
+		toDestroy.push_back(f);
+	}
+	for (int i = 0; i < toDestroy.size(); i++)
+	{
+		box2dBody->DestroyFixture(toDestroy[i]);
+	}
+	toDestroy.clear();
 }
 void PhysicsBody::setPhysicsMode(int mode)
 {
