@@ -5,6 +5,8 @@
 #include <project/player.h>
 #include <project/playergroundtrigger.h>
 #include <project/ground.h>
+#include <engine/scenemanager.h>
+#include <project/mapeditor.h>
 
 class Level1 : public Scene
 {
@@ -23,7 +25,6 @@ private:
 
 	Player* player;
 	PlayerGroundTrigger* playerGroundTrigger;
-	TextMesh* info;
 
 	std::vector<Ground*> groundTiles;
 	Entity* groundCollider;
@@ -33,6 +34,7 @@ private:
 	bool playerJump;
 
 	std::vector<Vector2> clickColVerts;
+	std::vector<Entity*> loadedEntities;
 	Entity* clickCollider;
 	bool mustSecondClick;
 

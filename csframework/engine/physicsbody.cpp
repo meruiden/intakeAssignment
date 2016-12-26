@@ -241,6 +241,15 @@ void PhysicsBody::regenerateColliderMesh()
 	
 	
 }
+std::vector<Vector2> PhysicsBody::getColliderVertices()
+{
+	std::vector<Vector2> v2Verts;
+	for (int i = 0; i < lastColliderVertices.size(); i++)
+	{
+		v2Verts.push_back(Vector2(lastColliderVertices[i].x, lastColliderVertices[i].y));
+	}
+	return v2Verts;
+}
 void PhysicsBody::destroyCollider()
 {
 	std::vector<b2Fixture*> toDestroy;

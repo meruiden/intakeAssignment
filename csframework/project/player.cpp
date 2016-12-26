@@ -2,7 +2,8 @@
 
 Player::Player(PlayerGroundTrigger* groundTrigger) : Entity()
 {
-	this->addSpriteAsSpriteSheet("assets/character_idle.png", 256, 256, 2, 2);
+	this->addSpriteAsSpriteSheet("assets/character.png", 256, 256, 4, 8);
+
 	this->getSpriteSheet()->setAnimateFrames(0, 3);
 	this->getSpriteSheet()->play();
 	this->getSpriteSheet()->setLoop(true);
@@ -17,6 +18,7 @@ Player::Player(PlayerGroundTrigger* groundTrigger) : Entity()
 	wasGrounded = false;
 
 	landsound = new Sound("assets/footStep.wav");
+	setLayer(2);
 }
 
 Player::~Player()
@@ -35,10 +37,9 @@ void Player::update(float deltaTime)
 	this->getSpriteSheet()->animate(deltaTime, 1.0f / animationFps);
 	if (!this->isGrounded())
 	{
-		if (this->getSprite()->getFileName() != "assets/character_jump.png")
+		if (this->getSpriteSheet()->getAnimationStartFrame() != 12)
 		{
-			this->addSpriteAsSpriteSheet("assets/character_jump.png", 256, 256, 2, 3);
-			this->getSpriteSheet()->setAnimateFrames(0, 5);
+			this->getSpriteSheet()->setAnimateFrames(12, 17);
 			this->getSpriteSheet()->setLoop(false);
 			this->getSpriteSheet()->play();
 			animationFps = jumpAnimationFps;
@@ -63,10 +64,10 @@ void Player::onWalk()
 	{
 		return;
 	}
-	this->addSpriteAsSpriteSheet("assets/character_walk.png", 256, 256, 4, 2);
-	this->getSpriteSheet()->setAnimateFrames(0, 7);
+	this->getSpriteSheet()->setAnimateFrames(4, 11);
 	this->getSpriteSheet()->play();
 	this->getSpriteSheet()->setLoop(true);
+	walking = true;
 	animationFps = walkAnimationFps;
 }
 
@@ -76,18 +77,29 @@ void Player::onIdle()
 	{
 		return;
 	}
-	this->addSpriteAsSpriteSheet("assets/character_idle.png", 256, 256, 2, 2);
 	this->getSpriteSheet()->setAnimateFrames(0, 3);
 	this->getSpriteSheet()->play();
 	this->getSpriteSheet()->setLoop(true);
+	walking = false;
 	animationFps = idleAnimationFps;
 
-	setLayer(2);
+}
+
+void Player::setWalk(bool value)
+{
+	walking = value;
 }
 
 void Player::onIsGrounded()
 {
-	onIdle();
+	if (walking)
+	{
+		onWalk();
+	}
+	else 
+	{
+		onIdle();
+	}
 	landsound->play();
 }
 

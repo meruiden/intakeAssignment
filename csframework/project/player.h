@@ -17,6 +17,7 @@ public:
 
 	void onWalk();
 	void onIdle();
+	void setWalk(bool value);
 	
 private:
 	PlayerGroundTrigger* groundTrigger;
@@ -29,5 +30,6 @@ private:
 	void onIsGrounded();
 
 	bool wasGrounded;
+	bool walking;
 };
 

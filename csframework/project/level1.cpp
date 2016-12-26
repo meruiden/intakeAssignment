@@ -25,11 +25,6 @@ Level1::Level1() : Scene()
 	mapHeight = 2;
 	createMap();
 	
-	info = new TextMesh();
-	info->loadFont("assets/arial.ttf");
-	info->setText("Jump down to see how many blocks\nthere actualy are in the scene :)");
-	addEntity(info);
-	info->setPosition(Vector2(2400, 0));
 	mustSecondClick = false;
 	clickCollider = new Entity();
 	addEntity(clickCollider);
@@ -58,22 +53,25 @@ Level1::~Level1()
 	removeEntity(player);
 	delete player;
 
-	removeEntity(info);
-	delete info;
 }
 
 void Level1::update(float deltaTime)
 {
-	
 	handleInput();
 	playerGroundTrigger->setPosition(player->getPosition() + Vector2(0, player->getHeight()/2.0f - playerGroundTrigger->getHeight()/2.0f));
 	
-	if (playerRight || playerLeft)
+	if ((playerRight || playerLeft) && player->isGrounded())
 	{
-		if (player->getSprite()->getFileName() != "assets/character_walk.png" )
-		{
-			player->onWalk();
-		}
+		player->setWalk(true);
+	}
+	else
+	{
+		player->setWalk(false);
+	}
+
+	if (input()->getKeyUp(SDLK_ESCAPE))
+	{
+		SceneManager::loadScene("menu");
 	}
 }
 
@@ -228,25 +226,30 @@ void Level1::createMap()
 	int groundCollSize = 0;
 	for (int w = 0; w < mapWidth; w++)
 	{
-		Ground* groundTile = new Ground();
-		groundTile->setPosition(Vector2(-200, 300));
-		groundTile->getPhysicsBody()->setPhysicsActive(false);
-		groundTile->setPosition(groundTile->getPosition() + Vector2(w * 60, 0));
-		groundTiles.push_back(groundTile);
+		//Ground* groundTile = new Ground();
+		//groundTile->setPosition(Vector2(-200, 300));
+		//groundTile->getPhysicsBody()->setPhysicsActive(false);
+		//groundTile->setPosition(groundTile->getPosition() + Vector2(w * 60, 0));
+		//groundTiles.push_back(groundTile);
 		groundCollSize += 60;
-		addEntity(groundTile);
+		//addEntity(groundTile);
 		
 		for (int h = 1; h < mapHeight; h++)
 		{
-			Ground* groundTile = new Ground();
-			groundTile->setPosition(Vector2(-200, 300));
-			groundTile->getPhysicsBody()->setPhysicsActive(false);
-			groundTile->setPosition(groundTile->getPosition() + Vector2(w * 60, h * 60));
-			groundTiles.push_back(groundTile);
-			addEntity(groundTile);
+			//Ground* groundTile = new Ground();
+			//groundTile->setPosition(Vector2(-200, 300));
+			//groundTile->getPhysicsBody()->setPhysicsActive(false);
+			//groundTile->setPosition(groundTile->getPosition() + Vector2(w * 60, h * 60));
+			//groundTiles.push_back(groundTile);
+			//addEntity(groundTile);
 		}
 	}
-
+	
+	MapEditor::loadMap(loadedEntities);
+	for (int i = 0; i < loadedEntities.size(); i++)
+	{
+		addEntity(loadedEntities[i]);
+	}
 	addEntity(groundCollider);
 	
 	groundCollider->getPhysicsBody()->setPhysicsActive(true);

@@ -44,6 +44,7 @@ public:
 	int getPhysicsMode();
 
 	void regenerateColliderMesh();
+	std::vector<Vector2> getColliderVertices();
 private:
 	void destroyCollider();
 
