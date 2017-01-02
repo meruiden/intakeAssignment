@@ -45,6 +45,9 @@
     <ClCompile Include="..\..\csframework\project\bullet.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\csframework\project\zombie.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\csframework\project\menuscene.h">
@@ -72,6 +75,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\csframework\project\bullet.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\csframework\project\zombie.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

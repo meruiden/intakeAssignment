@@ -100,7 +100,6 @@ void PhysicsBody::setEdgeCollider(std::vector<Vector2> vertices)
 	fixtureDef.shape = &shape;
 	fixtureDef.density = 1.0f;
 
-	
 	for (unsigned int i = 0; i < vertices.size()-1; i++)
 	{
 		shape.Set(b2Vec2(vertices[i].x * 0.02f, vertices[i].y * 0.02f), b2Vec2(vertices[i+1].x * 0.02f, vertices[i+1].y * 0.02f));
@@ -123,13 +122,17 @@ void PhysicsBody::setBox2dBody(b2Body* body, b2FixtureDef fixtureDef)
 	{
 		setPhysicsActive(physicsActive);
 		setPhysicsMode(curPhysicsMode);
+		setFixedRotation(fixedRotation);
 	}
 }
 
 void PhysicsBody::setFixedRotation(bool active)
 {
 	fixedRotation = active;
-	box2dBody->SetFixedRotation(active);
+	if (box2dBody != NULL)
+	{
+		box2dBody->SetFixedRotation(active);
+	}
 }
 
 void PhysicsBody::setDrawColliders(bool active)

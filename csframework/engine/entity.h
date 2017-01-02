@@ -67,6 +67,7 @@ private:
 	Vector2 position;
 	Vector2 globalScale;
 	Vector2 globalPosition;
+	Vector2 lastColliderScale;
 
 	float rotation;
 	float globalRotation;

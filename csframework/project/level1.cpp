@@ -9,7 +9,7 @@ Level1::Level1() : Scene()
 	player->setPosition(Vector2(0, 100));
 
 	addEntity(playerGroundTrigger);
-
+	playerGroundTrigger->getPhysicsBody()->setBoxCollider(90, 20);
 	playerGroundTrigger->getPhysicsBody()->setPhysicsMode(PhysicsBody::DYNAMIC);
 	playerGroundTrigger->getPhysicsBody()->setTrigger(true);
 
@@ -52,7 +52,10 @@ Level1::Level1() : Scene()
 	shootDelay = 0.1f;
 	shootDelayCounter = 0.0f;
 
-	
+	Zombie* zombie = new Zombie();
+	addEntity(zombie);
+	zombies.push_back(zombie);
+	zombie->getPhysicsBody()->setBoxCollider(128, 256);
 }
 
 Level1::~Level1()
@@ -87,6 +90,13 @@ Level1::~Level1()
 	}
 	groundTiles.clear();
 
+	for (int i = 0; i < zombies.size(); i++)
+	{
+		removeEntity(zombies[i]);
+		delete zombies[i];
+	}
+	zombies.clear();
+
 	removeEntity(groundCollider);
 	delete groundCollider;
 
@@ -102,7 +112,7 @@ void Level1::update(float deltaTime)
 {
 	shootDelayCounter += deltaTime;
 	handleInput();
-	playerGroundTrigger->setPosition(player->getPosition() + Vector2(0, player->getHeight()/2.0f - playerGroundTrigger->getHeight()/2.0f));
+	playerGroundTrigger->setPosition(player->getPosition() + Vector2(0, player->getHeight()/2.0f ));
 	
 	if ((playerRight || playerLeft) && player->isGrounded())
 	{
@@ -242,6 +252,7 @@ void Level1::fixedUpdate()
 	{
 		playerJump = false;
 		player->getPhysicsBody()->addForce(Vector2(0, -10000) );
+		std::cout << 1 << std::endl;
 	}
 
 	if (playerRight)

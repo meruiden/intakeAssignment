@@ -294,7 +294,6 @@ void Renderer::renderEntity(glm::mat4 &modelmatrix, Entity* entity, Camera* came
 	if (entity->getSprite() != NULL)
 	{
 
-		
 		if (entity->getSprite()->hasDynamicMesh())
 		{
 			isVisable = isMeshVisable(Vector2(position.x, position.y), Vector2(scale.x, scale.y), Vector2(entity->getSprite()->getDynamicMesh()->getWidth(), entity->getSprite()->getDynamicMesh()->getHeight()), camera->getPosition());
@@ -361,6 +360,7 @@ void Renderer::renderEntity(glm::mat4 &modelmatrix, Entity* entity, Camera* came
 			renderMesh(colliderModerMVP, entity->getPhysicsBody()->getColliderDrawMesh(), ResourceManager::getInstance()->getEmptyTexture(), Vector2(0, 0), COLLIDER_DRAW_COLOR);
 		}
 	}
+	entity->setScale(entity->getScale());
 	std::vector<Entity*>children = entity->getChildren();
 	std::vector<Entity*>::iterator it = children.begin();
 	while (it != children.end())

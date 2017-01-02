@@ -7,6 +7,7 @@ Player::Player(PlayerGroundTrigger* groundTrigger) : Entity()
 	this->groundTrigger = groundTrigger;
 	this->setName("player");
 
+	getPhysicsBody()->setDrawColliders(false);
 	wasGrounded = false;
 
 	landsound = new Sound("assets/footStep.wav");

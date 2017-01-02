@@ -9,6 +9,7 @@
 #include <project/ground.h>
 #include <project/mapeditor.h>
 #include <project/bullet.h>
+#include <project/zombie.h>
 
 class Level1 : public Scene
 {
@@ -40,6 +41,7 @@ private:
 	bool playerJump;
 
 	std::vector<Entity*> loadedEntities;
+	std::vector<Zombie*> zombies;
 	std::vector<Bullet*> bullets;
 	Entity* leftArmPivot;
 	Entity* rightArmPivot;
