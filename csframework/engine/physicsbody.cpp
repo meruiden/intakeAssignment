@@ -11,6 +11,8 @@ PhysicsBody::PhysicsBody()
 	lastCircleRadius = 0.0f;
 	fixedRotation = false;
 	curPhysicsMode = PhysicsBody::DYNAMIC;
+	friction = 0.2f;
+	density = 1.0f;
 }
 
 PhysicsBody::~PhysicsBody()
@@ -32,9 +34,9 @@ void PhysicsBody::setBoxCollider(float width, float height)
 	b2FixtureDef fixtureDef;
 	fixtureDef.shape = &shape;
 	fixtureDef.density = 1.0f;
-
 	b2Fixture* fixture = body->CreateFixture(&fixtureDef);
 	fixture->SetSensor(trigger);
+	fixture->SetFriction(friction);
 
 	customCollider = true;
 
@@ -58,9 +60,10 @@ void PhysicsBody::setCircleCollider(float radius)
 
 	b2Fixture* fixture = body->CreateFixture(&fixtureDef);
 	fixture->SetSensor(trigger);
-
+	fixture->SetFriction(friction);
 	customCollider = true;
 	regenerateColliderMesh();
+	
 	
 }
 
@@ -84,6 +87,7 @@ void PhysicsBody::setCollider(std::vector<Vector2> vertices)
 
 	b2Fixture* fixture = body->CreateFixture(&fixtureDef);
 	fixture->SetSensor(trigger);
+	fixture->SetFriction(friction);
 	
 	customCollider = true;
 
@@ -105,6 +109,7 @@ void PhysicsBody::setEdgeCollider(std::vector<Vector2> vertices)
 		shape.Set(b2Vec2(vertices[i].x * 0.02f, vertices[i].y * 0.02f), b2Vec2(vertices[i+1].x * 0.02f, vertices[i+1].y * 0.02f));
 		b2Fixture* fixture = body->CreateFixture(&fixtureDef);
 		fixture->SetSensor(trigger);
+		fixture->SetFriction(friction);
 
 	}
 
@@ -113,16 +118,41 @@ void PhysicsBody::setEdgeCollider(std::vector<Vector2> vertices)
 	regenerateColliderMesh();
 }
 
-void PhysicsBody::setBox2dBody(b2Body* body, b2FixtureDef fixtureDef) 
+void PhysicsBody::setFriction(float newFriction)
+{
+	friction = newFriction;
+	if (box2dBody != NULL)
+	{
+		for (b2Fixture* f = box2dBody->GetFixtureList(); f; f = f->GetNext())
+		{
+			f->SetFriction(newFriction);
+		}
+	}
+}
+
+void PhysicsBody::setDensity(float newDensity)
+{
+	density = newDensity;
+	if (box2dBody != NULL)
+	{
+		for (b2Fixture* f = box2dBody->GetFixtureList(); f; f = f->GetNext())
+		{
+			f->SetDensity(density);
+		}
+	}
+}
+
+void PhysicsBody::setBox2dBody(b2Body* body) 
 {
 	box2dBody = body;
-	this->fixtureDef = fixtureDef;
 
 	if (body != NULL)
 	{
 		setPhysicsActive(physicsActive);
 		setPhysicsMode(curPhysicsMode);
 		setFixedRotation(fixedRotation);
+		setFriction(friction);
+		setDensity(density);
 	}
 }
 

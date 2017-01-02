@@ -39,7 +39,7 @@ void Scene::createPhysicsFor(Entity* entity)
 
 	body->CreateFixture(&fixture);
 	body->SetUserData(body);
-	entity->getPhysicsBody()->setBox2dBody(body, fixture);
+	entity->getPhysicsBody()->setBox2dBody(body);
 	
 	physicBodies.push_back(body);
 }
@@ -63,7 +63,7 @@ void Scene::removePhysicsFor(Entity* entity)
 			Vector2 entityPos = entity->getPosition();
 			physicsWorld->DestroyBody((*it));	
 			b2FixtureDef emptyFixture;
-			entity->getPhysicsBody()->setBox2dBody(NULL, emptyFixture);
+			entity->getPhysicsBody()->setBox2dBody(NULL);
 			entity->setPosition(entityPos);
 			it = physicBodies.erase(it);
 

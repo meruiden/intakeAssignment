@@ -14,7 +14,7 @@ public:
 
 	b2Body* getBox2dBody() { return box2dBody; }
 
-	void setBox2dBody(b2Body* body, b2FixtureDef fixtureDef);
+	void setBox2dBody(b2Body* body);
 	void setPhysicsMode(int mode);
 	void addForce(Vector2 force);
 	void lockRotation(bool value);
@@ -27,9 +27,9 @@ public:
 	void setCircleCollider(float radius);
 	void setFixedRotation(bool active);
 	void setEdgeCollider(std::vector<Vector2> vertices);
+	void setFriction(float newFriction);
+	void setDensity(float newDensity);
 	
-
-	b2FixtureDef getFixtureDef(){return fixtureDef;}
 	Vector2 getVelocity();
 	Mesh* getColliderDrawMesh() { return drawColliderMesh; }
 
@@ -41,7 +41,10 @@ public:
 	bool isTrigger() { return trigger; }
 	bool hasCustomCollider() { return customCollider; }
 	bool isRotationFixed() { return fixedRotation; }
+
 	int getPhysicsMode();
+	float getFriction() { return friction; }
+	float getDensity() { return density; }
 
 	void regenerateColliderMesh();
 	std::vector<Vector2> getColliderVertices();
@@ -51,7 +54,6 @@ private:
 	std::vector<glm::vec3>lastColliderVertices;
 
 	b2Body* box2dBody;
-	b2FixtureDef fixtureDef;
 
 	bool drawColliders;
 	bool physicsActive;
@@ -61,6 +63,8 @@ private:
 	bool fixedRotation;
 	
 	float lastCircleRadius;
+	float friction;
+	float density;
 
 	int curPhysicsMode;
 	

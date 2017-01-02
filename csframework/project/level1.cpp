@@ -352,6 +352,7 @@ void Level1::createMap()
 	groundCollider->getPhysicsBody()->setEdgeCollider(verts);
 	groundCollider->setPosition(Vector2(-230, 300));
 	groundCollider->getPhysicsBody()->setDrawColliders(true);
+	groundCollider->getPhysicsBody()->setFriction(0.4f);
 }
 
 void Level1::checkBullets()

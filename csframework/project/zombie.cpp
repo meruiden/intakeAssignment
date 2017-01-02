@@ -9,6 +9,7 @@ Zombie::Zombie()
 	this->getPhysicsBody()->setPhysicsActive(true);
 	this->getPhysicsBody()->setFixedRotation(true);
 	this->getPhysicsBody()->setDrawColliders(true);
+	this->getPhysicsBody()->setDensity(4);
 }
 
 
