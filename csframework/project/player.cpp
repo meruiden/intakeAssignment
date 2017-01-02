@@ -2,28 +2,22 @@
 
 Player::Player(PlayerGroundTrigger* groundTrigger) : Entity()
 {
-	this->addSpriteAsSpriteSheet("assets/character.png", 256, 256, 4, 8);
-
-	this->getSpriteSheet()->setAnimateFrames(0, 3);
-	this->getSpriteSheet()->play();
-	this->getSpriteSheet()->setLoop(true);
+	this->addSprite("assets/character_idle.png");
 	this->getPhysicsBody()->setPhysicsActive(true);
 	this->groundTrigger = groundTrigger;
 	this->setName("player");
-	walkAnimationFps = 10.0f;
-	idleAnimationFps = 5.0f;
-	jumpAnimationFps = 10.0f;
 
-	animationFps = idleAnimationFps;
 	wasGrounded = false;
 
 	landsound = new Sound("assets/footStep.wav");
-	setLayer(2);
+	setLayer(3);
+
 }
 
 Player::~Player()
 {
 	delete landsound;
+
 }
 
 void Player::update(float deltaTime)
@@ -34,16 +28,8 @@ void Player::update(float deltaTime)
 		wasGrounded = true;
 
 	}
-	this->getSpriteSheet()->animate(deltaTime, 1.0f / animationFps);
 	if (!this->isGrounded())
 	{
-		if (this->getSpriteSheet()->getAnimationStartFrame() != 12)
-		{
-			this->getSpriteSheet()->setAnimateFrames(12, 17);
-			this->getSpriteSheet()->setLoop(false);
-			this->getSpriteSheet()->play();
-			animationFps = jumpAnimationFps;
-		}
 		wasGrounded = false;
 	}
 }
@@ -64,11 +50,8 @@ void Player::onWalk()
 	{
 		return;
 	}
-	this->getSpriteSheet()->setAnimateFrames(4, 11);
-	this->getSpriteSheet()->play();
-	this->getSpriteSheet()->setLoop(true);
 	walking = true;
-	animationFps = walkAnimationFps;
+
 }
 
 void Player::onIdle()
@@ -77,17 +60,31 @@ void Player::onIdle()
 	{
 		return;
 	}
-	this->getSpriteSheet()->setAnimateFrames(0, 3);
-	this->getSpriteSheet()->play();
-	this->getSpriteSheet()->setLoop(true);
 	walking = false;
-	animationFps = idleAnimationFps;
-
 }
 
 void Player::setWalk(bool value)
 {
 	walking = value;
+}
+
+Bullet * Player::shoot(float dir)
+{
+	Vector2 bulletDir;
+	dir *= -1;
+
+	if (this->getScale() == Vector2(1, 1))
+	{
+		dir -= 90;
+	}
+
+	if (this->getScale() == Vector2(-1, 1))
+	{
+		dir += 90;
+	}
+	bulletDir = Vector2(std::sin(dir * DEG_TO_RAD), std::cos(dir * DEG_TO_RAD));
+	Bullet* bullet = new Bullet(bulletDir);
+	return bullet;
 }
 
 void Player::onIsGrounded()

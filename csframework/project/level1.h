@@ -2,11 +2,13 @@
 
 #include <engine/scene.h>
 #include <engine/textmesh.h>
+#include <engine/scenemanager.h>
+
 #include <project/player.h>
 #include <project/playergroundtrigger.h>
 #include <project/ground.h>
-#include <engine/scenemanager.h>
 #include <project/mapeditor.h>
+#include <project/bullet.h>
 
 class Level1 : public Scene
 {
@@ -19,9 +21,13 @@ public:
 private:
 	void handleInput();
 	void createMap();
+	void checkBullets();
 
 	int mapWidth;
 	int mapHeight;
+
+	float shootDelay;
+	float shootDelayCounter;
 
 	Player* player;
 	PlayerGroundTrigger* playerGroundTrigger;
@@ -33,13 +39,14 @@ private:
 	bool playerRight;
 	bool playerJump;
 
-	std::vector<Vector2> clickColVerts;
 	std::vector<Entity*> loadedEntities;
-	Entity* clickCollider;
-	bool mustSecondClick;
+	std::vector<Bullet*> bullets;
+	Entity* leftArmPivot;
+	Entity* rightArmPivot;
+	Entity* leftArm;
+	Entity* rightArm;
+	Entity* weapon;
+	Entity* bulletLaunchPos;
 
-	float updateColCounter;
 
-	bool leftClicked;
-	bool rightClicked;
 };

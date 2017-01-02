@@ -281,19 +281,20 @@ void Renderer::renderEntity(glm::mat4 &modelmatrix, Entity* entity, Camera* came
 	Mesh* mesh = NULL;
 	bool isVisable = false;
 
+	// Get the globals
+	glm::vec3 scale;
+	glm::quat rotation;
+	glm::vec3 position;
+	glm::vec3 skew;
+	glm::vec4 perspective;
+	glm::decompose(modelmatrix, scale, rotation, position, skew, perspective);
+
+	entity->setGlobals(Vector2(position.x, position.y), Vector2(scale.x, scale.y), rotation.z * RAD_TO_DEG);
 
 	if (entity->getSprite() != NULL)
 	{
 
-		// Get the globals
-		glm::vec3 scale;
-		glm::quat rotation;
-		glm::vec3 position;
-		glm::vec3 skew;
-		glm::vec4 perspective;
-		glm::decompose(modelmatrix, scale, rotation, position, skew, perspective);
-
-		entity->setGlobals(Vector2(position.x, position.y), Vector2(scale.x, scale.y), rotation.z * DEG_TO_RAD);
+		
 		if (entity->getSprite()->hasDynamicMesh())
 		{
 			isVisable = isMeshVisable(Vector2(position.x, position.y), Vector2(scale.x, scale.y), Vector2(entity->getSprite()->getDynamicMesh()->getWidth(), entity->getSprite()->getDynamicMesh()->getHeight()), camera->getPosition());

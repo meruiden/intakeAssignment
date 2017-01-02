@@ -11,6 +11,8 @@ MenuScene* menuscene = NULL;
 SettingScene* settingscene = NULL;
 MapEditor* mapedit = NULL;;
 
+
+
 int main(int argc, char* argv[]) {
 	renderer = new Renderer();
 	level1 = new Level1();

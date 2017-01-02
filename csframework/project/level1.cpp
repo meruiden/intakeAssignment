@@ -24,19 +24,62 @@ Level1::Level1() : Scene()
 	mapWidth = 70;
 	mapHeight = 2;
 	createMap();
+
+	leftArmPivot = new Entity();
+	rightArmPivot = new Entity();
+	addEntity(leftArmPivot);
+	addEntity(rightArmPivot);
+
+	weapon = new Entity();
+	weapon->addSprite("assets/mp5.png");
+	leftArmPivot->addChild(weapon);
+
+
+	leftArm = new Entity();
+	leftArmPivot->addChild(leftArm);
+	leftArm->addSprite("assets/character_arm_left.png");
+	rightArm = new Entity();
+	rightArm->addSprite("assets/character_arm_right.png");
+	rightArmPivot->addChild(rightArm);
+
+	leftArmPivot->setLayer(4);
+	rightArmPivot->setLayer(2);
+
+	bulletLaunchPos = new Entity();
+	weapon->addChild(bulletLaunchPos);
+	bulletLaunchPos->setPosition(Vector2(-150, -25));
+
+	shootDelay = 0.1f;
+	shootDelayCounter = 0.0f;
+
 	
-	mustSecondClick = false;
-	clickCollider = new Entity();
-	addEntity(clickCollider);
-	clickCollider->getPhysicsBody()->setPhysicsMode(PhysicsBody::STATIC);
-	updateColCounter = 0;
-	rightClicked = false;
-	leftClicked = false;
 }
 
 Level1::~Level1()
 {
-	delete clickCollider;
+
+	weapon->removeChild(bulletLaunchPos);
+	delete bulletLaunchPos;
+
+	leftArmPivot->removeChild(weapon);
+	delete weapon;
+	leftArmPivot->removeChild(leftArm);
+	delete leftArm;
+	rightArmPivot->removeChild(rightArm);
+	delete rightArm;
+
+	removeEntity(leftArmPivot);
+	delete leftArmPivot;
+	removeEntity(rightArmPivot);
+	delete rightArmPivot;
+
+	for (int i = 0; i < bullets.size(); i++)
+	{
+		removeEntity(bullets[i]);
+		delete bullets[i];
+	}
+	bullets.clear();
+
 	for (int i = 0; i < groundTiles.size(); i++)
 	{
 		removeEntity(groundTiles[i]);
@@ -57,6 +100,7 @@ Level1::~Level1()
 
 void Level1::update(float deltaTime)
 {
+	shootDelayCounter += deltaTime;
 	handleInput();
 	playerGroundTrigger->setPosition(player->getPosition() + Vector2(0, player->getHeight()/2.0f - playerGroundTrigger->getHeight()/2.0f));
 	
@@ -73,6 +117,68 @@ void Level1::update(float deltaTime)
 	{
 		SceneManager::loadScene("menu");
 	}
+
+
+	float lookAtRotation = 0.0f;
+
+	lookAtRotation = Vector2(getCamera()->screenToWorldSpace(input()->getMousePosition()), player->getPosition()).getAngle();
+	
+	Vector2 leftArmOffSet;
+	Vector2 rightArmOffset;
+	
+	if (player->getScale() == Vector2(1, 1))
+	{
+		leftArmOffSet = Vector2(18, -15);
+		rightArmOffset = Vector2(18, -15);
+
+		leftArm->setPosition(Vector2(-30, 7));
+		rightArm->setPosition(Vector2(-30, 7));
+
+		weapon->setScale(Vector2(0.4f, 0.4f));
+		weapon->setPosition(Vector2(-60, 10));
+
+		lookAtRotation += 180;
+
+		if (lookAtRotation > 70 && lookAtRotation < 180)
+		{
+			lookAtRotation = 70;
+		}
+
+		if (lookAtRotation < 300 && lookAtRotation > 180)
+		{
+			lookAtRotation = 300;
+		}
+	}
+
+	if (player->getScale() == Vector2(-1, 1))
+	{
+		leftArmOffSet = Vector2(-18, -15);
+		rightArmOffset = Vector2(-18, -15);
+
+		leftArm->setPosition(Vector2(30, 7));
+		rightArm->setPosition(Vector2(30, 7));
+
+		weapon->setScale(Vector2(-0.4f, 0.4f));
+		weapon->setPosition(Vector2(60, 10));
+
+		if (lookAtRotation > 70)
+		{
+			lookAtRotation = 70;
+		}
+
+		if (lookAtRotation < -70)
+		{
+			lookAtRotation = -70;
+		}
+	}
+	leftArmPivot->setPosition(player->getPosition() + leftArmOffSet);
+	rightArmPivot->setPosition(player->getPosition() + rightArmOffset);
+	
+	
+	leftArmPivot->setRotation(lookAtRotation);
+	rightArmPivot->setRotation(lookAtRotation);
+
+	checkBullets();
 }
 
 void Level1::handleInput()
@@ -113,54 +219,20 @@ void Level1::handleInput()
 			player->onIdle();
 		}
 	}
-	if (input()->getMouseButtonDown(1))
+	if (input()->getMouseButton(1) && shootDelayCounter >= shootDelay)
 	{
-		leftClicked = true;
-	}
-
-	if (input()->getMouseButtonDown(3))
-	{
-		rightClicked = true;
+		shootDelayCounter = 0.0f;
+		Bullet* b = player->shoot(leftArmPivot->getRotation());
+		addEntity(b);
+		b->setPosition(bulletLaunchPos->getGlobalPosition());
+		bullets.push_back(b);
+		
 	}
 }
 
 
 void Level1::fixedUpdate()
 {
-
-	updateColCounter += 1.0f / 60.0f;
-	static bool initClickCollider = true;
-	if (leftClicked)
-	{
-		leftClicked = false;
-		if (initClickCollider)
-		{
-			initClickCollider = false;
-			clickCollider->getPhysicsBody()->setPhysicsActive(true);
-			clickCollider->getPhysicsBody()->setDrawColliders(true);
-			clickColVerts.push_back(getCamera()->screenToWorldSpace(input()->getMousePosition()));
-		}
-		
-		clickColVerts.push_back(getCamera()->screenToWorldSpace(input()->getMousePosition()));
-		if (clickColVerts.size() == 10)
-		{
-			clickColVerts.erase(clickColVerts.begin());
-		}
-		mustSecondClick = true;
-	}
-
-	if (mustSecondClick && updateColCounter >= 0.01f)
-	{
-		clickColVerts[clickColVerts.size() - 1] = getCamera()->screenToWorldSpace(input()->getMousePosition());
-		clickCollider->getPhysicsBody()->setEdgeCollider(clickColVerts);
-
-		updateColCounter = 0;
-	}
-	if (rightClicked)
-	{
-		rightClicked = false;
-		mustSecondClick = false;
-	}
 	if (!player->isGrounded())
 	{
 		player->getPhysicsBody()->addForce(Vector2(0, 300.0f));
@@ -175,17 +247,21 @@ void Level1::fixedUpdate()
 	if (playerRight)
 	{
 		player->getPhysicsBody()->addForce(Vector2(400.0f, 0));
-		if (player->getScale() != Vector2(1, 1))
-		{
-			player->setScale(Vector2(1, 1));
-		}
-	}
-
-	if (playerLeft)
-	{
 		if (player->getScale() != Vector2(-1, 1))
 		{
 			player->setScale(Vector2(-1, 1));
+			leftArm->setScale(Vector2(-1, 1));
+			rightArm->setScale(Vector2(-1, 1));
+		}
+	}
+	
+	if (playerLeft)
+	{
+		if (player->getScale() != Vector2(1, 1))
+		{
+			player->setScale(Vector2(1, 1));
+			leftArm->setScale(Vector2(1, 1));
+			rightArm->setScale(Vector2(1, 1));
 		}
 		player->getPhysicsBody()->addForce(Vector2(-400.0f, 0));
 	}
@@ -265,4 +341,23 @@ void Level1::createMap()
 	groundCollider->getPhysicsBody()->setEdgeCollider(verts);
 	groundCollider->setPosition(Vector2(-230, 300));
 	groundCollider->getPhysicsBody()->setDrawColliders(true);
+}
+
+void Level1::checkBullets()
+{
+	std::vector<Bullet* >::iterator it = bullets.begin();
+	while (it != bullets.end())
+	{
+		Bullet* b = (*it);
+		if (b->mustDestroy())
+		{
+			removeEntity(b);
+			delete b;
+			bullets.erase(it);
+		}
+		else
+		{
+			++it;
+		}
+	}
 }

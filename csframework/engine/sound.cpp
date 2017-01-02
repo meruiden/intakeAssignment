@@ -15,6 +15,7 @@ Sound::Sound(std::string filepath){
 	if (loadingSucces) {
 		assignChannel(); // Assign a free channel to this sound.
 	}
+	
 }
 
 void Sound::assignChannel() 
@@ -24,6 +25,7 @@ void Sound::assignChannel()
 	for (unsigned int i = 0; i < MAX_AUDIO_PLAYING; i++) {
 		if (Sound::availableChannels[i]) {
 			this->channel = i;
+			Sound::availableChannels[i] = false;
 			hasChannel = true;
 			break; // If an available channel has been found. Assign it and break out of the loop.
 		}

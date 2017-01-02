@@ -1,8 +1,11 @@
 #pragma once
 
 #include <engine/entity.h>
-#include <project/playergroundtrigger.h>
 #include <engine/sound.h>
+
+#include <project/playergroundtrigger.h>
+#include <project/bullet.h>
+
 class Player : public Entity
 {
 public:
@@ -12,20 +15,16 @@ public:
 	virtual void onCollisionBegin(Entity* other);
 	virtual void onCollisionEnd(Entity* other);
 
-
 	bool isGrounded() { return groundTrigger->getGroundedCollisions() > 0; }
 
 	void onWalk();
 	void onIdle();
 	void setWalk(bool value);
 	
+	Bullet* shoot(float dir);
 private:
 	PlayerGroundTrigger* groundTrigger;
 	Sound* landsound;
-	float walkAnimationFps;
-	float idleAnimationFps;
-	float jumpAnimationFps;
-	float animationFps;
 
 	void onIsGrounded();
 

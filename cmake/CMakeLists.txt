@@ -160,6 +160,8 @@ add_executable(project
 	"${FRAMEWORK_DIR}/project/settingscene.h"
 	"${FRAMEWORK_DIR}/project/player.cpp"
 	"${FRAMEWORK_DIR}/project/player.h"
+	"${FRAMEWORK_DIR}/project/bullet.cpp"
+	"${FRAMEWORK_DIR}/project/bullet.h"
 )
 
 target_link_libraries(project
