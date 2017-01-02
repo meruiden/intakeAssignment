@@ -134,13 +134,23 @@ void Entity::setScale(Vector2 newScale)
 	{
 		return;
 	}
-
+    
 	lastColliderScale = newScale;
 	b2Body* body = physicsBody->getBox2dBody();
 	b2Fixture* fixture = body->GetFixtureList();
 	body->DestroyFixture(fixture);
 	b2PolygonShape shape;
-	shape.SetAsBox(0.02f * (abs(getWidth() / 2.0f)), 0.02f * abs((getHeight() / 2.0f)));
+    float width = abs(getWidth() / 2.0f);
+    float height = abs(getHeight() / 2.0f);
+    if(width == 0)
+    {
+        width = 100;
+    }
+    if(height == 0)
+    {
+        height = 100;
+    }
+	shape.SetAsBox(0.02f * width, 0.02f * height);
 
 	b2FixtureDef fixtureDef;
 	fixtureDef.shape = &shape;
