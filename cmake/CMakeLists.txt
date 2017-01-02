@@ -162,6 +162,8 @@ add_executable(project
 	"${FRAMEWORK_DIR}/project/player.h"
 	"${FRAMEWORK_DIR}/project/bullet.cpp"
 	"${FRAMEWORK_DIR}/project/bullet.h"
+	"${FRAMEWORK_DIR}/project/zombie.cpp"
+	"${FRAMEWORK_DIR}/project/zombie.h"
 )
 
 target_link_libraries(project
