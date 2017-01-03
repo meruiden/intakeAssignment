@@ -27,6 +27,8 @@ Input::Input()
                 mousebuttonalrdydown[i] = false;
         }
     }
+
+	lastPulledChar = "";
 }
 
 //Get the singleton instance. If it doesn't exist, create a new one and assign it.
@@ -59,7 +61,7 @@ Input::~Input()
 
 void Input::update()
 {
-    /* Our SDL event placeholder. */
+	lastPulledChar = "";
     this->scrollup = false;
     this->scrolldown = false;
     int x,y;
@@ -108,7 +110,7 @@ void Input::update()
                 keyalrdydown[scancode] = true;
             }
             keys[scancode] = true;
-        break;
+			break;
 
         case SDL_KEYUP:
             keyalrdydown[scancode] = false;
@@ -119,10 +121,10 @@ void Input::update()
                 keyalrdyup[scancode] = true;
             }
             keys[scancode] = false;
-        break;
+			break;
         case SDL_QUIT:
-                mustq = true;
-        break;
+			mustq = true;
+			break;
 
         case SDL_MOUSEBUTTONDOWN:
             mousebuttonalrdyup[mouseButton] = false;
@@ -133,7 +135,7 @@ void Input::update()
                 mousebuttonalrdydown[mouseButton] = true;
             }
             mousebutton[mouseButton] = true;
-        break;
+		 break;
 
         case SDL_MOUSEBUTTONUP:
             mousebuttonalrdydown[mouseButton] = false;
@@ -144,7 +146,7 @@ void Input::update()
                 mousebuttonalrdyup[mouseButton] = true;
             }
             mousebutton[mouseButton] = false;
-        break;
+			break;
         case SDL_MOUSEWHEEL:
             if (event.wheel.y < 0)
 			{
@@ -153,7 +155,13 @@ void Input::update()
 			{
                 this->scrollup = true;
             }
+			break;
+		case SDL_TEXTINPUT:
+			lastPulledChar = event.text.text;
+			break;
         }
+
+	
     }
 }
 

@@ -34,6 +34,8 @@ public:
 
 	static Input* getInstance();
 
+	std::string getTextInput() { return lastPulledChar; }
+
 private:
 	Input();
 
@@ -54,6 +56,9 @@ private:
 	
     bool scrollup;
     bool scrolldown;
+
+	std::string lastPulledChar;
+
     Vector2 mousepos;
 
 	static Input* instance;

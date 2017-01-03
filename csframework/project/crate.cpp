@@ -64,7 +64,10 @@ std::vector<CratePart*> Crate::getParts()
 			partPosition = Vector2(42, -17);
 			break;
 		}
+		partPosition *= 2;
+		partPosition *= getScale();
 		partPosition += getPosition();
+		
 		part->setPosition(partPosition);
 		part->setRotation(partRotation);
 		part->setScale(getScale());

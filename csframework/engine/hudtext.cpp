@@ -5,6 +5,7 @@ HudText::HudText()
 	font = NULL;
 	fontSurface = NULL;
 	sprite = new Sprite();
+	multiline = false;
 }
 
 void HudText::setText(std::string text)
@@ -14,6 +15,7 @@ void HudText::setText(std::string text)
 	if (text == lastText) {
 		return;
 	}
+
 	if (sprite->hasDynamicMesh())
 	{
 		delete sprite->getDynamicMesh();
@@ -23,13 +25,25 @@ void HudText::setText(std::string text)
 	{
 		delete sprite->getDynamicTexture();
 	}
-
 	sprite->setDynamics(NULL, NULL);
+
+	if (text == "")
+	{
+		return;
+	}
+
 	GLuint textureBuffer;
 	glGenTextures(1, &textureBuffer);
 	glBindTexture(GL_TEXTURE_2D, textureBuffer);
 	SDL_Color c = { 255, 255, 255, 0 };
-	fontSurface = TTF_RenderText_Blended_Wrapped(font, text.c_str(), c, (int)text.length() * (int)FONT_SIZE);
+	if (multiline)
+	{
+		fontSurface = TTF_RenderText_Blended_Wrapped(font, text.c_str(), c, (int)text.length() * (int)FONT_SIZE);
+	}
+	else
+	{
+		fontSurface = TTF_RenderText_Blended(font, text.c_str(), c);
+	}
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, fontSurface->w, fontSurface->h, 0, GL_BGRA, GL_UNSIGNED_BYTE, fontSurface->pixels);
@@ -44,6 +58,27 @@ void HudText::setText(std::string text)
 	fontSurface = NULL;
 
 	lastText = text;
+}
+
+void HudText::pullTextInput()
+{
+	std::string curText = getText();
+	if (input()->getKeyDown(SDLK_BACKSPACE))
+	{
+		if (curText.length() > 0)
+		{
+			curText.pop_back();
+		}
+	}
+	if (input()->getKeyDown(SDLK_RETURN) && multiline)
+	{
+		curText += "\n";
+	}
+	if (input()->getTextInput() != "")
+	{
+		curText += input()->getTextInput();
+	}
+	setText(curText);
 }
 
 bool HudText::loadFont(std::string path)

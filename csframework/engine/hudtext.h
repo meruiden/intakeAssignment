@@ -9,8 +9,13 @@ public:
 	HudText();
 	virtual ~HudText();
 
-	bool loadFont(std::string path);
+	
 	void setText(std::string text);
+	void setMultiLine(bool value);
+	void pullTextInput();
+
+	bool loadFont(std::string path);
+	bool isMultiLine() { return multiline; }
 	std::string getText() { return text; }
 
 private:
@@ -18,5 +23,6 @@ private:
 	SDL_Surface* fontSurface;
 	std::string text;
 	std::string lastText;
+	bool multiline;
 };
 

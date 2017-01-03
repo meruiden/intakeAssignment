@@ -271,7 +271,7 @@ void Level1::handleInput()
 			player->onIdle();
 		}
 	}
-	if (input()->getMouseButtonDown(1) && shootDelayCounter >= shootDelay)
+	if (input()->getMouseButton(1) && shootDelayCounter >= shootDelay)
 	{
 		shootDelayCounter = 0.0f;
 		Bullet* b = player->shoot(leftArmPivot->getRotation());
@@ -437,6 +437,22 @@ void Level1::handleZombies()
 		}
 		
 	}
+
+	std::vector<Zombie* >::iterator it = zombies.begin();
+	while (it != zombies.end())
+	{
+		Zombie* z = (*it);
+		if (z->getHealth() == 0)
+		{
+			removeEntity(z);
+			delete z;
+			zombies.erase(it);
+		}
+		else
+		{
+			++it;
+		}
+	}
 }
 
 void Level1::checkCrates()
@@ -455,7 +471,7 @@ void Level1::checkCrates()
 				parts[i]->getPhysicsBody()->setCollider(parts[i]->getColliderVerts(c->getScale()));
 				Vector2 explosionDir = Vector2(parts[i]->getPosition(), c->getPosition()) ;
 				explosionDir.normalize();
-				parts[i]->getPhysicsBody()->addForce(explosionDir  * 100);
+				parts[i]->getPhysicsBody()->addForce(explosionDir  * 300);
 				crateParts.push_back(parts[i]);
 			}
 			removeEntity(c);
