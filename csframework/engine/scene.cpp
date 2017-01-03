@@ -16,10 +16,10 @@ void Scene::update(float deltaTime)
 
 void Scene::createPhysicsFor(Entity* entity) 
 {
+	float rotation = entity->getRotation();
 	b2BodyDef bodydef;
 	bodydef.position.Set(entity->getPosition().x * 0.02f, entity->getPosition().y * 0.02f);
 	bodydef.type = b2_dynamicBody;
-
 	b2Body* body = physicsWorld->CreateBody(&bodydef);
 	b2PolygonShape shape;
 
@@ -42,6 +42,7 @@ void Scene::createPhysicsFor(Entity* entity)
 	entity->getPhysicsBody()->setBox2dBody(body);
 	
 	physicBodies.push_back(body);
+	entity->setRotation(rotation);
 }
 
 void Scene::fixedUpdate()

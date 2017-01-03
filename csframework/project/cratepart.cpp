@@ -15,7 +15,6 @@ CratePart::CratePart(int sliceId) : Entity()
 
 	getPhysicsBody()->setPhysicsActive(true);
 
-	getPhysicsBody()->setDrawColliders(true);
 }
 
 

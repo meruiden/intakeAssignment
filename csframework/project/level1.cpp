@@ -271,7 +271,7 @@ void Level1::handleInput()
 			player->onIdle();
 		}
 	}
-	if (input()->getMouseButton(1) && shootDelayCounter >= shootDelay)
+	if (input()->getMouseButtonDown(1) && shootDelayCounter >= shootDelay)
 	{
 		shootDelayCounter = 0.0f;
 		Bullet* b = player->shoot(leftArmPivot->getRotation());
@@ -279,7 +279,6 @@ void Level1::handleInput()
 		b->setPosition(bulletLaunchPos->getGlobalPosition());
 		bullets.push_back(b);
 		createAudioParticle("assets/gunShot.wav")->start();
-		std::cout << getCamera()->screenToWorldSpace(input()->getMousePosition()).toString() << std::endl;
 	}
 }
 
