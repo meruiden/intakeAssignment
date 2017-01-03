@@ -1,6 +1,6 @@
 #include <project/bullet.h>
 
-Bullet::Bullet(Vector2 dir)
+Bullet::Bullet(Vector2 dir) : Entity()
 {
 	this->direction = dir;
 	this->addSprite("assets/bullet.png");
@@ -9,18 +9,23 @@ Bullet::Bullet(Vector2 dir)
 	lifeTime = 5.0f;
 	lifeTimeCounter = 0;
 	destroyme = false;
-	gunShot = new Sound("assets/gunShot.wav");
-	gunShot->play();
+
+	this->getPhysicsBody()->setPhysicsActive(true);
+	this->getPhysicsBody()->setPhysicsMode(PhysicsBody::DYNAMIC);
+	this->getPhysicsBody()->setTrigger(true);
+
+	setName("bullet");
 }
 
 
 Bullet::~Bullet()
 {
-	delete gunShot;
 }
 
 void Bullet::update(float deltaTime)
 {
+	this->getPhysicsBody()->setVelocity(Vector2());
+	
 	this->setRotation(direction.getAngle());
 	this->setPosition(this->getPosition() + direction * speed * deltaTime);
 
@@ -29,4 +34,25 @@ void Bullet::update(float deltaTime)
 	{
 		destroyme = true;
 	}
+}
+
+void Bullet::onCollisionBegin(Entity * other)
+{
+	if (other->getName() != "player")
+	{
+		destroyme = true;
+	}
+	if (other->getName() == "zombie")
+	{
+		((Zombie*)other)->applyDamage(10);
+	}
+
+	if (other->getName() == "crate")
+	{
+		((Crate*)other)->applyDamage(10);
+	}
+}
+
+void Bullet::onCollisionEnd(Entity * other)
+{
 }

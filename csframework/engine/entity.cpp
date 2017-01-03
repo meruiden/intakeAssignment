@@ -126,7 +126,8 @@ float Entity::getRotation()
 void Entity::setScale(Vector2 newScale)
 {
 	scale = newScale;
-	if (newScale == lastColliderScale && physicsBody->getBox2dBody() != NULL)
+	Vector2 size = Vector2(getWidth(), getHeight());
+	if (size == lastColliderSize && physicsBody->getBox2dBody() != NULL)
 	{
 		return;
 	}
@@ -135,13 +136,13 @@ void Entity::setScale(Vector2 newScale)
 		return;
 	}
     
-	lastColliderScale = newScale;
+	lastColliderSize = size;
 	b2Body* body = physicsBody->getBox2dBody();
 	b2Fixture* fixture = body->GetFixtureList();
 	body->DestroyFixture(fixture);
 	b2PolygonShape shape;
-    float width = abs(getWidth() / 2.0f);
-    float height = abs(getHeight() / 2.0f);
+    float width = abs(size.x / 2.0f);
+    float height = abs(size.y / 2.0f);
     if(width == 0)
     {
         width = 100;

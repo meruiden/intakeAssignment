@@ -18,6 +18,12 @@ Sound::Sound(std::string filepath){
 	
 }
 
+Sound::~Sound() {
+	if (hasChannel) { // If this instance is deleted and a channel whas assigned to this sound. set that channel available again.
+		Sound::availableChannels[this->channel] = true;
+	}
+}
+
 void Sound::assignChannel() 
 {
 
@@ -37,11 +43,6 @@ void Sound::init()
 	// Init all channels to be available.
 	for (unsigned int i = 0; i < MAX_AUDIO_PLAYING; i++) {
 		Sound::availableChannels[i] = true;
-	}
-}
-Sound::~Sound(){
-	if (hasChannel) { // If this instance is deleted and a channel whas assigned to this sound. set that channel available again.
-		Sound::availableChannels[this->channel] = true;
 	}
 }
 
@@ -88,6 +89,21 @@ void Sound::setVolume(float value){
     this->volume = value; // Set the volume variable of this instance
     Mix_Volume(this->channel, (int)v); // Set the volume
 
+}
+
+bool Sound::isPlaying()
+{
+	if (!hasChannel) // If no channel has been assigned, the audio can never play.
+	{
+		return false;
+	}
+
+	bool playing = false;
+	if (Mix_Playing(channel)) // Check if audio is playing on the current audio channel.
+	{
+		playing = true;
+	}
+	return playing;
 }
 
 void Sound::stop(){

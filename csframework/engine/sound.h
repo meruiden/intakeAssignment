@@ -27,6 +27,9 @@ public:
 	/// @param value Give an volume from 0 to 100.
 	void setVolume(float value);
 
+	/// @brief Check if the audio is playing.
+	bool isPlaying();
+
 	/// @brief Set all audio channels available
 	static void init();
 private:

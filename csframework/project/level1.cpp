@@ -55,7 +55,17 @@ Level1::Level1() : Scene()
 	Zombie* zombie = new Zombie();
 	addEntity(zombie);
 	zombies.push_back(zombie);
-	zombie->getPhysicsBody()->setBoxCollider(128, 256);
+	zombie->getPhysicsBody()->setBoxCollider(128, 200);
+	zombie->setPosition(Vector2(500, 0));
+	Crate* crate = new Crate();
+	addEntity(crate);
+	crates.push_back(crate);
+	crate->setScale(Vector2(0.5f, 0.5f));
+	player->setScale(Vector2(-1, 1));
+	leftArm->setScale(Vector2(-1, 1));
+	rightArm->setScale(Vector2(-1, 1));
+
+	preloadImages();
 }
 
 Level1::~Level1()
@@ -76,6 +86,20 @@ Level1::~Level1()
 	removeEntity(rightArmPivot);
 	delete rightArmPivot;
 
+	for (int i = 0; i < crates.size(); i++)
+	{
+		removeEntity(crates[i]);
+		delete crates[i];
+	}
+	crates.clear();
+
+	for (int i = 0; i < crateParts.size(); i++)
+	{
+		removeEntity(crateParts[i]);
+		delete crateParts[i];
+	}
+	crateParts.clear();
+
 	for (int i = 0; i < bullets.size(); i++)
 	{
 		removeEntity(bullets[i]);
@@ -83,12 +107,11 @@ Level1::~Level1()
 	}
 	bullets.clear();
 
-	for (int i = 0; i < groundTiles.size(); i++)
+	for (int i = 0; i < audioParticles.size(); i++)
 	{
-		removeEntity(groundTiles[i]);
-		delete groundTiles[i];
+		delete audioParticles[i];
 	}
-	groundTiles.clear();
+	audioParticles.clear();
 
 	for (int i = 0; i < zombies.size(); i++)
 	{
@@ -131,7 +154,7 @@ void Level1::update(float deltaTime)
 
 	float lookAtRotation = 0.0f;
 
-	lookAtRotation = Vector2(getCamera()->screenToWorldSpace(input()->getMousePosition()), player->getPosition()).getAngle();
+	lookAtRotation = Vector2(getCamera()->screenToWorldSpace(input()->getMousePosition()), leftArmPivot->getGlobalPosition()).getAngle();
 	
 	Vector2 leftArmOffSet;
 	Vector2 rightArmOffset;
@@ -148,7 +171,6 @@ void Level1::update(float deltaTime)
 		weapon->setPosition(Vector2(-60, 10));
 
 		lookAtRotation += 180;
-
 		if (lookAtRotation > 70 && lookAtRotation < 180)
 		{
 			lookAtRotation = 70;
@@ -170,7 +192,6 @@ void Level1::update(float deltaTime)
 
 		weapon->setScale(Vector2(-0.4f, 0.4f));
 		weapon->setPosition(Vector2(60, 10));
-
 		if (lookAtRotation > 70)
 		{
 			lookAtRotation = 70;
@@ -189,6 +210,27 @@ void Level1::update(float deltaTime)
 	rightArmPivot->setRotation(lookAtRotation);
 
 	checkBullets();
+	checkAudioParticles();
+	checkCrates();
+}
+
+void Level1::preloadImages()
+{
+	bool succes = false;
+	ResourceManager::getInstance()->getTexture("assets/character_idle.png", succes);
+	ResourceManager::getInstance()->getTexture("assets/character_arm_left.png", succes);
+	ResourceManager::getInstance()->getTexture("assets/character_arm_right.png", succes);
+	ResourceManager::getInstance()->getTexture("assets/mp5.png", succes);
+	ResourceManager::getInstance()->getTexture("assets/zombie.png", succes);
+	ResourceManager::getInstance()->getTexture("assets/crate/crate_full.png", succes);
+	for (int i = 1; i <= 9; i++)
+	{
+		std::stringstream path;
+		path << "assets/crate/crate_slice_";
+		path << i;
+		path << ".png";
+		ResourceManager::getInstance()->getTexture(path.str() , succes);
+	}
 }
 
 void Level1::handleInput()
@@ -236,7 +278,8 @@ void Level1::handleInput()
 		addEntity(b);
 		b->setPosition(bulletLaunchPos->getGlobalPosition());
 		bullets.push_back(b);
-		
+		createAudioParticle("assets/gunShot.wav")->start();
+		std::cout << getCamera()->screenToWorldSpace(input()->getMousePosition()).toString() << std::endl;
 	}
 }
 
@@ -252,7 +295,6 @@ void Level1::fixedUpdate()
 	{
 		playerJump = false;
 		player->getPhysicsBody()->addForce(Vector2(0, -10000) );
-		std::cout << 1 << std::endl;
 	}
 
 	if (playerRight)
@@ -306,32 +348,14 @@ void Level1::fixedUpdate()
 		player->getPhysicsBody()->setVelocity(Vector2(playerVelocity.x * 0.97f, playerVelocity.y));
 
 	}
+
+	handleZombies();
 }
 
 void Level1::createMap()
 {
-	int groundCollSize = 0;
-	for (int w = 0; w < mapWidth; w++)
-	{
-		//Ground* groundTile = new Ground();
-		//groundTile->setPosition(Vector2(-200, 300));
-		//groundTile->getPhysicsBody()->setPhysicsActive(false);
-		//groundTile->setPosition(groundTile->getPosition() + Vector2(w * 60, 0));
-		//groundTiles.push_back(groundTile);
-		groundCollSize += 60;
-		//addEntity(groundTile);
-		
-		for (int h = 1; h < mapHeight; h++)
-		{
-			//Ground* groundTile = new Ground();
-			//groundTile->setPosition(Vector2(-200, 300));
-			//groundTile->getPhysicsBody()->setPhysicsActive(false);
-			//groundTile->setPosition(groundTile->getPosition() + Vector2(w * 60, h * 60));
-			//groundTiles.push_back(groundTile);
-			//addEntity(groundTile);
-		}
-	}
-	
+	int groundCollSize = 2000;
+
 	MapEditor::loadMap(loadedEntities);
 	for (int i = 0; i < loadedEntities.size(); i++)
 	{
@@ -352,7 +376,7 @@ void Level1::createMap()
 	groundCollider->getPhysicsBody()->setEdgeCollider(verts);
 	groundCollider->setPosition(Vector2(-230, 300));
 	groundCollider->getPhysicsBody()->setDrawColliders(true);
-	groundCollider->getPhysicsBody()->setFriction(0.4f);
+	groundCollider->getPhysicsBody()->setFriction(0.3f);
 }
 
 void Level1::checkBullets()
@@ -372,4 +396,99 @@ void Level1::checkBullets()
 			++it;
 		}
 	}
+}
+
+void Level1::checkAudioParticles()
+{
+	std::vector<AudioParticle* >::iterator it = audioParticles.begin();
+	while (it != audioParticles.end())
+	{
+		AudioParticle* a = (*it);
+		if (a->destroyMe())
+		{
+			delete a;
+			audioParticles.erase(it);
+		}
+		else
+		{
+			++it;
+		}
+	}
+}
+
+void Level1::handleZombies()
+{
+	for (int i = 0; i < zombies.size(); i++)
+	{
+		if (Vector2(zombies[i]->getPosition(), player->getPosition()).magnitude() <= 500 && Vector2(zombies[i]->getPosition(), player->getPosition()).magnitude() >= 200)
+		{
+			if (zombies[i]->getPosition().x < player->getPosition().x)
+			{
+				zombies[i]->getPhysicsBody()->addForce(Vector2(100, 0));
+				zombies[i]->setScale(Vector2(std::abs(zombies[i]->getScale().x), zombies[i]->getScale().y));
+				
+			}
+
+			if (zombies[i]->getPosition().x > player->getPosition().x)
+			{
+				zombies[i]->getPhysicsBody()->addForce(Vector2(-100, 0));
+				zombies[i]->setScale(Vector2(-std::abs(zombies[i]->getScale().x), zombies[i]->getScale().y));
+			}
+			
+		}
+		
+	}
+}
+
+void Level1::checkCrates()
+{
+
+	std::vector<Crate* >::iterator it = crates.begin();
+	while (it != crates.end())
+	{
+		Crate* c = (*it);
+		if (c->destroyMe())
+		{
+			std::vector<CratePart*> parts = c->getParts();
+			for (int i = 0; i < parts.size(); i++)
+			{
+				addEntity(parts[i]);
+				parts[i]->getPhysicsBody()->setCollider(parts[i]->getColliderVerts(c->getScale()));
+				Vector2 explosionDir = Vector2(parts[i]->getPosition(), c->getPosition()) ;
+				explosionDir.normalize();
+				parts[i]->getPhysicsBody()->addForce(explosionDir  * 100);
+				crateParts.push_back(parts[i]);
+			}
+			removeEntity(c);
+			delete c;
+			crates.erase(it);
+		}
+		else
+		{
+			++it;
+		}
+	}
+
+	std::vector<CratePart* >::iterator ite = crateParts.begin();
+	while (ite != crateParts.end())
+	{
+		CratePart* cp = (*ite);
+		if (cp->destroyMe())
+		{
+			removeEntity(cp);
+			delete cp;
+			crateParts.erase(ite);
+		}
+		else
+		{
+			++ite;
+		}
+	}
+}
+
+AudioParticle * Level1::createAudioParticle(std::string filePath)
+{
+	AudioParticle* particle = new AudioParticle(filePath);
+	audioParticles.push_back(particle);
+	return particle;
 }

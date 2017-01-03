@@ -9,7 +9,6 @@ Player::Player(PlayerGroundTrigger* groundTrigger) : Entity()
 
 	getPhysicsBody()->setDrawColliders(false);
 	wasGrounded = false;
-
 	landsound = new Sound("assets/footStep.wav");
 	setLayer(3);
 
@@ -18,7 +17,6 @@ Player::Player(PlayerGroundTrigger* groundTrigger) : Entity()
 Player::~Player()
 {
 	delete landsound;
-
 }
 
 void Player::update(float deltaTime)

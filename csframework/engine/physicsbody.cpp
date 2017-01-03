@@ -153,6 +153,7 @@ void PhysicsBody::setBox2dBody(b2Body* body)
 		setFixedRotation(fixedRotation);
 		setFriction(friction);
 		setDensity(density);
+		setTrigger(trigger);
 	}
 }
 
@@ -383,10 +384,14 @@ int PhysicsBody::getPhysicsMode()
 
 void PhysicsBody::setTrigger(bool active)
 {
+	trigger = active;
+	if (box2dBody == NULL)
+	{
+		return;
+	}
 	for (b2Fixture* f = box2dBody->GetFixtureList(); f; f = f->GetNext())
 	{
 		f->SetSensor(active);
-		trigger = active;
 	}
 }
 

@@ -146,8 +146,6 @@ add_executable(project
 	"${FRAMEWORK_DIR}/project/main.cpp"
 	"${FRAMEWORK_DIR}/project/level1.cpp"
 	"${FRAMEWORK_DIR}/project/level1.h"
-	"${FRAMEWORK_DIR}/project/ground.cpp"
-	"${FRAMEWORK_DIR}/project/ground.h"
 	"${FRAMEWORK_DIR}/project/menuscene.cpp"
 	"${FRAMEWORK_DIR}/project/menuscene.h"
 	"${FRAMEWORK_DIR}/project/mapeditor.cpp"
@@ -164,6 +162,10 @@ add_executable(project
 	"${FRAMEWORK_DIR}/project/bullet.h"
 	"${FRAMEWORK_DIR}/project/zombie.cpp"
 	"${FRAMEWORK_DIR}/project/zombie.h"
+	"${FRAMEWORK_DIR}/project/crate.cpp"
+	"${FRAMEWORK_DIR}/project/crate.h"
+	"${FRAMEWORK_DIR}/project/cratepart.cpp"
+	"${FRAMEWORK_DIR}/project/cratepart.h"
 )
 
 target_link_libraries(project
