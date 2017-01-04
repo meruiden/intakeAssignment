@@ -346,7 +346,7 @@ void Renderer::renderEntity(glm::mat4 &modelmatrix, Entity* entity, Camera* came
 			{
 				mesh = entity->getSprite()->getDynamicMesh();
 			}
-
+			entity->getSprite()->setSpriteSize(Vector2(mesh->getWidth(), mesh->getHeight()));
 			renderMesh(MVP, mesh, texture->getTextureBuffer(), entity->getSprite()->getUvOffset(), entity->color);
 		}
 	}
@@ -440,11 +440,11 @@ void Renderer::renderHudElement(HudElement* hudelement)
 		{
 			texture = hudelement->getSprite()->getDynamicTexture();
 		}
-
-		hudelement->getSprite()->setTextureSize(Vector2(texture->getWidth(), texture->getHeight()));
+		Vector2 size = Vector2(texture->getWidth(), texture->getHeight());
+		hudelement->getSprite()->setTextureSize(size);
 		if (hudelement->getSprite()->getSpriteSize().x == 0 && hudelement->getSprite()->getSpriteSize().y == 0)
 		{
-			hudelement->getSprite()->setSpriteSize(Vector2(texture->getWidth(), texture->getHeight()));
+			hudelement->getSprite()->setSpriteSize(size);
 		}
 
 		if (!hudelement->getSprite()->hasDynamicMesh())
@@ -457,6 +457,7 @@ void Renderer::renderHudElement(HudElement* hudelement)
 		{
 			mesh = hudelement->getSprite()->getDynamicMesh();
 		}
+		hudelement->getSprite()->setSpriteSize(Vector2(mesh->getWidth(), mesh->getHeight()));
 
 		renderMesh(MVP, mesh, texture->getTextureBuffer(), hudelement->getSprite()->getUvOffset(), hudelement->color);
 	}

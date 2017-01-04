@@ -52,6 +52,7 @@ void HudText::setText(std::string text)
 	Texture* texture = new Texture();
 	mesh->setAsSquare(fontSurface->w, fontSurface->h, 1.0f, 1.0f);
 	texture->setPreloaded(fontSurface->w, fontSurface->h, textureBuffer);
+
 	sprite->setDynamics(mesh, texture);
 
 	SDL_FreeSurface(fontSurface);

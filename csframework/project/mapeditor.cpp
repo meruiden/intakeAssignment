@@ -8,12 +8,35 @@ MapEditor::MapEditor() : Scene()
 	loadAvailableSprites();
 	
 	spritesChanged = true;
-	campSpeed = 40.0f;
+	campSpeed = 100.0f;
+
+	selected = NULL;
+
+	renamerBackground = new HudText();
+	addHudElement(renamerBackground);
+	renamerBackground->addSprite("assets/whiteSquare.png");
+
+	renameInputText = new HudText();
+	renameInputText->loadFont("assets/arial.ttf");
+	addHudElement(renameInputText);
+	renamerSelected = true;
+	renameInputText->color = BLACK;
+	
+	renameInputText->setAnchorPoint(HudElement::ANCHOR_BOTTOM_LEFT);
+	renamerBackground->setAnchorPoint(HudElement::ANCHOR_BOTTOM_LEFT);
+
+	selectedName = "No Name";
+	draggingSelected = false;
 }
 
 
 MapEditor::~MapEditor()
 {
+	removeHudElement(renamerBackground);
+	delete renamerBackground;
+	removeHudElement(renameInputText);
+	delete renameInputText;
+
 	if (draggingImage != NULL)
 	{
 		removeHudElement(draggingImage);
@@ -38,6 +61,57 @@ MapEditor::~MapEditor()
 
 void MapEditor::update(float deltaTime)
 {
+	if (selected == NULL)
+	{
+		renamerSelected = false;
+		renameInputText->color.a = 0;
+		renamerBackground->color.a = 0;
+	}
+	else
+	{
+		
+		renamerBackground->color.a = 255;
+
+		if (renamerBackground->overLapsWithPoint(input()->getMousePosition()))
+		{
+			renameInputText->color.a = 255;
+			if (input()->getMouseButtonDown(1) && selected->getSprite()->getFileName() != "assets/player_icon.png")
+			{
+				renamerSelected = true;
+			}
+		}
+		else
+		{
+			if (input()->getMouseButtonDown(1))
+			{
+				renamerSelected = false;
+			}
+			if (renamerSelected)
+			{
+				renameInputText->color.a = 255;
+			}
+			else
+			{
+				renameInputText->color.a = 100;
+			}
+		}
+		if (input()->getKeyUp(SDLK_RETURN))
+		{
+			renamerSelected = false;
+			selected->setName(renameInputText->getText());
+		}
+		
+	}
+	Vector2 inputOffset = Vector2(renameInputText->getSprite()->getSpriteSize().x / 2.0f, 0);
+	renamerBackground->setPosition(renameInputText->getPosition());
+	renamerBackground->setScale(Vector2(inputOffset.x*2/32.0f + 0.5f, 1));
+	renameInputText->setPosition(Vector2(200, -100) + inputOffset);
+	if (renamerSelected)
+	{
+		renameInputText->pullTextInput();
+		
+	}
+		
 	if (spritesChanged)
 	{
 		spritesChanged = false;
@@ -71,15 +145,104 @@ void MapEditor::update(float deltaTime)
 			draggingImage = NULL;
 		}
 	}
-
-	if (input()->getMouseButtonUp(1) && draggingImage != NULL)
+	
+	if (input()->getMouseButtonUp(1) && !(renamerBackground->overLapsWithPoint(input()->getMousePosition()) && selected != NULL ))
 	{
-		Entity* entity = new Entity();
-		mapObjects.push_back(entity);
-		entity->addSprite(draggingImage->getSprite()->getFileName());
-		addEntity(entity);
-		entity->setPosition(getCamera()->screenToWorldSpace(draggingImage->getGlobalPosition()));
+		if (draggingImage == NULL)
+		{
+			if (selected == NULL)
+			{
+				for (int i = 0; i < mapObjects.size(); i++)
+				{
+					if (mapObjects[i]->overLapsWithPoint(getCamera()->screenToWorldSpace(input()->getMousePosition())))
+					{
+						selected = mapObjects[i];
+						selected->color.a = 155;
+						renameInputText->setText(selected->getName());
+						break;
+					}
+					
+				}
+			}else
+			{
+				for (int i = 0; i < mapObjects.size(); i++)
+				{
+					if (mapObjects[i]->overLapsWithPoint(getCamera()->screenToWorldSpace(input()->getMousePosition())))
+					{
+						if (selected == mapObjects[i])
+						{
+							draggingImage = new HudElement();
+							addHudElement(draggingImage);
+							draggingImage->addSprite(selected->getSprite()->getFileName());
+							selectedName = selected->getName();
+							draggingSelected = true;
+							std::vector< Entity* >::iterator it = mapObjects.begin();
+							while (it != mapObjects.end())
+							{
+								if ((*it) == selected)
+								{
+									removeEntity((*it));
+									delete (*it);
+									it = mapObjects.erase(it);
 
+								}
+								else
+								{
+									++it;
+								}
+							}
+						}
+					}
+
+				}
+				selected->color.a = 255;
+				selected = NULL;
+			}
+		}
+		else
+		{
+			bool isPlayer = draggingImage->getSprite()->getFileName() == "assets/player_icon.png";
+			if (isPlayer)
+			{
+				std::vector< Entity* >::iterator it = mapObjects.begin();
+				while (it != mapObjects.end())
+				{
+					if ((*it)->getSprite()->getFileName() == "assets/player_icon.png")
+					{
+						removeEntity((*it));
+						delete (*it);
+						it = mapObjects.erase(it);
+
+					}
+					else
+					{
+						++it;
+					}
+				}
+			}
+			Entity* entity = new Entity();
+			mapObjects.push_back(entity);
+			entity->addSprite(draggingImage->getSprite()->getFileName());
+			addEntity(entity);
+			entity->setPosition(getCamera()->screenToWorldSpace(draggingImage->getGlobalPosition()));
+			if (entity->getSprite()->getFileName() == "assets/crate/crate_full.png")
+			{
+				entity->setScale(Vector2(0.5f, 0.5f));
+			}
+			if (isPlayer)
+			{
+				selectedName = "Player";
+			}
+			entity->setName(selectedName);
+			if (draggingSelected)
+			{
+				selectedName = "No Name";
+				removeHudElement(draggingImage);
+				delete draggingImage;
+				draggingImage = NULL;
+				draggingSelected = false;
+			}
+		}
 	}
 
 	if (input()->getMouseButtonUp(1))
@@ -96,6 +259,7 @@ void MapEditor::update(float deltaTime)
 				draggingImage = new HudElement();
 				addHudElement(draggingImage);
 				draggingImage->addSprite(availableSprites[i]->getSprite()->getFileName());
+				selectedName = "No Name";
 				break;
 			}
 		}
@@ -103,6 +267,10 @@ void MapEditor::update(float deltaTime)
 	if (draggingImage != NULL)
 	{
 		draggingImage->setPosition(input()->getMousePosition());
+		if (draggingImage->getSprite()->getFileName() == "assets/crate/crate_full.png")
+		{
+			draggingImage->setScale(Vector2(0.5f, 0.5f));
+		}
 	}
 
 	bool useSmart = false;
@@ -142,8 +310,18 @@ void MapEditor::update(float deltaTime)
 	{
 		SceneManager::loadScene("menu");
 	}
-
-	
+	if (input()->scrollUp())
+	{
+		scrollOffset.y += 20;
+	}
+	if (input()->scrollDown())
+	{
+		scrollOffset.y -= 20;
+	}
+	for (int i = 0; i < availableSprites.size(); i++)
+	{
+		availableSprites[i]->setPosition(Vector2(spritesHudSize / 2 + 10, spritesHudSize / 2 + 10 + i* (spritesHudSize + 10)) + scrollOffset);
+	}
 }
 
 void MapEditor::loadMap(std::vector<Entity*>& entities)

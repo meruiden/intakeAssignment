@@ -358,7 +358,15 @@ void Level1::createMap()
 	MapEditor::loadMap(loadedEntities);
 	for (int i = 0; i < loadedEntities.size(); i++)
 	{
-		addEntity(loadedEntities[i]);
+		
+		if (loadedEntities[i]->getName() == "Player")
+		{
+			player->setPosition(loadedEntities[i]->getPosition());
+			delete loadedEntities[i];
+		}else
+		{
+			addEntity(loadedEntities[i]);
+		}
 	}
 	addEntity(groundCollider);
 	

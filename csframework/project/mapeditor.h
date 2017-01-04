@@ -11,6 +11,7 @@
 #include <engine/hudelement.h>
 #include <engine/entity.h>
 #include <engine/scenemanager.h>
+#include <engine/hudtext.h>
 
 class MapEditor : public Scene
 {
@@ -35,9 +36,18 @@ private:
 	std::vector<Entity*> mapObjects;
 	std::vector<Entity*> edgeColliders;
 
+	Entity* selected;
+
 	HudElement* draggingImage;
+	HudElement* renamerBackground;
+	HudText* renameInputText;
 	
 	bool spritesChanged;
-	
+	bool renamerSelected;
+	bool draggingSelected;
+
+	Vector2 scrollOffset;
+
+	std::string selectedName;
 };
 
