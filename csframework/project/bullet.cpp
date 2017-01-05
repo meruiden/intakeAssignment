@@ -38,7 +38,7 @@ void Bullet::update(float deltaTime)
 
 void Bullet::onCollisionBegin(Entity * other)
 {
-	if (other->getName() != "player")
+	if (other->getName() != "player" && other->getName() != "cratePart")
 	{
 		destroyme = true;
 	}

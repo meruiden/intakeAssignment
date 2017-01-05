@@ -8,34 +8,32 @@ MapEditor::MapEditor() : Scene()
 	loadAvailableSprites();
 	
 	spritesChanged = true;
-	campSpeed = 100.0f;
+	campSpeed = 300.0f;
 
 	selected = NULL;
 
-	renamerBackground = new HudText();
-	addHudElement(renamerBackground);
-	renamerBackground->addSprite("assets/whiteSquare.png");
-
-	renameInputText = new HudText();
-	renameInputText->loadFont("assets/arial.ttf");
-	addHudElement(renameInputText);
-	renamerSelected = true;
-	renameInputText->color = BLACK;
-	
-	renameInputText->setAnchorPoint(HudElement::ANCHOR_BOTTOM_LEFT);
-	renamerBackground->setAnchorPoint(HudElement::ANCHOR_BOTTOM_LEFT);
-
 	selectedName = "No Name";
 	draggingSelected = false;
+
+	renamer = new TextInputField();
+	addHudElement(renamer);
+	renamer->setVisable(false);
+
+	renamer->setAnchorPoint(HudElement::ANCHOR_BOTTOM_LEFT);
+	renamer->setPosition(Vector2(200, -70));
+
+	fileNameHandler = new TextInputField();
+	addHudElement(fileNameHandler);
+	fileNameHandler->setVisable(false);
 }
 
 
 MapEditor::~MapEditor()
 {
-	removeHudElement(renamerBackground);
-	delete renamerBackground;
-	removeHudElement(renameInputText);
-	delete renameInputText;
+	removeHudElement(fileNameHandler);
+	delete fileNameHandler;
+	removeHudElement(renamer);
+	delete renamer;
 
 	if (draggingImage != NULL)
 	{
@@ -63,53 +61,49 @@ void MapEditor::update(float deltaTime)
 {
 	if (selected == NULL)
 	{
-		renamerSelected = false;
-		renameInputText->color.a = 0;
-		renamerBackground->color.a = 0;
+		if (renamer->isVisable())
+		{
+			renamer->setVisable(false);
+		}
 	}
 	else
 	{
 		
-		renamerBackground->color.a = 255;
-
-		if (renamerBackground->overLapsWithPoint(input()->getMousePosition()))
+		if (selected->getSprite()->getFileName() == "assets/player_icon.png")
 		{
-			renameInputText->color.a = 255;
-			if (input()->getMouseButtonDown(1) && selected->getSprite()->getFileName() != "assets/player_icon.png")
+			if (!renamer->isVisable())
 			{
-				renamerSelected = true;
+				renamer->setVisable(true);
+				renamer->setSelectAble(false);
 			}
+			
 		}
 		else
 		{
-			if (input()->getMouseButtonDown(1))
+			if (!renamer->isVisable())
 			{
-				renamerSelected = false;
-			}
-			if (renamerSelected)
-			{
-				renameInputText->color.a = 255;
-			}
-			else
-			{
-				renameInputText->color.a = 100;
+				renamer->setVisable(true);
 			}
 		}
 		if (input()->getKeyUp(SDLK_RETURN))
 		{
-			renamerSelected = false;
-			selected->setName(renameInputText->getText());
+			renamer->setSelected(false);
+			selected->setName(renamer->getText());
 		}
 		
 	}
-	Vector2 inputOffset = Vector2(renameInputText->getSprite()->getSpriteSize().x / 2.0f, 0);
-	renamerBackground->setPosition(renameInputText->getPosition());
-	renamerBackground->setScale(Vector2(inputOffset.x*2/32.0f + 0.5f, 1));
-	renameInputText->setPosition(Vector2(200, -100) + inputOffset);
-	if (renamerSelected)
+
+	if (input()->getKeyUp(SDLK_o))
 	{
-		renameInputText->pullTextInput();
-		
+		fileNameHandler->setVisable(true);
+	}
+	if (fileNameHandler->isVisable())
+	{
+		if (input()->getKeyDown(SDLK_RETURN))
+		{
+			fileNameHandler->setVisable(false);
+			openMapFile(fileNameHandler->getText());
+		}
 	}
 		
 	if (spritesChanged)
@@ -146,7 +140,7 @@ void MapEditor::update(float deltaTime)
 		}
 	}
 	
-	if (input()->getMouseButtonUp(1) && !(renamerBackground->overLapsWithPoint(input()->getMousePosition()) && selected != NULL ))
+	if (input()->getMouseButtonUp(1) && !(renamer->beingHovered() && selected != NULL ))
 	{
 		if (draggingImage == NULL)
 		{
@@ -158,7 +152,7 @@ void MapEditor::update(float deltaTime)
 					{
 						selected = mapObjects[i];
 						selected->color.a = 155;
-						renameInputText->setText(selected->getName());
+						renamer->setText(selected->getName());
 						break;
 					}
 					
@@ -207,12 +201,11 @@ void MapEditor::update(float deltaTime)
 				std::vector< Entity* >::iterator it = mapObjects.begin();
 				while (it != mapObjects.end())
 				{
-					if ((*it)->getSprite()->getFileName() == "assets/player_icon.png")
+					if ((*it)->getSprite() != NULL && (*it)->getSprite()->getFileName() == "assets/player_icon.png")
 					{
 						removeEntity((*it));
 						delete (*it);
 						it = mapObjects.erase(it);
-
 					}
 					else
 					{
@@ -220,11 +213,12 @@ void MapEditor::update(float deltaTime)
 					}
 				}
 			}
+			
 			Entity* entity = new Entity();
 			mapObjects.push_back(entity);
 			entity->addSprite(draggingImage->getSprite()->getFileName());
 			addEntity(entity);
-			entity->setPosition(getCamera()->screenToWorldSpace(draggingImage->getGlobalPosition()));
+			entity->setPosition(getCamera()->screenToWorldSpace(draggingImage->getPosition()));
 			if (entity->getSprite()->getFileName() == "assets/crate/crate_full.png")
 			{
 				entity->setScale(Vector2(0.5f, 0.5f));
@@ -285,7 +279,6 @@ void MapEditor::update(float deltaTime)
 		saveMapFile();
 	}
 
-	
 	if (input()->getKey(SDLK_d))
 	{
 		getCamera()->setPosition(getCamera()->getPosition() + Vector2(campSpeed, 0) * deltaTime);
@@ -324,10 +317,10 @@ void MapEditor::update(float deltaTime)
 	}
 }
 
-void MapEditor::loadMap(std::vector<Entity*>& entities)
+void MapEditor::loadMap(std::vector<Entity*>& entities, std::string filePath)
 {
 	std::ifstream mapFile;
-	mapFile.open("assets/level1.map");
+	mapFile.open(filePath);
 	std::string output;
 	if (mapFile.is_open()) {
 		for (std::string line; std::getline(mapFile, line); )
@@ -344,6 +337,7 @@ void MapEditor::loadMap(std::vector<Entity*>& entities)
 		
 		if (lines[i] == "[EntityList]")
 		{
+			i++;
 			while (lines[i] != "[/EntityList]" && i < lines.size())
 			{
 				Vector2 position = Vector2();
@@ -370,7 +364,7 @@ void MapEditor::loadMap(std::vector<Entity*>& entities)
 				{
 					entity->addSprite(filePath);
 				}
-
+				
 				if (name != "")
 				{
 					entity->setName(name);
@@ -590,6 +584,23 @@ void MapEditor::snap(bool smartSnap)
 		}
 	}
 
+}
+
+void MapEditor::openMapFile(std::string filePath)
+{
+	for (int i = 0; i < mapObjects.size(); i++)
+	{
+		removeEntity(mapObjects[i]);
+		delete mapObjects[i];
+	}
+	mapObjects.clear();
+	std::vector<Entity*> loadedEntities;
+	MapEditor::loadMap(loadedEntities, filePath);
+	for (int i = 0; i < loadedEntities.size(); i++)
+	{
+		addEntity(loadedEntities[i]);
+		mapObjects.push_back(loadedEntities[i]);
+	}
 }
 
 std::vector<std::string> MapEditor::splitString(std::string str, std::string splitter)

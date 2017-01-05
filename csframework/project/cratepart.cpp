@@ -14,6 +14,7 @@ CratePart::CratePart(int sliceId) : Entity()
 	lifeTimeCounter = 0;
 
 	getPhysicsBody()->setPhysicsActive(true);
+	setName("cratePart");
 
 }
 

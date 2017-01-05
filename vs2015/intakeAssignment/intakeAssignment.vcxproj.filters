@@ -54,6 +54,9 @@
     <ClCompile Include="..\..\csframework\project\cratepart.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\csframework\project\textinputfield.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\csframework\project\menuscene.h">
@@ -90,6 +93,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\csframework\project\cratepart.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\csframework\project\textinputfield.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

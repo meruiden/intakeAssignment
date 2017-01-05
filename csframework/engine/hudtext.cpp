@@ -61,6 +61,11 @@ void HudText::setText(std::string text)
 	lastText = text;
 }
 
+void HudText::setMultiLine(bool value)
+{
+	multiline = value;
+}
+
 void HudText::pullTextInput()
 {
 	std::string curText = getText();

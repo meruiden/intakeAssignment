@@ -1,4 +1,5 @@
 #pragma once
+#include <vector>
 
 #include <engine/color.h>
 #include <engine/vector2.h>
@@ -12,16 +13,23 @@ public:
 	virtual ~HudElement();
 
 	virtual void update(float deltaTime);
+	void addChild(HudElement* entity);
+	void removeChild(HudElement* entity);
+	void setParent(HudElement* entity);
 	void setLayer(int value);
 	void setPosition(Vector2 newPosition);
 	void setScale(Vector2 newScale);
 	void setRotation(float newRotation);
 	void addSprite(std::string path);
+	void setGlobals(Vector2 pos, Vector2 scal, float rot);
 
 	Vector2 getPosition() { return position; }
 	Vector2 getScale() { return scale; }
+	Vector2 getAnchorPosition();
 	Vector2 getAnchoredPosition();
-	Vector2 getGlobalPosition();
+	Vector2 getGlobalPosition() { return globalPosition; }
+	Vector2 getGlobalScale() { return globalScale; }
+	float getGlobalRotation() { return globalRotation; }
 
 	float getRotation() { return rotation; }
 	int getLayer() { return layer; }
@@ -48,12 +56,21 @@ public:
 	bool overLapsWithPoint(Vector2 point);
 
 	Input* input() { return Input::getInstance(); }
+
+	std::vector<HudElement*> getChildren() { return children; }
+	HudElement* getParent() { return parent; }
 private:
 	int layer;
 	Vector2 position;
 	Vector2 scale;
+	Vector2 globalPosition;
+	Vector2 globalScale;
+	float globalRotation;
 	float rotation;
 	int anchorPoint;
+
+	std::vector<HudElement*> children;
+	HudElement* parent;
 protected:
 	Sprite* sprite;
 };

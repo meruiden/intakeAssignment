@@ -2,10 +2,14 @@
 
 HudElement::HudElement()
 {
+	parent = NULL;
 	sprite = NULL;
 	layer = 0;
 	position = Vector2();
 	scale = Vector2(1, 1);
+	globalPosition = Vector2();
+	globalScale = Vector2(1, 1);
+	globalRotation = 0.0f;
 	rotation = 0.0f;
 	color = Color();
 	setAnchorPoint(HudElement::ANCHOR_CENTER_CENTER);
@@ -57,7 +61,7 @@ void HudElement::update(float deltaTime)
 
 }
 
-Vector2 HudElement::getAnchoredPosition()
+Vector2 HudElement::getAnchorPosition()
 {
 	Vector2 anchoredPosition = Vector2();
 	Vector2 windowSize = Camera::getWindowSize();
@@ -104,9 +108,9 @@ Vector2 HudElement::getAnchoredPosition()
 	return anchoredPosition;
 }
 
-Vector2 HudElement::getGlobalPosition()
+Vector2 HudElement::getAnchoredPosition()
 {
-	return getPosition() + getAnchoredPosition();
+	return getPosition() + getAnchorPosition();
 }
 
 float HudElement::getWidth()
@@ -130,6 +134,7 @@ float HudElement::getHeight()
 bool HudElement::overLapsWithPoint(Vector2 point)
 {
 	bool overlaps = false;
+
 	if (point.x < (getGlobalPosition().x + getWidth() / 2.0f)
 		&& point.x >(getGlobalPosition().x - getWidth() / 2.0f)
 		&& point.y < (getGlobalPosition().y + getHeight() / 2.0f)
@@ -150,6 +155,89 @@ void HudElement::addSprite(std::string path)
 	}
 	sprite = new Sprite();
 	sprite->setUpSprite(path);
+}
+
+void HudElement::addChild(HudElement* element)
+{
+	if (element->parent != NULL) {
+		element->parent->removeChild(element);
+	}
+
+	std::vector< HudElement* >::iterator it = children.begin();
+	while (it != children.end())
+	{
+		if ((*it) == element)
+		{
+			return;
+		}
+		else {
+			++it;
+		}
+	}
+
+	children.push_back(element);
+	element->setParent((this));
+
+}
+void HudElement::removeChild(HudElement* element)
+{
+	std::vector< HudElement* >::iterator it = children.begin();
+	while (it != children.end())
+	{
+		if ((*it) == element)
+		{
+			it = children.erase(it);
+			element->setParent(NULL);
+		}
+		else
+		{
+			++it;
+		}
+	}
+
+
+}
+
+void HudElement::setParent(HudElement* element)
+{
+
+	if (element == NULL)
+	{
+		if (this->parent != NULL)
+		{
+			this->parent->removeChild(this);
+		}
+
+		this->parent = NULL;
+		return;
+	}
+
+	this->parent = element;
+	bool alreadyChild = false;
+	std::vector<HudElement*> children = element->getChildren();
+	std::vector< HudElement* >::iterator it = children.begin();
+	while (it != children.end())
+	{
+		if ((*it) == this)
+		{
+			alreadyChild = true;
+		}
+
+		it++;
+	}
+
+	if (!alreadyChild)
+	{
+		element->addChild(this);
+	}
+
+}
+
+void HudElement::setGlobals(Vector2 pos, Vector2 scal, float rot)
+{
+	this->globalPosition = pos - Camera::getWindowSize() / 2.0f;
+	this->globalScale = scal;
+	this->globalRotation = rot;
 }
 
 

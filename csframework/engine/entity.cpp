@@ -276,7 +276,7 @@ void Entity::addSpriteAsSpriteSheet(std::string path, int spriteWidth, int sprit
 void Entity::setGlobals(Vector2 pos, Vector2 scal, float rot)
 {
 	this->globalPosition = pos;
-	this->globalScale = scale;
+	this->globalScale = scal;
 	this->globalRotation = rot;
 }
 

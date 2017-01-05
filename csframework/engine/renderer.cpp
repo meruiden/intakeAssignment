@@ -252,7 +252,8 @@ void Renderer::renderScene()
 			{
 				if (hudElements[i]->getLayer() == curLayer) {
 					hudElements[i]->update(dt);
-					renderHudElement(hudElements[i]);
+					glm::mat4 modelmatrix = glm::mat4(1.0f);
+					renderHudElement(modelmatrix, hudElements[i]);
 				}
 
 				if (hudElements[i]->getLayer() > curLayer) {
@@ -366,23 +367,31 @@ void Renderer::renderEntity(glm::mat4 &modelmatrix, Entity* entity, Camera* came
 	while (it != children.end())
 	{
 		renderEntity(modelmatrix, (*it), camera);
-		modelmatrix = getModelMatrix((*it)->getParent()->getPosition(), (*it)->getParent()->getScale(), (*it)->getParent()->getRotation());
+		modelmatrix = getModelMatrix(entity->getPosition(), entity->getScale(), entity->getRotation());
 		it++;
 	}
 }
 
-void Renderer::renderHudElement(HudElement* hudelement)
+void Renderer::renderHudElement(glm::mat4 &modelmatrix, HudElement * hudelement)
 {
 
 	Vector2 position = Vector2();
 	Vector2 windowSize = Camera::getWindowSize();
 
-	position = hudelement->getGlobalPosition();
+	if (hudelement->getParent() == NULL)
+	{
+		position = hudelement->getAnchoredPosition() + windowSize / 2.0f;
+	}
+	else
+	{
+		position = hudelement->getPosition();
+	}
+	
 
 	// Use our shader
 	glm::mat4 MVP;
 	glUseProgram(programID);
-	glm::mat4 modelmatrix = getModelMatrix(position + windowSize/2.0f, hudelement->getScale(), hudelement->getRotation());
+	modelmatrix *= getModelMatrix(position , hudelement->getScale(), hudelement->getRotation());
 	glm::mat4 vm = glm::lookAt(
 		glm::vec3(0, 0, 5), // Camera is at (0,0,5), in World Space
 		glm::vec3(0, 0, -5), // and looks towards Z
@@ -390,76 +399,95 @@ void Renderer::renderHudElement(HudElement* hudelement)
 	);
 	MVP = ProjectionMatrix * vm * modelmatrix;
 
-	if (hudelement->getSprite() == NULL) {
-		return;
-	}
+	if (hudelement->getSprite() != NULL) {
 
-	Texture* texture = NULL;
-	Mesh* mesh = NULL;
-	bool isVisable = false;
+		Texture* texture = NULL;
+		Mesh* mesh = NULL;
+		bool isVisable = false;
 
-	// Get the globals
-	glm::vec3 scale;
-	glm::quat rotation;
-	glm::vec3 pos;
-	glm::vec3 skew;
-	glm::vec4 perspective;
-	glm::decompose(modelmatrix, scale, rotation, pos, skew, perspective);
+		// Get the globals
+		glm::vec3 scale;
+		glm::quat rotation;
+		glm::vec3 pos;
+		glm::vec3 skew;
+		glm::vec4 perspective;
+		glm::decompose(modelmatrix, scale, rotation, pos, skew, perspective);
 
-	if (hudelement->getSprite()->hasDynamicMesh())
-	{
-		isVisable = isMeshVisable(Vector2(pos.x, pos.y), Vector2(scale.x, scale.y), Vector2(hudelement->getSprite()->getDynamicMesh()->getWidth(), hudelement->getSprite()->getDynamicMesh()->getHeight()), Camera::getWindowSize() * 0.5f);
-	}
-	else 
-	{
-		isVisable = isMeshVisable(Vector2(pos.x, pos.y), Vector2(scale.x, scale.y), hudelement->getSprite()->getSpriteSize(), Camera::getWindowSize() * 0.5f);
-	}
+		hudelement->setGlobals(Vector2(pos.x, pos.y), Vector2(scale.x, scale.y), rotation.z * RAD_TO_DEG);
 
-	if (hudelement->getSprite()->getSpriteSize().magnitude() == 0)
-	{
-		isVisable = true;
-	}
-
-	if (isVisable)
-	{
-		if (!hudelement->getSprite()->hasDynamicTexture())
+		if (hudelement->getSprite()->hasDynamicMesh())
 		{
-			if (hudelement->getSprite()->getFileName() == "")
-			{
-				return;
-			}
-			bool succes = false;
-
-			texture = ResourceManager::getInstance()->getTexture(hudelement->getSprite()->getFileName(), succes);
-			if (!succes)
-			{
-				return;
-			}
+			isVisable = isMeshVisable(Vector2(pos.x, pos.y), Vector2(scale.x, scale.y), Vector2(hudelement->getSprite()->getDynamicMesh()->getWidth(), hudelement->getSprite()->getDynamicMesh()->getHeight()), Camera::getWindowSize() * 0.5f);
 		}
 		else
 		{
-			texture = hudelement->getSprite()->getDynamicTexture();
-		}
-		Vector2 size = Vector2(texture->getWidth(), texture->getHeight());
-		hudelement->getSprite()->setTextureSize(size);
-		if (hudelement->getSprite()->getSpriteSize().x == 0 && hudelement->getSprite()->getSpriteSize().y == 0)
-		{
-			hudelement->getSprite()->setSpriteSize(size);
+			isVisable = isMeshVisable(Vector2(pos.x, pos.y), Vector2(scale.x, scale.y), hudelement->getSprite()->getSpriteSize(), Camera::getWindowSize() * 0.5f);
 		}
 
-		if (!hudelement->getSprite()->hasDynamicMesh())
+		if (hudelement->getSprite()->getSpriteSize().magnitude() == 0)
 		{
-			Vector2 spriteSize = hudelement->getSprite()->getSpriteSize();
-			Vector2 uvSize = hudelement->getSprite()->getUvSize();
-			mesh = ResourceManager::getInstance()->getSpriteMesh(spriteSize.x, spriteSize.y, uvSize.x, uvSize.y);
+			isVisable = true;
+		}
+
+		if (isVisable)
+		{
+			if (!hudelement->getSprite()->hasDynamicTexture())
+			{
+				if (hudelement->getSprite()->getFileName() == "")
+				{
+					return;
+				}
+				bool succes = false;
+
+				texture = ResourceManager::getInstance()->getTexture(hudelement->getSprite()->getFileName(), succes);
+				if (!succes)
+				{
+					return;
+				}
+			}
+			else
+			{
+				texture = hudelement->getSprite()->getDynamicTexture();
+			}
+			Vector2 size = Vector2(texture->getWidth(), texture->getHeight());
+			hudelement->getSprite()->setTextureSize(size);
+			if (hudelement->getSprite()->getSpriteSize().x == 0 && hudelement->getSprite()->getSpriteSize().y == 0)
+			{
+				hudelement->getSprite()->setSpriteSize(size);
+			}
+
+			if (!hudelement->getSprite()->hasDynamicMesh())
+			{
+				Vector2 spriteSize = hudelement->getSprite()->getSpriteSize();
+				Vector2 uvSize = hudelement->getSprite()->getUvSize();
+				mesh = ResourceManager::getInstance()->getSpriteMesh(spriteSize.x, spriteSize.y, uvSize.x, uvSize.y);
+			}
+			else
+			{
+				mesh = hudelement->getSprite()->getDynamicMesh();
+			}
+			hudelement->getSprite()->setSpriteSize(Vector2(mesh->getWidth(), mesh->getHeight()));
+
+			renderMesh(MVP, mesh, texture->getTextureBuffer(), hudelement->getSprite()->getUvOffset(), hudelement->color);
+		}
+	}
+	std::vector<HudElement*>children = hudelement->getChildren();
+	std::vector<HudElement*>::iterator it = children.begin();
+	while (it != children.end())
+	{
+		renderHudElement(modelmatrix, (*it));
+
+		Vector2 pos = Vector2();
+		if (hudelement->getParent() == NULL)
+		{
+			position = hudelement->getAnchoredPosition() + windowSize / 2.0f;
 		}
 		else
 		{
-			mesh = hudelement->getSprite()->getDynamicMesh();
+			position = hudelement->getPosition();
 		}
-		hudelement->getSprite()->setSpriteSize(Vector2(mesh->getWidth(), mesh->getHeight()));
-
-		renderMesh(MVP, mesh, texture->getTextureBuffer(), hudelement->getSprite()->getUvOffset(), hudelement->color);
+		modelmatrix = getModelMatrix(position, hudelement->getScale(), hudelement->getRotation());
+		it++;
 	}
 }
 

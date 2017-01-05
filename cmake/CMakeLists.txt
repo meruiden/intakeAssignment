@@ -166,6 +166,8 @@ add_executable(project
 	"${FRAMEWORK_DIR}/project/crate.h"
 	"${FRAMEWORK_DIR}/project/cratepart.cpp"
 	"${FRAMEWORK_DIR}/project/cratepart.h"
+	"${FRAMEWORK_DIR}/project/textinputfield.cpp"
+	"${FRAMEWORK_DIR}/project/textinputfield.h"
 )
 
 target_link_libraries(project

@@ -353,9 +353,9 @@ void Level1::fixedUpdate()
 
 void Level1::createMap()
 {
-	int groundCollSize = 2000;
+	int groundCollSize = 4000;
 
-	MapEditor::loadMap(loadedEntities);
+	MapEditor::loadMap(loadedEntities, "assets/level1.map");
 	for (int i = 0; i < loadedEntities.size(); i++)
 	{
 		
@@ -363,13 +363,27 @@ void Level1::createMap()
 		{
 			player->setPosition(loadedEntities[i]->getPosition());
 			delete loadedEntities[i];
-		}else
+		}
+		else if (loadedEntities[i]->getName() == "crate")
+		{
+			Crate* c = new Crate();
+			c->setPosition(loadedEntities[i]->getPosition());
+			c->setScale(loadedEntities[i]->getScale());
+			c->setRotation(loadedEntities[i]->getRotation());
+			c->setName(loadedEntities[i]->getName());
+			delete loadedEntities[i];
+			loadedEntities[i] = c;
+			addEntity(c);
+			crates.push_back(c);
+			
+		}
+		else
 		{
 			addEntity(loadedEntities[i]);
 		}
 	}
 	addEntity(groundCollider);
-	
+
 	groundCollider->getPhysicsBody()->setPhysicsActive(true);
 	groundCollider->getPhysicsBody()->setPhysicsMode(PhysicsBody::STATIC);
 	std::vector<Vector2> verts;
@@ -381,7 +395,7 @@ void Level1::createMap()
 	verts.push_back(Vector2(groundCollSize, 0));
 
 	groundCollider->getPhysicsBody()->setEdgeCollider(verts);
-	groundCollider->setPosition(Vector2(-230, 300));
+	groundCollider->setPosition(Vector2(-600, 300));
 	groundCollider->getPhysicsBody()->setDrawColliders(true);
 	groundCollider->getPhysicsBody()->setFriction(0.3f);
 }
