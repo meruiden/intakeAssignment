@@ -25,11 +25,53 @@ MapEditor::MapEditor() : Scene()
 	fileNameHandler = new TextInputField();
 	addHudElement(fileNameHandler);
 	fileNameHandler->setVisable(false);
+
+	infoButton = new HudElement();
+	infoButton->addSprite("assets/questionMark.png");
+	addHudElement(infoButton);
+	infoButton->setAnchorPoint(HudElement::ANCHOR_TOP_RIGHT);
+	infoButton->setPosition(Vector2(-40, 40));
+	infoButton->setScale(Vector2(0.5f, 0.5f));
+
+	colliderMode = false;
+	drawingCollider = -1;
+	selectedCollider = -1;
+	lockedVert = -1;
+
+	curModeText = new HudText();
+	addHudElement(curModeText);
+	curModeText->loadFont("assets/arial.ttf");
+	curModeText->setAnchorPoint(HudElement::ANCHOR_TOP_CENTER);
+	curModeText->setText("Object Mode");
+	curModeText->setPosition(Vector2(0, 30));
+
+	hoveringVertIndicator = new Entity();
+	Mesh* mesh = new Mesh();
+	Texture* texture = new Texture();
+	Sprite* sprite = new Sprite();
+	sprite->setDynamics(mesh, texture);
+	hoveringVertIndicator->addSprite(sprite);
+
+	mesh->setDrawMode(Mesh::drawModeSettings::polygons);
+	std::vector<Vector2> indicatorVerts;
+	float radius = 10.0f;
+	int segments = 16;
+	for (unsigned int i = 0; i < segments; i++)
+	{
+		float angle = 2.0f * PI * float(i) / float(segments);
+		indicatorVerts.push_back(Vector2(cosf(angle)*radius, sinf(angle)*radius));
+	}
+	mesh->setFromVertices(indicatorVerts);
+	addEntity(hoveringVertIndicator);
+	hoveringVertIndicator->color.a = 0;
 }
 
 
 MapEditor::~MapEditor()
 {
+	removeEntity(hoveringVertIndicator);
+	delete hoveringVertIndicator;
+
 	removeHudElement(fileNameHandler);
 	delete fileNameHandler;
 	removeHudElement(renamer);
@@ -54,10 +96,105 @@ MapEditor::~MapEditor()
 		delete mapObjects[i];
 	}
 	mapObjects.clear();
-	
+
+	for (int i = 0; i < edgeColliders.size(); i++)
+	{
+		removeEntity(edgeColliders[i]);
+		delete edgeColliders[i];
+	}
+	edgeColliders.clear();
+
+	for (int i = 0; i < edgeColliderVerts.size(); i++)
+	{
+		edgeColliderVerts[i].clear();
+	}
+	edgeColliderVerts.clear();
 }
 
 void MapEditor::update(float deltaTime)
+{
+	if (!fileNameHandler->isVisable())
+	{
+		if (input()->getKey(SDLK_d))
+		{
+			getCamera()->setPosition(getCamera()->getPosition() + Vector2(campSpeed, 0) * deltaTime);
+		}
+
+		if (input()->getKey(SDLK_a))
+		{
+			getCamera()->setPosition(getCamera()->getPosition() - Vector2(campSpeed, 0) * deltaTime);
+		}
+
+		if (input()->getKey(SDLK_w))
+		{
+			getCamera()->setPosition(getCamera()->getPosition() - Vector2(0, campSpeed) * deltaTime);
+		}
+
+		if (input()->getKey(SDLK_s))
+		{
+			getCamera()->setPosition(getCamera()->getPosition() + Vector2(0, campSpeed) * deltaTime);
+		}
+
+		if (input()->getKeyUp(SDLK_o) && !renamer->isVisable())
+		{
+			fileNameHandler->setVisable(true);
+		}
+
+		if (input()->getKeyUp(SDLK_n))
+		{
+			saveMapFile();
+		}
+
+		if (input()->getKeyUp(SDLK_p))
+		{
+			switchColliderMode(!colliderMode);
+		}
+
+		if (input()->getKeyUp(SDLK_ESCAPE))
+		{
+			SceneManager::loadScene("menu");
+		}
+
+		if (infoButton->overLapsWithPoint(input()->getMousePosition()))
+		{
+			if (input()->getMouseButtonUp(1))
+			{
+				SceneManager::loadScene("mapEditHelp");
+				return;
+			}
+			infoButton->color = GREY;
+		}
+		else
+		{
+			infoButton->color = WHITE;
+		}
+	}
+
+	if (fileNameHandler->isVisable())
+	{
+		if (input()->getKeyDown(SDLK_RETURN))
+		{
+			fileNameHandler->setVisable(false);
+			openMapFile(fileNameHandler->getText());
+		}
+
+		if (input()->getKeyDown(SDLK_ESCAPE))
+		{
+			fileNameHandler->setVisable(false);
+		}
+	}
+	if (colliderMode)
+	{
+		updateColliderMode();
+	}
+	else
+	{
+		updateObjectMode();
+	}
+	
+}
+
+void MapEditor::updateObjectMode()
 {
 	if (selected == NULL)
 	{
@@ -68,7 +205,7 @@ void MapEditor::update(float deltaTime)
 	}
 	else
 	{
-		
+
 		if (selected->getSprite()->getFileName() == "assets/player_icon.png")
 		{
 			if (!renamer->isVisable())
@@ -76,7 +213,7 @@ void MapEditor::update(float deltaTime)
 				renamer->setVisable(true);
 				renamer->setSelectAble(false);
 			}
-			
+
 		}
 		else
 		{
@@ -90,22 +227,19 @@ void MapEditor::update(float deltaTime)
 			renamer->setSelected(false);
 			selected->setName(renamer->getText());
 		}
-		
-	}
 
-	if (input()->getKeyUp(SDLK_o))
-	{
-		fileNameHandler->setVisable(true);
-	}
-	if (fileNameHandler->isVisable())
-	{
-		if (input()->getKeyDown(SDLK_RETURN))
+		if (input()->getKeyUp(SDLK_c))
 		{
-			fileNameHandler->setVisable(false);
-			openMapFile(fileNameHandler->getText());
+			draggingImage = new HudElement();
+			addHudElement(draggingImage);
+			draggingImage->addSprite(selected->getSprite()->getFileName());
+			selectedName = selected->getName();
+
+			selected->color.a = 255;
+			selected = NULL;
 		}
 	}
-		
+
 	if (spritesChanged)
 	{
 		spritesChanged = false;
@@ -124,7 +258,7 @@ void MapEditor::update(float deltaTime)
 					removeEntity((*it));
 					delete (*it);
 					it = mapObjects.erase(it);
-					
+
 				}
 				else
 				{
@@ -139,8 +273,8 @@ void MapEditor::update(float deltaTime)
 			draggingImage = NULL;
 		}
 	}
-	
-	if (input()->getMouseButtonUp(1) && !(renamer->beingHovered() && selected != NULL ))
+
+	if (input()->getMouseButtonUp(1) && !(renamer->beingHovered() && selected != NULL))
 	{
 		if (draggingImage == NULL)
 		{
@@ -155,9 +289,10 @@ void MapEditor::update(float deltaTime)
 						renamer->setText(selected->getName());
 						break;
 					}
-					
+
 				}
-			}else
+			}
+			else
 			{
 				for (int i = 0; i < mapObjects.size(); i++)
 				{
@@ -187,7 +322,6 @@ void MapEditor::update(float deltaTime)
 							}
 						}
 					}
-
 				}
 				selected->color.a = 255;
 				selected = NULL;
@@ -213,7 +347,7 @@ void MapEditor::update(float deltaTime)
 					}
 				}
 			}
-			
+
 			Entity* entity = new Entity();
 			mapObjects.push_back(entity);
 			entity->addSprite(draggingImage->getSprite()->getFileName());
@@ -274,35 +408,7 @@ void MapEditor::update(float deltaTime)
 		snap(useSmart);
 	}
 
-	if (input()->getKeyUp(SDLK_n))
-	{
-		saveMapFile();
-	}
 
-	if (input()->getKey(SDLK_d))
-	{
-		getCamera()->setPosition(getCamera()->getPosition() + Vector2(campSpeed, 0) * deltaTime);
-	}
-
-	if (input()->getKey(SDLK_a))
-	{
-		getCamera()->setPosition(getCamera()->getPosition() - Vector2(campSpeed, 0) * deltaTime);
-	}
-
-	if (input()->getKey(SDLK_w))
-	{
-		getCamera()->setPosition(getCamera()->getPosition() - Vector2(0, campSpeed) * deltaTime);
-	}
-
-	if (input()->getKey(SDLK_s))
-	{
-		getCamera()->setPosition(getCamera()->getPosition() + Vector2(0, campSpeed) * deltaTime);
-	}
-
-	if (input()->getKeyUp(SDLK_ESCAPE))
-	{
-		SceneManager::loadScene("menu");
-	}
 	if (input()->scrollUp())
 	{
 		scrollOffset.y += 20;
@@ -334,7 +440,6 @@ void MapEditor::loadMap(std::vector<Entity*>& entities, std::string filePath)
 
 	for (int i = 0; i < lines.size(); i++)
 	{
-		
 		if (lines[i] == "[EntityList]")
 		{
 			i++;
@@ -343,28 +448,89 @@ void MapEditor::loadMap(std::vector<Entity*>& entities, std::string filePath)
 				Vector2 position = Vector2();
 				Vector2 scale = Vector2();
 				float rotation = 0.0f;
-				std::string filePath = "";
+				std::string imagePath = "";
 				std::string name = "";
 
 				std::vector<std::string> data = MapEditor::splitString(lines[i], ",");
 
 				if (data.size() == 7)
 				{
-					std::string::size_type sz;
-
 					name = data[0];
-					position = Vector2(std::stof(data[1], &sz), std::stof(data[2], &sz));
-					scale = Vector2(std::stof(data[3], &sz), std::stof(data[4], &sz));
-					rotation = std::stof(data[5], &sz);
-					filePath = data[6];
+					position = Vector2(std::stof(data[1]), std::stof(data[2]));
+					scale = Vector2(std::stof(data[3]), std::stof(data[4]));
+					rotation = std::stof(data[5]);
+					imagePath = data[6];
 				}
-				
+
 				Entity* entity = new Entity();
-				if (filePath != "")
+				if (imagePath != "")
 				{
-					entity->addSprite(filePath);
+					entity->addSprite(imagePath);
 				}
-				
+
+				if (name != "")
+				{
+					entity->setName(name);
+				}
+				entity->setPosition(position);
+				entity->setScale(scale);
+				entity->setRotation(rotation);
+				entities.push_back(entity);
+				i++;
+			}
+		}
+
+		if (lines[i] == "[EdgeColliderList]")
+		{
+			i++;
+			while (lines[i] != "[/EdgeColliderList]" && i < lines.size())
+			{
+				Vector2 position = Vector2();
+				Vector2 scale = Vector2();
+				float rotation = 0.0f;
+				std::string name = "";
+				std::string colliderVertsString = "";
+				std::vector<std::string> data = MapEditor::splitString(lines[i], ",");
+
+				if (data.size() == 7)
+				{
+					name = data[0];
+					position = Vector2(std::stof(data[1]), std::stof(data[2]));
+					scale = Vector2(std::stof(data[3]), std::stof(data[4]));
+					rotation = std::stof(data[5]);
+					colliderVertsString = data[6];
+				}
+
+				Entity* entity = new Entity();
+				std::vector<Vector2> colliderVerts;
+				if (colliderVertsString != "")
+				{
+					std::vector<std::string> colliderVectors = MapEditor::splitString(colliderVertsString, "/");
+					for (int v = 0; v < colliderVectors.size(); v++)
+					{
+						std::vector<std::string> vectorData = MapEditor::splitString(colliderVectors[v], "|");
+						if (vectorData.size() == 2)
+						{
+							Vector2 curVec = Vector2(std::stof(vectorData[0]), std::stof(vectorData[1]));
+							
+							bool sameAsPrev = false;
+							if (colliderVerts.size() > 1)
+							{
+								if (curVec == colliderVerts[colliderVerts.size() - 2])
+								{
+									sameAsPrev = true;
+								}
+							}
+							if (!sameAsPrev)
+							{
+								colliderVerts.push_back(curVec);
+							}
+						}
+					}
+				}
+				entity->getPhysicsBody()->setPhysicsActive(true);
+				entity->getPhysicsBody()->setPhysicsMode(PhysicsBody::STATIC);
+				entity->getPhysicsBody()->setEdgeCollider(colliderVerts);
 				if (name != "")
 				{
 					entity->setName(name);
@@ -377,6 +543,286 @@ void MapEditor::loadMap(std::vector<Entity*>& entities, std::string filePath)
 			}
 		}
 	}
+}
+
+void MapEditor::updateColliderMode()
+{
+	if (input()->getKeyUp(SDLK_e) && selectedCollider == -1)
+	{
+		drawingCollider = edgeColliders.size();
+		Entity* edgeCollider = new Entity();
+		Mesh* colliderMesh = new Mesh();
+		Texture* texture = new Texture();
+		Sprite* sprite = new Sprite();
+		colliderMesh->setDrawMode(Mesh::drawModeSettings::lines);
+		sprite->setDynamics(colliderMesh, texture);
+		edgeCollider->addSprite(sprite);
+		std::vector<Vector2> firstVerts;
+		firstVerts.push_back(Vector2());
+		firstVerts.push_back(Vector2());
+		edgeColliderVerts.push_back(firstVerts);
+		edgeColliders.push_back(edgeCollider);
+		edgeCollider->setPosition(getCamera()->screenToWorldSpace(input()->getMousePosition()));
+		addEntity(edgeCollider);
+	}
+
+	if (drawingCollider != -1)
+	{
+		Vector2 vertPos = getCamera()->screenToWorldSpace(input()->getMousePosition()) - edgeColliders[drawingCollider]->getPosition();
+		edgeColliderVerts[drawingCollider][edgeColliderVerts[drawingCollider].size()-1] = vertPos;
+
+		edgeColliders[drawingCollider]->getSprite()->getDynamicMesh()->setFromVertices(edgeColliderVerts[drawingCollider]);
+
+		if (input()->getMouseButtonUp(1))
+		{
+			edgeColliderVerts[drawingCollider].push_back(vertPos);
+			edgeColliderVerts[drawingCollider].push_back(vertPos);
+		}
+
+		if (input()->getMouseButtonUp(3))
+		{
+			drawingCollider = -1;
+		}
+	}
+
+	if (selectedCollider == -1)
+	{
+		for (int i = 0; i < edgeColliders.size(); i++)
+		{
+			std::vector<Vector2> curEdgeVerts = edgeColliderVerts[i];
+			bool alreadyHovering = false;
+			if (hoversOverLine(edgeColliders[i]->getPosition(), curEdgeVerts, 5.0f) && !alreadyHovering && drawingCollider == -1)
+			{
+				edgeColliders[i]->getSprite()->getDynamicMesh()->setLineThickness(5.0f);
+				alreadyHovering = true;
+				if (input()->getMouseButtonUp(1))
+				{
+					selectedCollider = i;
+					edgeColliders[i]->color = GREY;
+				}
+			}
+			else
+			{
+				edgeColliders[i]->getSprite()->getDynamicMesh()->setLineThickness(3.0f);
+			}
+		}
+	}
+	else
+	{	
+		Vector2 mousePos = getCamera()->screenToWorldSpace(input()->getMousePosition());
+		std::vector<Vector2> verts = edgeColliderVerts[selectedCollider];
+
+		if (lockedVert != -1)
+		{
+			Vector2 selectedVertPos = edgeColliders[selectedCollider]->getPosition() + verts[lockedVert];
+			
+
+			if (input()->getMouseButton(1))
+			{
+				verts[lockedVert] = mousePos + curSelectedVertOffset - edgeColliders[selectedCollider]->getPosition();
+				if (lockedVert != 0 && lockedVert != verts.size() - 1)
+				{
+					verts[lockedVert + 1] = mousePos + curSelectedVertOffset - edgeColliders[selectedCollider]->getPosition();
+				}
+				edgeColliderVerts[selectedCollider] = verts;
+				edgeColliders[selectedCollider]->getSprite()->getDynamicMesh()->setFromVertices(verts);
+			}
+
+			if (input()->getMouseButtonUp(1))
+			{
+				lockedVert = -1;
+			}
+			
+		}
+	
+		if (verts.size() > 0)
+		{
+			if (hoversOverLine(edgeColliders[selectedCollider]->getPosition(), verts, 20.0f))
+			{
+				int closest = 0;
+				bool inRange = false;
+				for (int i = 0; i < verts.size(); i++)
+				{
+					Vector2 curVertPos = edgeColliders[selectedCollider]->getPosition() + verts[i];
+					Vector2 closestVertPos = edgeColliders[selectedCollider]->getPosition() + verts[closest];
+					
+					if (Vector2(mousePos, curVertPos).magnitude() <= 15)
+					{
+						if (Vector2(mousePos, curVertPos).magnitude() < Vector2(mousePos, closestVertPos).magnitude())
+						{
+							closest = i;
+						}
+						inRange = true;
+					}
+				}
+
+				if (inRange)
+				{
+					Vector2 selectedVertPos = edgeColliders[selectedCollider]->getPosition() + verts[closest];
+					if (input()->getMouseButtonDown(1))
+					{
+						curSelectedVertOffset = mousePos - selectedVertPos;
+						lockedVert = closest;
+					}
+
+					if (input()->getMouseButton(1))
+					{
+						verts[closest] = mousePos + curSelectedVertOffset - edgeColliders[selectedCollider]->getPosition();
+						if (closest != 0 && closest != verts.size() - 1)
+						{
+							verts[closest+1] = mousePos + curSelectedVertOffset - edgeColliders[selectedCollider]->getPosition();
+						}
+						edgeColliderVerts[selectedCollider] = verts;
+						edgeColliders[selectedCollider]->getSprite()->getDynamicMesh()->setFromVertices(verts);
+					}
+					if (lockedVert == -1)
+					{
+						hoveringVertIndicator->color.a = 100;
+						hoveringVertIndicator->setPosition(selectedVertPos);
+					}
+					else
+					{
+						hoveringVertIndicator->color.a = 0;
+					}
+					
+
+				}
+				else
+				{
+					hoveringVertIndicator->color.a = 0;
+				}
+			}
+			else
+			{
+				hoveringVertIndicator->color.a = 0;
+				if (input()->getMouseButtonUp(1))
+				{
+					edgeColliders[selectedCollider]->color = WHITE;
+					selectedCollider = -1;
+				}
+			}
+		}
+		if (input()->getMouseButtonUp(3))
+		{
+			removeEntity(edgeColliders[selectedCollider]);
+			delete edgeColliders[selectedCollider];
+			edgeColliders.erase(edgeColliders.begin() + selectedCollider);
+			edgeColliderVerts.erase(edgeColliderVerts.begin() + selectedCollider);
+			lockedVert = -1;
+			selectedCollider = -1;
+		}
+	}
+}
+
+void MapEditor::switchColliderMode(bool value)
+{
+	colliderMode = value;
+
+	if (value)
+	{
+		for (int i = 0; i < mapObjects.size(); i++)
+		{
+			mapObjects[i]->color.a = 100;
+		}
+		for (int i = 0; i < availableSprites.size(); i++)
+		{
+			availableSprites[i]->color.a = 0;
+		}
+		if (draggingImage != NULL)
+		{
+			removeHudElement(draggingImage);
+			delete draggingImage;
+			draggingImage = NULL;
+		}
+		if (selected != NULL)
+		{
+			selected = NULL;
+		}
+		if (renamer->isVisable())
+		{
+			renamer->setVisable(false);
+		}
+
+		for (int i = 0; i < edgeColliders.size(); i++)
+		{
+			edgeColliders[i]->color.a = 255;
+			edgeColliders[i]->getSprite()->getDynamicMesh()->setLineThickness(3.0f);
+		}
+
+		curModeText->setText("Collider Mode");
+	}
+	else
+	{
+		for (int i = 0; i < mapObjects.size(); i++)
+		{
+			mapObjects[i]->color.a = 255;
+		}
+		for (int i = 0; i < availableSprites.size(); i++)
+		{
+			availableSprites[i]->color.a = 255;
+		}
+		for (int i = 0; i < edgeColliders.size(); i++)
+		{
+			edgeColliders[i]->color.a = 100;
+		}
+		curModeText->setText("Object Mode");
+	}
+}
+
+bool MapEditor::hoversOverLine(Vector2 linePos, std::vector<Vector2> lineVerts, float detectionRange)
+{
+	int numVerts = lineVerts.size();
+	if (numVerts == 0)
+	{
+		return false;
+	}
+	for (unsigned int i = 0; i < numVerts - 1; i++) {
+		bool inRange = true;
+		Vector2 a = lineVerts[i] + linePos;
+		Vector2 b = lineVerts[i + 1] + linePos;
+
+		Vector2 mousePos = getCamera()->screenToWorldSpace(input()->getMousePosition());
+		Vector2 normal = Vector2::getNormalPoint(mousePos, a, b);
+		float distance = Vector2(mousePos, normal).magnitude();
+
+		if (a.x < b.x && normal.x < a.x) {
+			inRange = false;
+		}
+
+		if (a.y < b.y && normal.y < a.y) {
+			inRange = false;
+		}
+
+		if (a.x < b.x && normal.x > b.x) {
+			inRange = false;
+		}
+
+		if (a.y < b.y && normal.y > b.y) {
+			inRange = false;
+		}
+
+		if (b.x < a.x && normal.x < b.x) {
+			inRange = false;
+		}
+
+		if (b.y < a.y && normal.y < b.y) {
+			inRange = false;
+		}
+
+		if (b.x < a.x && normal.x > a.x) {
+			inRange = false;
+		}
+
+		if (b.y < a.y && normal.y > a.y) {
+			inRange = false;
+		}
+
+		if (distance <= detectionRange && inRange) {
+			return true;
+		}
+
+	}
+	return false;
 }
 
 void MapEditor::loadAvailableSprites()
@@ -426,58 +872,58 @@ void MapEditor::saveMapFile()
 {
 	std::stringstream mapData;
 
-	if (mapObjects.size() > 0)
+	mapData << "[EntityList]\n";
+	for(int i = 0; i < mapObjects.size(); i++)
 	{
-		mapData << "[EntityList]\n";
-		for(int i = 0; i < mapObjects.size(); i++)
-		{
-			mapData << mapObjects[i]->getName();
-			mapData << ",";
-			mapData << mapObjects[i]->getGlobalPosition().x;
-			mapData << ",";
-			mapData << mapObjects[i]->getGlobalPosition().y;
-			mapData << ",";
-			mapData << mapObjects[i]->getGlobalScale().x;
-			mapData << ",";
-			mapData << mapObjects[i]->getGlobalScale().y;
-			mapData << ",";
-			mapData << mapObjects[i]->getGlobalRotation();
-			mapData << ",";
-			mapData << mapObjects[i]->getSprite()->getFileName();
+		mapData << mapObjects[i]->getName();
+		mapData << ",";
+		mapData << mapObjects[i]->getGlobalPosition().x;
+		mapData << ",";
+		mapData << mapObjects[i]->getGlobalPosition().y;
+		mapData << ",";
+		mapData << mapObjects[i]->getGlobalScale().x;
+		mapData << ",";
+		mapData << mapObjects[i]->getGlobalScale().y;
+		mapData << ",";
+		mapData << mapObjects[i]->getGlobalRotation();
+		mapData << ",";
+		mapData << mapObjects[i]->getSprite()->getFileName();
 
-			mapData << "\n";
+		mapData << "\n";
 			
-		}
-		mapData << "[/EntityList]\n";
-		mapData << "[EdgeColliderList]\n";
-		for (int i = 0; i < edgeColliders.size(); i++)
+	}
+	mapData << "[/EntityList]\n";
+	mapData << "[EdgeColliderList]\n";
+	for (int i = 0; i < edgeColliders.size(); i++)
+	{
+		mapData << edgeColliders[i]->getName();
+		mapData << ",";
+		mapData << edgeColliders[i]->getGlobalPosition().x;
+		mapData << ",";
+		mapData << edgeColliders[i]->getGlobalPosition().y;
+		mapData << ",";
+		mapData << edgeColliders[i]->getGlobalScale().x;
+		mapData << ",";
+		mapData << edgeColliders[i]->getGlobalScale().y;
+		mapData << ",";
+		mapData << edgeColliders[i]->getGlobalRotation();
+		mapData << ",";
+		std::vector<Vector2>verts = edgeColliderVerts[i];
+		for (int ii = 0; ii < verts.size(); ii++)
 		{
-			mapData << edgeColliders[i]->getName();
-			mapData << ",";
-			mapData << edgeColliders[i]->getGlobalPosition().x;
-			mapData << ",";
-			mapData << edgeColliders[i]->getGlobalPosition().y;
-			mapData << ",";
-			mapData << edgeColliders[i]->getGlobalScale().x;
-			mapData << ",";
-			mapData << edgeColliders[i]->getGlobalScale().y;
-			mapData << ",";
-			mapData << edgeColliders[i]->getGlobalRotation();
-			mapData << ",";
-			mapData << edgeColliders[i]->getSprite()->getFileName();
-			mapData << ",";
-			std::vector<Vector2>verts = edgeColliders[i]->getPhysicsBody()->getColliderVertices();
-			for (int ii = 0; ii < verts.size(); i++)
+			mapData << verts[ii].x << "|" << verts[ii].y;
+			if (ii + 1 < verts.size())
 			{
-				mapData << verts[i].x << "|" << verts[i].y << "/";
+				mapData << "/";
 			}
-
-			mapData << "\n";
-
 		}
-		mapData << "[/EdgeColliderList]\n";
+
+		mapData << "\n";
 
 	}
+	mapData << "[/EdgeColliderList]\n";
+
+	
 
 	std::ofstream myfile("assets/level1.map");
 	if (myfile.is_open())
@@ -599,9 +1045,44 @@ void MapEditor::openMapFile(std::string filePath)
 	for (int i = 0; i < loadedEntities.size(); i++)
 	{
 		addEntity(loadedEntities[i]);
-		mapObjects.push_back(loadedEntities[i]);
+		if (loadedEntities[i]->getPhysicsBody()->getPhysicsActive())
+		{
+			Entity* edgeCollider = loadedEntities[i];
+			std::vector<Vector2> colliderVerts = loadedEntities[i]->getPhysicsBody()->getColliderVertices();
+			Mesh* colliderMesh = new Mesh();
+			Texture* texture = new Texture();
+			Sprite* sprite = new Sprite();
+			colliderMesh->setDrawMode(Mesh::drawModeSettings::lines);
+			sprite->setDynamics(colliderMesh, texture);
+			edgeCollider->addSprite(sprite);
+			std::vector<Vector2> fixedVerts;
+			float lineCounter = 0.0f;;
+
+			for (int v = 0; v < colliderVerts.size(); v++)
+			{
+				if (lineCounter >= 1.0f)
+				{
+					v--;
+					lineCounter = 0.0f;
+				}
+				fixedVerts.push_back(colliderVerts[v]);
+				lineCounter += 0.5f;
+			}
+			colliderMesh->setFromVertices(fixedVerts);
+			edgeColliderVerts.push_back(fixedVerts);
+			edgeColliders.push_back(edgeCollider);
+		}
+		else
+		{
+			mapObjects.push_back(loadedEntities[i]);
+		}
+		
 	}
+
+	switchColliderMode(colliderMode);
 }
+
+
 
 std::vector<std::string> MapEditor::splitString(std::string str, std::string splitter)
 {

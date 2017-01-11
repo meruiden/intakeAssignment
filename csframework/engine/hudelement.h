@@ -21,6 +21,7 @@ public:
 	void setScale(Vector2 newScale);
 	void setRotation(float newRotation);
 	void addSprite(std::string path);
+	void addSprite(Sprite* sprite);
 	void setGlobals(Vector2 pos, Vector2 scal, float rot);
 
 	Vector2 getPosition() { return position; }

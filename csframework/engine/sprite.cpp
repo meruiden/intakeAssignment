@@ -30,7 +30,6 @@ void Sprite::setDynamics(Mesh* mesh, Texture* texture)
 {
 	this->dynamicMesh = mesh;
 	this->dynamicTexture = texture;
-
 }
 
 void Sprite::setUvSize(Vector2 size)

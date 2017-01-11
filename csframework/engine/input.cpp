@@ -56,7 +56,7 @@ void Input::quit()
 
 Input::~Input()
 {
-
+	
 }
 
 void Input::update()

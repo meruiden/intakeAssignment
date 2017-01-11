@@ -10,7 +10,7 @@ Player::Player(PlayerGroundTrigger* groundTrigger) : Entity()
 	getPhysicsBody()->setDrawColliders(false);
 	wasGrounded = false;
 	landsound = new Sound("assets/footStep.wav");
-	setLayer(3);
+	setLayer(4);
 
 }
 

@@ -39,9 +39,6 @@ No Name,1682.8,270,1,1,0,assets/grass.png
 No Name,1746.8,270,1,1,0,assets/grass.png
 No Name,1811.1,270,1,1,0,assets/grass.png
 No Name,1875.1,270,1,1,0,assets/grass.png
-No Name,1939.4,270,1,1,0,assets/grass.png
-No Name,2068,270,1,1,0,assets/grass.png
-No Name,2132.3,270,1,1,0,assets/grass.png
 No Name,2196.6,270,1,1,0,assets/grass.png
 No Name,2260.9,270,1,1,0,assets/grass.png
 No Name,2325.2,270,1,1,0,assets/grass.png
@@ -130,8 +127,6 @@ No Name,1553.9,334,1,1,0,assets/dirt.png
 No Name,1617.9,334,1,1,0,assets/dirt.png
 No Name,1681.9,334,1,1,0,assets/dirt.png
 No Name,1745.9,334,1,1,0,assets/dirt.png
-No Name,1809.9,334,1,1,0,assets/dirt.png
-No Name,2003.4,270,1,1,0,assets/grass.png
 No Name,1873.9,334,1,1,0,assets/dirt.png
 No Name,1937.9,334,1,1,0,assets/dirt.png
 No Name,2001.9,334,1,1,0,assets/dirt.png
@@ -141,13 +136,30 @@ No Name,2193.9,334,1,1,0,assets/dirt.png
 No Name,2257.9,334,1,1,0,assets/dirt.png
 No Name,2321.9,334,1,1,0,assets/dirt.png
 No Name,2385.9,334,1,1,0,assets/dirt.png
-No Name,1809.9,334,1,1,0,assets/dirt.png
 No Name,1809.9,398,1,1,0,assets/dirt.png
 No Name,1873.9,398,1,1,0,assets/dirt.png
 No Name,1937.9,398,1,1,0,assets/dirt.png
 No Name,2001.9,398,1,1,0,assets/dirt.png
 No Name,2065.9,398,1,1,0,assets/dirt.png
 crate,1490.2,177.801,0.5,0.5,0,assets/crate/crate_full.png
+No Name,1809.9,334,1,1,0,assets/dirt.png
+zombie,646.784,110.601,1,1,0,assets/zombie_icon.png
+zombie,767.885,111.801,1,1,0,assets/zombie_icon.png
+zombie,872.885,109.801,1,1,0,assets/zombie_icon.png
+zombie,981.885,110.801,1,1,0,assets/zombie_icon.png
+zombie,1101.89,109.801,1,1,0,assets/zombie_icon.png
+zombie,1216.89,107.801,1,1,0,assets/zombie_icon.png
+No Name,1939.4,206,1,1,0,assets/grass.png
+No Name,2003.4,206,1,1,0,assets/dirt.png
+No Name,2068,206,1,1,0,assets/dirt.png
+No Name,1939.4,270,1,1,0,assets/dirt.png
+No Name,2003.4,270,1,1,0,assets/dirt.png
+No Name,2067.4,270,1,1,0,assets/dirt.png
+No Name,2003.4,142,1,1,0,assets/grass.png
+No Name,2068,142,1,1,0,assets/grass.png
+No Name,2132,206,1,1,0,assets/grass.png
+No Name,2131.4,270,1,1,0,assets/dirt.png
 [/EntityList]
 [EdgeColliderList]
+No Name,-655.009,236.801,1,1,0,0|0/2559.1|2.00002/2559.1|2.00002/2559.1|-62/2559.1|-62/2626.1|-63/2626.1|-63/2626.1|-126/2626.1|-126/2752.1|-126/2752.1|-126/2752.1|-63/2752.1|-63/2820.1|-64/2820.1|-64/2820.1|2.00002/2820.1|2.00002/3068.1|1.52588e-05/3068.1|1.52588e-05/3076.1|1.00002
 [/EdgeColliderList]

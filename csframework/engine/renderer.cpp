@@ -142,8 +142,6 @@ void Renderer::initGL()
 	{
 		fullScreenFlag = SDL_WINDOW_FULLSCREEN_DESKTOP;
 	}
-
-	glLineWidth(3.0f);
 }
 
 void Renderer::renderScene()
@@ -308,17 +306,17 @@ void Renderer::renderEntity(glm::mat4 &modelmatrix, Entity* entity, Camera* came
 		{
 			isVisable = true;
 		}
-
 		if (isVisable)
 		{
 			if (!entity->getSprite()->hasDynamicTexture())
 			{
-				if (entity->getSprite()->getFileName() == "")
-				{
-					return;
-				}
 				bool succes = false;
-				texture = ResourceManager::getInstance()->getTexture(entity->getSprite()->getFileName(), succes);
+				if (entity->getSprite()->getFileName() != "")
+				{
+					texture = ResourceManager::getInstance()->getTexture(entity->getSprite()->getFileName(), succes);
+				}
+				
+				
 				if (!succes)
 				{
 					return;
@@ -326,7 +324,6 @@ void Renderer::renderEntity(glm::mat4 &modelmatrix, Entity* entity, Camera* came
 			}
 			else
 			{
-
 				texture = entity->getSprite()->getDynamicTexture();
 			}
 
@@ -348,7 +345,11 @@ void Renderer::renderEntity(glm::mat4 &modelmatrix, Entity* entity, Camera* came
 				mesh = entity->getSprite()->getDynamicMesh();
 			}
 			entity->getSprite()->setSpriteSize(Vector2(mesh->getWidth(), mesh->getHeight()));
-			renderMesh(MVP, mesh, texture->getTextureBuffer(), entity->getSprite()->getUvOffset(), entity->color);
+
+			if (texture != NULL)
+			{
+				renderMesh(MVP, mesh, texture->getTextureBuffer(), entity->getSprite()->getUvOffset(), entity->color);
+			}
 		}
 	}
 	if (entity->getPhysicsBody()->getDrawColliders())
@@ -428,18 +429,18 @@ void Renderer::renderHudElement(glm::mat4 &modelmatrix, HudElement * hudelement)
 		{
 			isVisable = true;
 		}
-
 		if (isVisable)
 		{
 			if (!hudelement->getSprite()->hasDynamicTexture())
 			{
-				if (hudelement->getSprite()->getFileName() == "")
-				{
-					return;
-				}
 				bool succes = false;
+				if (hudelement->getSprite()->getFileName() != "")
+				{
+					texture = ResourceManager::getInstance()->getTexture(hudelement->getSprite()->getFileName(), succes);
 
-				texture = ResourceManager::getInstance()->getTexture(hudelement->getSprite()->getFileName(), succes);
+				}
+				
+
 				if (!succes)
 				{
 					return;
@@ -467,8 +468,10 @@ void Renderer::renderHudElement(glm::mat4 &modelmatrix, HudElement * hudelement)
 				mesh = hudelement->getSprite()->getDynamicMesh();
 			}
 			hudelement->getSprite()->setSpriteSize(Vector2(mesh->getWidth(), mesh->getHeight()));
-
-			renderMesh(MVP, mesh, texture->getTextureBuffer(), hudelement->getSprite()->getUvOffset(), hudelement->color);
+			if (texture != NULL)
+			{
+				renderMesh(MVP, mesh, texture->getTextureBuffer(), hudelement->getSprite()->getUvOffset(), hudelement->color);
+			}
 		}
 	}
 	std::vector<HudElement*>children = hudelement->getChildren();
@@ -542,6 +545,10 @@ void Renderer::renderMesh(glm::mat4 matrix, Mesh* mesh, GLuint textureBuffer, Ve
 
 	// Draw the triangles !
 	
+	if (mesh->getDrawMode() == Mesh::drawModeSettings::lines)
+	{
+		glLineWidth(mesh->getLineThickness());
+	}
 	glDrawArrays(mesh->getDrawMode(), 0, mesh->getNumVerts());
 
 	glDisableVertexAttribArray(vertexPosition_modelspaceID);
@@ -604,7 +611,7 @@ Renderer::~Renderer()
 		Camera::setResolution(originalResolution);
 	}
 	// delete RecouseManager instance
-	delete  ResourceManager::getInstance();
+	delete ResourceManager::getInstance();
 
 	// delete Input instance
 	delete Input::getInstance();

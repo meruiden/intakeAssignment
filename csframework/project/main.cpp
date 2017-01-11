@@ -4,13 +4,14 @@
 #include <project/menuscene.h>
 #include <project/settingscene.h>
 #include <project/mapeditor.h>
+#include <project/mapeditorhelp.h>
 
 Renderer* renderer;
 Level1* level1 = NULL;
 MenuScene* menuscene = NULL;
 SettingScene* settingscene = NULL;
 MapEditor* mapedit = NULL;;
-
+MapEditorHelp* mapEditHelp = NULL;
 
 
 int main(int argc, char* argv[]) {
@@ -19,11 +20,13 @@ int main(int argc, char* argv[]) {
 	menuscene = new MenuScene();
 	settingscene = new SettingScene();
 	mapedit = new MapEditor();
+	mapEditHelp = new MapEditorHelp();
 
 	SceneManager::addScene("level1", level1);
 	SceneManager::addScene("settings", settingscene);
 	SceneManager::addScene("menu", menuscene);
 	SceneManager::addScene("mapedit", mapedit);
+	SceneManager::addScene("mapEditHelp", mapEditHelp);
 	SceneManager::loadScene("menu");
 
 	while (!renderer->mustQuit()) {
@@ -34,6 +37,8 @@ int main(int argc, char* argv[]) {
 	delete menuscene;
 	delete settingscene;
 	delete mapedit;
+	delete mapEditHelp;
+
 	delete renderer;
 
 	return 0;

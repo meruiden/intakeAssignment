@@ -12,12 +12,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\csframework\project\audioparticle.cpp" />
+    <ClCompile Include="..\..\csframework\project\baselevel.cpp" />
     <ClCompile Include="..\..\csframework\project\bullet.cpp" />
     <ClCompile Include="..\..\csframework\project\crate.cpp" />
     <ClCompile Include="..\..\csframework\project\cratepart.cpp" />
     <ClCompile Include="..\..\csframework\project\level1.cpp" />
     <ClCompile Include="..\..\csframework\project\main.cpp" />
     <ClCompile Include="..\..\csframework\project\mapeditor.cpp" />
+    <ClCompile Include="..\..\csframework\project\mapeditorhelp.cpp" />
     <ClCompile Include="..\..\csframework\project\menuscene.cpp" />
     <ClCompile Include="..\..\csframework\project\player.cpp" />
     <ClCompile Include="..\..\csframework\project\playergroundtrigger.cpp" />
@@ -28,11 +30,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\csframework\project\audioparticle.h" />
+    <ClInclude Include="..\..\csframework\project\baselevel.h" />
     <ClInclude Include="..\..\csframework\project\bullet.h" />
     <ClInclude Include="..\..\csframework\project\crate.h" />
     <ClInclude Include="..\..\csframework\project\cratepart.h" />
     <ClInclude Include="..\..\csframework\project\level1.h" />
     <ClInclude Include="..\..\csframework\project\mapeditor.h" />
+    <ClInclude Include="..\..\csframework\project\mapeditorhelp.h" />
     <ClInclude Include="..\..\csframework\project\menuscene.h" />
     <ClInclude Include="..\..\csframework\project\player.h" />
     <ClInclude Include="..\..\csframework\project\playergroundtrigger.h" />

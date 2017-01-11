@@ -3,6 +3,8 @@
 #define MAX_MOUSE_BUTTONS 15
 //defines max mouse buttons possible.
 
+#include <string>
+
 #include <SDL.h>
 
 #include <engine/vector2.h>
@@ -33,11 +35,14 @@ public:
     int window_height;
 
 	static Input* getInstance();
-
+	
 	std::string getTextInput() { return lastPulledChar; }
 
 private:
 	Input();
+	static Input* instance;
+
+	std::string lastPulledChar;
 
     bool keys[SDL_NUM_SCANCODES];
     bool keysdown[SDL_NUM_SCANCODES];
@@ -57,9 +62,5 @@ private:
     bool scrollup;
     bool scrolldown;
 
-	std::string lastPulledChar;
-
     Vector2 mousepos;
-
-	static Input* instance;
 };

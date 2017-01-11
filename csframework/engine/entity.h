@@ -27,6 +27,7 @@ public:
 	void setLayer(int value);
 	void setName(std::string newName);
 	void addSprite(std::string path);
+	void addSprite(Sprite* sprite);
 	void addSpriteAsSpriteSheet(std::string path, int spriteWidth, int spriteHeight, int spritesPerRow, int rows);
 	void setGlobals(Vector2 pos, Vector2 scal, float rot);
 
@@ -75,7 +76,6 @@ private:
 	std::string name;
 
 	SpriteSheet* spritesheet;
-	
 	
 protected:
 	Sprite* sprite;

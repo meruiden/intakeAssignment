@@ -157,6 +157,15 @@ void HudElement::addSprite(std::string path)
 	sprite->setUpSprite(path);
 }
 
+void HudElement::addSprite(Sprite * sprite)
+{
+	if (this->sprite != NULL)
+	{
+		delete this->sprite;
+	}
+	this->sprite = sprite;
+}
+
 void HudElement::addChild(HudElement* element)
 {
 	if (element->parent != NULL) {

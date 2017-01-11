@@ -267,6 +267,15 @@ void Entity::addSprite(std::string path)
 	sprite->setUpSprite(path);
 }
 
+void Entity::addSprite(Sprite * sprite)
+{
+	if (this->sprite != NULL)
+	{
+		delete this->sprite;
+	}
+	this->sprite = sprite;
+}
+
 void Entity::addSpriteAsSpriteSheet(std::string path, int spriteWidth, int spriteHeight, int spritesPerRow, int rows)
 {
 	spritesheet->setUpSpriteSheet(path, spriteWidth, spriteHeight, spritesPerRow, rows);

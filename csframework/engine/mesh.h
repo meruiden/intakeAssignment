@@ -1,10 +1,13 @@
 #pragma once
 
-#include <GL/glew.h>
-#include <engine/vector2.h>
 #include <vector>
-#include <glm/glm.hpp>
 #include <iostream>
+
+#include <GL/glew.h>
+#include <glm/glm.hpp>
+
+#include <engine/vector2.h>
+
 class Mesh
 {
 public:
@@ -12,13 +15,21 @@ public:
 
 	virtual ~Mesh();
 
-	enum drawModeSettings {
+	enum drawModeSettings { //How are the vertices of the mesh set up?
 		triangles = GL_TRIANGLES,
 		polygons = GL_POLYGON,
 		lines = GL_LINES
 	};
-	//How are the vertices of the mesh set up?
+	
 
+	void setAsSquare(int width, int height, float uvWidth, float uvHeight);
+	void setUvOffset(Vector2 offset);
+	void setFromVertices(std::vector<Vector2> vertices);
+	void setFromVerticesAndUvs(std::vector<Vector2> vertices, std::vector<Vector2> uvs);
+	void setDrawMode(drawModeSettings settings);
+	void setLineThickness(float newThickness);
+
+	float getLineThickness() { return lineThickness; }
 	GLuint getVertexBuffer() { return vertexBuffer; }
 	GLuint getUvBuffer() { return uvBuffer; }
 	
@@ -31,16 +42,10 @@ public:
 
 	Vector2 getUvOffset() { return  uvOffset; }
 
-	void setAsSquare(int width, int height, float uvWidth, float uvHeight);
-	void setUvOffset(Vector2 offset);
-	void setFromVertices(std::vector<glm::vec3> vertices);
-	void setFromVerticesAndUvs(std::vector<glm::vec3> vertices, std::vector<glm::vec2> uvs);
-	void setDrawMode(drawModeSettings settings);
-
 	GLuint getDrawMode();
 
 private:
-	void generateBuffers(std::vector<glm::vec3> vertices, std::vector<glm::vec2> uvs);
+	void generateBuffers(std::vector<Vector2> vertices, std::vector<Vector2> uvs);
 
 	GLuint vertexBuffer;
 	GLuint uvBuffer;
@@ -50,6 +55,8 @@ private:
 
 	int textureWidth;
 	int textureHeight;
+
+	float lineThickness;
 
 	Vector2 uvOffset;
 	

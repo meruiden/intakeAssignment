@@ -18,7 +18,10 @@ void Texture::setPreloaded(int width, int height, GLuint textureBuffer)
 
 Texture::~Texture()
 {
-	glDeleteTextures(1, &textureBuffer);
+	if (textureBuffer != ResourceManager::getInstance()->getEmptyTexture())
+	{
+		glDeleteTextures(1, &textureBuffer);
+	}
 }
 
 bool Texture::loadTexture(std::string path)

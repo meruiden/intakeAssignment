@@ -15,6 +15,7 @@ Zombie::Zombie() : Entity()
 	this->healthText->setPosition(Vector2(0, -160));
 	this->setName("zombie");
 	this->setScale(Vector2(0.8f, 0.8f));
+	this->getPhysicsBody()->setBoxCollider(128, 200);
 
 }
 

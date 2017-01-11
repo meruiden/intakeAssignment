@@ -47,11 +47,27 @@ public:
 	float getDensity() { return density; }
 
 	void regenerateColliderMesh();
-	std::vector<Vector2> getColliderVertices();
+	std::vector<Vector2> getColliderVertices() { return preSetVerts; }
+
+	enum colliderType
+	{
+		RelativeCollider,
+		CicrleCollider,
+		BoxCollider,
+		CustomCollider,
+		EdgeCollider
+	};
+
+	colliderType getColliderType() { return curColliderType; }
+
 private:
 	void destroyCollider();
 
-	std::vector<glm::vec3>lastColliderVertices;
+	std::vector<Vector2> lastColliderVertices;
+	std::vector<Vector2> preSetVerts;
+
+	Vector2 preSetBoxColliderSize;
+	float preSetCircleColliderRadius;
 
 	b2Body* box2dBody;
 
@@ -67,6 +83,6 @@ private:
 	float density;
 
 	int curPhysicsMode;
-	
+	colliderType curColliderType;
 };
 

@@ -13,6 +13,9 @@ PhysicsBody::PhysicsBody()
 	curPhysicsMode = PhysicsBody::DYNAMIC;
 	friction = 0.2f;
 	density = 1.0f;
+	curColliderType = colliderType::RelativeCollider;
+	preSetBoxColliderSize = Vector2();
+	preSetCircleColliderRadius = 0.0f;
 }
 
 PhysicsBody::~PhysicsBody()
@@ -25,7 +28,12 @@ PhysicsBody::~PhysicsBody()
 
 void PhysicsBody::setBoxCollider(float width, float height)
 {
-
+	curColliderType = colliderType::BoxCollider;
+	if (box2dBody == NULL)
+	{
+		preSetBoxColliderSize = Vector2(width, height);
+		return;
+	}
 	b2Body* body = box2dBody;
 	destroyCollider();
 	b2PolygonShape shape;
@@ -47,6 +55,12 @@ void PhysicsBody::setBoxCollider(float width, float height)
 
 void PhysicsBody::setCircleCollider(float radius)
 {
+	curColliderType = colliderType::CicrleCollider;
+	if (box2dBody == NULL)
+	{
+		preSetCircleColliderRadius = radius;
+		return;
+	}
 	radius *= 0.02f;
 	b2Body* body = box2dBody;
 	destroyCollider();
@@ -63,13 +77,21 @@ void PhysicsBody::setCircleCollider(float radius)
 	fixture->SetFriction(friction);
 	customCollider = true;
 	regenerateColliderMesh();
-	
-	
 }
 
 
 void PhysicsBody::setCollider(std::vector<Vector2> vertices)
 {
+	if (vertices.size() == 0)
+	{
+		return;
+	}
+	curColliderType = colliderType::CustomCollider;
+	preSetVerts = vertices;
+	if (box2dBody == NULL)
+	{
+		return;
+	}
 	std::vector<b2Vec2> b2verts;
 	for (unsigned int i = 0; i < vertices.size(); i++)
 	{
@@ -97,13 +119,23 @@ void PhysicsBody::setCollider(std::vector<Vector2> vertices)
 
 void PhysicsBody::setEdgeCollider(std::vector<Vector2> vertices)
 {
+	if (vertices.size() == 0)
+	{
+		return;
+	}
+	curColliderType = colliderType::EdgeCollider;
+	preSetVerts = vertices;
+	if (box2dBody == NULL)
+	{	
+		return;
+	}
 	b2Body* body = box2dBody;
 	destroyCollider();
 	b2EdgeShape shape;
 	b2FixtureDef fixtureDef;
 	fixtureDef.shape = &shape;
 	fixtureDef.density = 1.0f;
-
+	
 	for (unsigned int i = 0; i < vertices.size()-1; i++)
 	{
 		shape.Set(b2Vec2(vertices[i].x * 0.02f, vertices[i].y * 0.02f), b2Vec2(vertices[i+1].x * 0.02f, vertices[i+1].y * 0.02f));
@@ -148,6 +180,21 @@ void PhysicsBody::setBox2dBody(b2Body* body)
 
 	if (body != NULL)
 	{
+		switch (curColliderType)
+		{
+		case PhysicsBody::CicrleCollider:
+			setCircleCollider(preSetCircleColliderRadius);
+			break;
+		case PhysicsBody::BoxCollider:
+			setBoxCollider(preSetBoxColliderSize.x, preSetBoxColliderSize.y);
+			break;
+		case PhysicsBody::CustomCollider:
+			setCollider(preSetVerts);
+			break;
+		case PhysicsBody::EdgeCollider:
+			setEdgeCollider(preSetVerts);
+			break;
+		}
 		setPhysicsActive(physicsActive);
 		setPhysicsMode(curPhysicsMode);
 		setFixedRotation(fixedRotation);
@@ -173,12 +220,8 @@ void PhysicsBody::setDrawColliders(bool active)
 
 void PhysicsBody::regenerateColliderMesh()
 {
-	bool isCircle = false;
-	bool isEdge = false;
-	
-
-	std::vector<glm::vec3> vertices;
-	std::vector<glm::vec2> uvs;
+	std::vector<Vector2> vertices;
+	std::vector<Vector2> uvs;
 	b2Shape* shape = box2dBody->GetFixtureList()->GetShape();
 
 	if (shape->GetType() == b2Shape::Type::e_polygon)
@@ -189,8 +232,8 @@ void PhysicsBody::regenerateColliderMesh()
 		{
 			b2Vec2 pos = poly->GetVertex(i);
 			pos *= 50.0f;
-			vertices.push_back(glm::vec3(pos.x, pos.y, 0.0f));
-			uvs.push_back(glm::vec2(0.5f, 0.5f));
+			vertices.push_back(Vector2(pos.x, pos.y));
+			uvs.push_back(Vector2(0.5f, 0.5f));
 		}
 
 		
@@ -198,7 +241,6 @@ void PhysicsBody::regenerateColliderMesh()
 	{
 
 		b2CircleShape *poly = (b2CircleShape*)shape;
-		isCircle = true;
 		float radius = poly->m_radius;
 		radius *= 50.0f;
 		if (lastCircleRadius == radius)
@@ -210,13 +252,12 @@ void PhysicsBody::regenerateColliderMesh()
 		for (unsigned int i = 0; i < segments; i++)
 		{
 			float angle = 2.0f * PI * float(i) / float(segments);
-			vertices.push_back(glm::vec3(cosf(angle)*radius, sinf(angle)*radius, 0.0f));
-			uvs.push_back(glm::vec2(0.5f, 0.5f));
+			vertices.push_back(Vector2(cosf(angle)*radius, sinf(angle)*radius));
+			uvs.push_back(Vector2(0.5f, 0.5f));
 		}
 	}
 	else if (shape->GetType() == b2Shape::Type::e_edge)
 	{
-		int ii = 0;
 		for (b2Fixture* f = box2dBody->GetFixtureList(); f; f = f->GetNext())
 		{
 			b2Shape* s = f->GetShape();
@@ -225,20 +266,35 @@ void PhysicsBody::regenerateColliderMesh()
 			b2Vec2 pos2 = edge->m_vertex2;
 			pos1 *= 50.0f;
 			pos2 *= 50.0f;
-			vertices.push_back(glm::vec3(pos1.x, pos1.y, 0.0f));
-			vertices.push_back(glm::vec3(pos2.x, pos2.y, 0.0f));
-			uvs.push_back(glm::vec2(0.5f, 0.5f));
-			uvs.push_back(glm::vec2(0.5f, 0.5f));
-			ii++;
+			vertices.push_back(Vector2(pos1.x, pos1.y));
+			vertices.push_back(Vector2(pos2.x, pos2.y));
+			uvs.push_back(Vector2(0.5f, 0.5f));
+			uvs.push_back(Vector2(0.5f, 0.5f));
 			
 		}
 
 		vertices.push_back(vertices[vertices.size()-1]);
-		uvs.push_back(glm::vec2(0.5f, 0.5f));
-		isEdge = true;
+		uvs.push_back(Vector2(0.5f, 0.5f));
 	}
 
-	if (lastColliderVertices == vertices && !isCircle)
+	bool collidersSame = true;
+	if (lastColliderVertices.size() == vertices.size())
+	{
+		for (int i = 0; i < lastColliderVertices.size(); i++)
+		{
+			if(lastColliderVertices[i] != vertices[i])
+			{
+				collidersSame = false;
+				break;
+			}
+		}
+	}
+	else
+	{
+		collidersSame = false;
+	}
+
+	if (collidersSame && curColliderType != colliderType::CicrleCollider)
 	{
 		return;
 	}
@@ -259,12 +315,9 @@ void PhysicsBody::regenerateColliderMesh()
 	}
 
 	lastColliderVertices = vertices;
-
-
-
 	drawColliderMesh = new Mesh();
 	drawColliderMesh->setFromVerticesAndUvs(vertices, uvs);
-	if (isEdge)
+	if (curColliderType == colliderType::EdgeCollider)
 	{
 		drawColliderMesh->setDrawMode(Mesh::drawModeSettings::lines);
 	}
@@ -275,15 +328,7 @@ void PhysicsBody::regenerateColliderMesh()
 	
 	
 }
-std::vector<Vector2> PhysicsBody::getColliderVertices()
-{
-	std::vector<Vector2> v2Verts;
-	for (int i = 0; i < lastColliderVertices.size(); i++)
-	{
-		v2Verts.push_back(Vector2(lastColliderVertices[i].x, lastColliderVertices[i].y));
-	}
-	return v2Verts;
-}
+
 void PhysicsBody::destroyCollider()
 {
 	std::vector<b2Fixture*> toDestroy;
