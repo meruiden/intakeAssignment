@@ -57,4 +57,5 @@ private:
 	Entity* weapon;
 	Entity* bulletLaunchPos;
 
+
 };

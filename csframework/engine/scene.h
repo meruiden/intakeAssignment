@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <string>
 
 #include <Box2D/Box2D.h>
 
@@ -28,6 +29,9 @@ public:
 	Input* input() { return Input::getInstance(); }
 	std::vector <Entity*> getEntities() { return entities; }
 	std::vector <HudElement*> getHudElements() { return hudElements; }
+
+	Entity* getEntityByName(std::string name);
+	std::vector <Entity*> getEntitiesByName(std::string name);
 
 	b2World* getPhysicsWorld() { return physicsWorld; }
 	Camera* getCamera() { return camera; }

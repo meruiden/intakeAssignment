@@ -145,6 +145,28 @@ void Scene::removeHudElement(HudElement* element)
 	}
 }
 
+Entity * Scene::getEntityByName(std::string name)
+{
+	for each (Entity* entity in entities)
+	{
+		if (entity->getName().compare(name)) {
+			return entity;
+		}
+	}
+}
+
+std::vector<Entity*> Scene::getEntitiesByName(std::string name)
+{
+	std::vector<Entity*> foundEntities;
+	for each (Entity* entity in entities)
+	{
+		if (entity->getName().compare(name)) {
+			foundEntities.push_back(entity);
+		}
+	}
+	return foundEntities;
+}
+
 Scene::~Scene()
 {
 	delete collisionHandler;
