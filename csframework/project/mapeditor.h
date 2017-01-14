@@ -13,6 +13,7 @@
 #include <engine/scenemanager.h>
 #include <engine/hudtext.h>
 #include <engine/sprite.h>
+#include <engine/csutils.h>
 
 #include <project/textinputfield.h>
 
