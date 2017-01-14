@@ -140,6 +140,7 @@ add_library(engine
 	"${FRAMEWORK_DIR}/engine/texture.h"
 	"${FRAMEWORK_DIR}/engine/vector2.cpp"
 	"${FRAMEWORK_DIR}/engine/vector2.h"
+	"${FRAMEWORK_DIR}/engine/csutils.h"
 )
 
 add_executable(project
@@ -170,6 +171,9 @@ add_executable(project
 	"${FRAMEWORK_DIR}/project/cratepart.h"
 	"${FRAMEWORK_DIR}/project/textinputfield.cpp"
 	"${FRAMEWORK_DIR}/project/textinputfield.h"
+	"${FRAMEWORK_DIR}/project/mapeditorhelp.cpp"
+	"${FRAMEWORK_DIR}/project/mapeditorhelp.h"
+
 )
 
 target_link_libraries(project

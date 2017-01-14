@@ -1084,18 +1084,3 @@ void MapEditor::openMapFile(std::string filePath)
 
 
 
-std::vector<std::string> MapEditor::splitString(std::string str, std::string splitter)
-{
-	std::vector<std::string> tokens;
-	std::string::size_type lastPos = str.find_first_not_of(splitter, 0);
-	std::string::size_type pos = str.find_first_of(splitter, lastPos);
-
-	while (std::string::npos != pos || std::string::npos != lastPos)
-	{
-		tokens.push_back(str.substr(lastPos, pos - lastPos));
-		lastPos = str.find_first_not_of(splitter, pos);
-		pos = str.find_first_of(splitter, lastPos);
-	}
-
-	return tokens;
-}

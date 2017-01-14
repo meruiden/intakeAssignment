@@ -14,5 +14,4 @@ Level1::~Level1()
 void Level1::update(float deltaTime)
 {
 	BaseLevel::update(deltaTime);
-
 }

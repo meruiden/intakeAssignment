@@ -11,7 +11,6 @@ HudText::HudText()
 void HudText::setText(std::string text)
 {
 	this->text = text;
-
 	if (text == lastText) {
 		return;
 	}
@@ -54,7 +53,7 @@ void HudText::setText(std::string text)
 	texture->setPreloaded(fontSurface->w, fontSurface->h, textureBuffer);
 
 	sprite->setDynamics(mesh, texture);
-
+	sprite->setSpriteSize(Vector2(mesh->getWidth(), mesh->getHeight()));
 	SDL_FreeSurface(fontSurface);
 	fontSurface = NULL;
 

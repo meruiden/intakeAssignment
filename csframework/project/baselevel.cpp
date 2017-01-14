@@ -51,10 +51,16 @@ BaseLevel::BaseLevel() : Scene()
 	leftArm->setScale(Vector2(-1, 1));
 	rightArm->setScale(Vector2(-1, 1));
 	preloadImages();
+
+	questLog = new QuestLog();
+	addHudElement(questLog);
+	questLog->addQuest("Hospital needed!", "Clear the path to\nthe Hostpital so Jason\ncan get the medical suplies.");
 }
 
 BaseLevel::~BaseLevel()
 {
+	removeHudElement(questLog);
+	delete questLog;
 
 	weapon->removeChild(bulletLaunchPos);
 	delete bulletLaunchPos;

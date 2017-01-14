@@ -13,6 +13,7 @@
 #include <project/audioparticle.h>
 #include <project/crate.h>
 #include <project/cratepart.h>
+#include <project/questlog.h>
 
 class BaseLevel : public Scene
 {
@@ -57,5 +58,5 @@ private:
 	Entity* weapon;
 	Entity* bulletLaunchPos;
 
-
+	QuestLog* questLog;
 };

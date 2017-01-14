@@ -23,6 +23,7 @@
     <ClCompile Include="..\..\csframework\project\menuscene.cpp" />
     <ClCompile Include="..\..\csframework\project\player.cpp" />
     <ClCompile Include="..\..\csframework\project\playergroundtrigger.cpp" />
+    <ClCompile Include="..\..\csframework\project\questlog.cpp" />
     <ClCompile Include="..\..\csframework\project\settingsbutton.cpp" />
     <ClCompile Include="..\..\csframework\project\settingscene.cpp" />
     <ClCompile Include="..\..\csframework\project\textinputfield.cpp" />
@@ -40,6 +41,7 @@
     <ClInclude Include="..\..\csframework\project\menuscene.h" />
     <ClInclude Include="..\..\csframework\project\player.h" />
     <ClInclude Include="..\..\csframework\project\playergroundtrigger.h" />
+    <ClInclude Include="..\..\csframework\project\questlog.h" />
     <ClInclude Include="..\..\csframework\project\settingsbutton.h" />
     <ClInclude Include="..\..\csframework\project\settingscene.h" />
     <ClInclude Include="..\..\csframework\project\textinputfield.h" />
