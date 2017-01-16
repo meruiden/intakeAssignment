@@ -113,7 +113,7 @@ MapEditor::~MapEditor()
 
 void MapEditor::update(float deltaTime)
 {
-	if (!fileNameHandler->isVisable())
+	if (!fileNameHandler->isVisable() && !renamer->isSelected())
 	{
 		if (input()->getKey(SDLK_d))
 		{
@@ -436,7 +436,7 @@ void MapEditor::loadMap(std::vector<Entity*>& entities, std::string filePath)
 	}
 	mapFile.close();
 
-	std::vector<std::string> lines = MapEditor::splitString(output, "\n");
+	std::vector<std::string> lines = csframework::splitString(output, "\n");
 
 	for (int i = 0; i < lines.size(); i++)
 	{
@@ -451,7 +451,7 @@ void MapEditor::loadMap(std::vector<Entity*>& entities, std::string filePath)
 				std::string imagePath = "";
 				std::string name = "";
 
-				std::vector<std::string> data = MapEditor::splitString(lines[i], ",");
+				std::vector<std::string> data = csframework::splitString(lines[i], ",");
 
 				if (data.size() == 7)
 				{
@@ -490,7 +490,7 @@ void MapEditor::loadMap(std::vector<Entity*>& entities, std::string filePath)
 				float rotation = 0.0f;
 				std::string name = "";
 				std::string colliderVertsString = "";
-				std::vector<std::string> data = MapEditor::splitString(lines[i], ",");
+				std::vector<std::string> data = csframework::splitString(lines[i], ",");
 
 				if (data.size() == 7)
 				{
@@ -505,26 +505,15 @@ void MapEditor::loadMap(std::vector<Entity*>& entities, std::string filePath)
 				std::vector<Vector2> colliderVerts;
 				if (colliderVertsString != "")
 				{
-					std::vector<std::string> colliderVectors = MapEditor::splitString(colliderVertsString, "/");
+					std::vector<std::string> colliderVectors = csframework::splitString(colliderVertsString, "/");
 					for (int v = 0; v < colliderVectors.size(); v++)
 					{
-						std::vector<std::string> vectorData = MapEditor::splitString(colliderVectors[v], "|");
+
+						std::vector<std::string> vectorData = csframework::splitString(colliderVectors[v], "|");
 						if (vectorData.size() == 2)
 						{
 							Vector2 curVec = Vector2(std::stof(vectorData[0]), std::stof(vectorData[1]));
-							
-							bool sameAsPrev = false;
-							if (colliderVerts.size() > 1)
-							{
-								if (curVec == colliderVerts[colliderVerts.size() - 2])
-								{
-									sameAsPrev = true;
-								}
-							}
-							if (!sameAsPrev)
-							{
-								colliderVerts.push_back(curVec);
-							}
+							colliderVerts.push_back(curVec);
 						}
 					}
 				}
@@ -839,7 +828,7 @@ void MapEditor::loadAvailableSprites()
 	}
 	myReadFile.close();
 
-	std::vector<std::string> imagePaths = MapEditor::splitString(output, "\n");
+	std::vector<std::string> imagePaths = csframework::splitString(output, "\n");
 	for (int i = 0; i < imagePaths.size(); i++)
 	{
 		HudElement* img = new HudElement();
@@ -1060,13 +1049,7 @@ void MapEditor::openMapFile(std::string filePath)
 
 			for (int v = 0; v < colliderVerts.size(); v++)
 			{
-				if (lineCounter >= 1.0f)
-				{
-					v--;
-					lineCounter = 0.0f;
-				}
 				fixedVerts.push_back(colliderVerts[v]);
-				lineCounter += 0.5f;
 			}
 			colliderMesh->setFromVertices(fixedVerts);
 			edgeColliderVerts.push_back(fixedVerts);

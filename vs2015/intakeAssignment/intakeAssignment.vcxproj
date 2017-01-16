@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\csframework\project\audioparticle.cpp" />
+    <ClCompile Include="..\..\csframework\project\background.cpp" />
     <ClCompile Include="..\..\csframework\project\baselevel.cpp" />
     <ClCompile Include="..\..\csframework\project\bullet.cpp" />
     <ClCompile Include="..\..\csframework\project\crate.cpp" />
@@ -24,6 +25,7 @@
     <ClCompile Include="..\..\csframework\project\player.cpp" />
     <ClCompile Include="..\..\csframework\project\playergroundtrigger.cpp" />
     <ClCompile Include="..\..\csframework\project\questlog.cpp" />
+    <ClCompile Include="..\..\csframework\project\questnpc.cpp" />
     <ClCompile Include="..\..\csframework\project\settingsbutton.cpp" />
     <ClCompile Include="..\..\csframework\project\settingscene.cpp" />
     <ClCompile Include="..\..\csframework\project\textinputfield.cpp" />
@@ -31,6 +33,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\csframework\project\audioparticle.h" />
+    <ClInclude Include="..\..\csframework\project\background.h" />
     <ClInclude Include="..\..\csframework\project\baselevel.h" />
     <ClInclude Include="..\..\csframework\project\bullet.h" />
     <ClInclude Include="..\..\csframework\project\crate.h" />
@@ -42,6 +45,7 @@
     <ClInclude Include="..\..\csframework\project\player.h" />
     <ClInclude Include="..\..\csframework\project\playergroundtrigger.h" />
     <ClInclude Include="..\..\csframework\project\questlog.h" />
+    <ClInclude Include="..\..\csframework\project\questnpc.h" />
     <ClInclude Include="..\..\csframework\project\settingsbutton.h" />
     <ClInclude Include="..\..\csframework\project\settingscene.h" />
     <ClInclude Include="..\..\csframework\project\textinputfield.h" />

@@ -2,6 +2,7 @@
 
 #include <engine/hudelement.h>
 #include <engine/resourcemanager.h>
+#include <engine/csutils.h>
 
 class HudText : public HudElement
 {

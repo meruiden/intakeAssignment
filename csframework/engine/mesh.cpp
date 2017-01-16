@@ -112,8 +112,8 @@ void Mesh::setFromVertices(std::vector<Vector2> vertices)
 		}
 	}
 	
-	this->width = abs(max.x)*2.0f;
-	this->height = abs(max.y)*2.0f;
+	this->width = std::max(std::abs(min.x), std::abs(max.x))*2.0f;
+	this->height = std::max(std::abs(min.y), std::abs(max.y))*2.0f;
 	Vector2 scalar = Vector2(1.0f / (max.x - min.x), 1.0f / (max.y - min.y));
 
 	
@@ -153,8 +153,8 @@ void Mesh::setFromVerticesAndUvs(std::vector<Vector2> vertices, std::vector<Vect
 		}
 	}
 
-	this->width = abs(max.x)*2.0f;
-	this->height = abs(max.y)*2.0f;
+	this->width = std::max(std::abs(min.x), std::abs(max.x))*2.0f;
+	this->height = std::max(std::abs(min.y), std::abs(max.y))*2.0f;
 
 	numVerts = vertices.size();
 	generateBuffers(vertices, uvs);

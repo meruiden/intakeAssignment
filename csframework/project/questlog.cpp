@@ -6,12 +6,19 @@ QuestLog::QuestLog()
 	this->addChild(infoText);
 	this->infoText->loadFont("assets/arial.ttf");
 	this->infoText->setMultiLine(true);
+	this->infoText->color = BLACK;
 
 	surrounding = new Mesh();
+	surrounding->setDrawMode(Mesh::drawModeSettings::lines);
+	surrounding->setLineThickness(5);
+
+	Texture* emptyTexture = new Texture();
 	Sprite* sprite = new Sprite();
-	sprite->setDynamics(surrounding, NULL);
+	sprite->setDynamics(surrounding, emptyTexture);
 	this->addSprite(sprite);
 	this->color = BLACK;
+
+	padding = 5;
 }
 
 
@@ -57,6 +64,7 @@ void QuestLog::reformatText()
 
 	std::vector<Vector2> vertices;
 	Vector2 halveSize = Vector2(infoText->getWidth()/2.0f, infoText->getHeight()/2.0f);
+	halveSize += padding;
 	vertices.push_back(Vector2(-halveSize.x, -halveSize.y));
 	vertices.push_back(Vector2(halveSize.x, -halveSize.y));
 
@@ -71,7 +79,4 @@ void QuestLog::reformatText()
 
 	surrounding->setFromVertices(vertices);
 
-	for each(Vector2 v in vertices) {
-		std::cout << v.toString() << std::endl;
-	}
 }

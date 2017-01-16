@@ -149,5 +149,8 @@
     <ClInclude Include="..\..\..\csframework\engine\vector2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="csutils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

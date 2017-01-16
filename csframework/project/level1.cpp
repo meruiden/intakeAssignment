@@ -3,6 +3,7 @@
 Level1::Level1() : BaseLevel()
 {
 	loadMap("assets/level1.map");
+
 }
 
 

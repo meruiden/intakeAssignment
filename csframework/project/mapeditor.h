@@ -40,8 +40,6 @@ private:
 	void switchColliderMode(bool value);
 	
 	bool hoversOverLine(Vector2 linePos, std::vector<Vector2> lineVerts, float detectionRange);
-
-	static std::vector<std::string> splitString(std::string str, std::string splitter);
 	std::vector<HudElement*> availableSprites;
 	std::vector<Entity*> mapObjects;
 	std::vector<Entity*> edgeColliders;

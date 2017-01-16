@@ -70,7 +70,19 @@ void TextMesh::setText(std::string text)
 
 	if (multiline)
 	{
-		fontSurface = TTF_RenderText_Blended_Wrapped(font, text.c_str(), c, (int)text.length() * (int)FONT_SIZE);
+		std::vector<std::string> lines = csframework::splitString(text, "\n");
+		std::string longestLine = "";
+		for each(std::string line in lines)
+		{
+			if (line.size() > longestLine.size())
+			{
+				longestLine = line;
+			}
+		}
+		int lineWidth;
+		int lineHeight;
+		TTF_SizeText(font, longestLine.c_str(), &lineWidth, &lineHeight);
+		fontSurface = TTF_RenderText_Blended_Wrapped(font, text.c_str(), c, lineWidth);
 	}
 	else
 	{

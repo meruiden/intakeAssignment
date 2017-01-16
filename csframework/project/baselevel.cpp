@@ -2,6 +2,9 @@
  
 BaseLevel::BaseLevel() : Scene()
 {
+	background = new Background(getCamera());
+	addEntity(background);
+
 	playerGroundTrigger = new PlayerGroundTrigger();
 	player = new Player(playerGroundTrigger);
 	addEntity(player);
@@ -28,8 +31,6 @@ BaseLevel::BaseLevel() : Scene()
 	weapon = new Entity();
 	weapon->addSprite("assets/mp5.png");
 	leftArmPivot->addChild(weapon);
-
-
 	leftArm = new Entity();
 	leftArmPivot->addChild(leftArm);
 	leftArm->addSprite("assets/character_arm_left.png");
@@ -54,11 +55,16 @@ BaseLevel::BaseLevel() : Scene()
 
 	questLog = new QuestLog();
 	addHudElement(questLog);
+	questLog->setAnchorPoint(HudElement::ANCHOR_TOP_RIGHT);
 	questLog->addQuest("Hospital needed!", "Clear the path to\nthe Hostpital so Jason\ncan get the medical suplies.");
+
 }
 
 BaseLevel::~BaseLevel()
 {
+	removeEntity(background);
+	delete background;
+
 	removeHudElement(questLog);
 	delete questLog;
 
@@ -120,6 +126,8 @@ BaseLevel::~BaseLevel()
 
 void BaseLevel::update(float deltaTime)
 {
+	questLog->setPosition(Vector2(-questLog->getWidth() / 2.0f, questLog->getHeight() / 2.0f) + Vector2(-10, 10));
+
 	shootDelayCounter += deltaTime;
 	handleInput();
 	playerGroundTrigger->setPosition(player->getPosition() + Vector2(0, player->getHeight()/2.0f ));
@@ -137,7 +145,6 @@ void BaseLevel::update(float deltaTime)
 	{
 		SceneManager::loadScene("menu");
 	}
-
 
 	float lookAtRotation = 0.0f;
 
@@ -210,6 +217,7 @@ void BaseLevel::preloadImages()
 	ResourceManager::getInstance()->getTexture("assets/mp5.png", succes);
 	ResourceManager::getInstance()->getTexture("assets/zombie.png", succes);
 	ResourceManager::getInstance()->getTexture("assets/crate/crate_full.png", succes);
+	ResourceManager::getInstance()->getTexture("assets/background.png", succes);
 	for (int i = 1; i <= 9; i++)
 	{
 		std::stringstream path;

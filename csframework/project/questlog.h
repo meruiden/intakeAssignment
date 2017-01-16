@@ -23,5 +23,7 @@ private:
 
 	HudText* infoText;
 	Mesh* surrounding;
+
+	int padding;
 };
 

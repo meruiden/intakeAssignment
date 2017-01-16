@@ -173,7 +173,12 @@ add_executable(project
 	"${FRAMEWORK_DIR}/project/textinputfield.h"
 	"${FRAMEWORK_DIR}/project/mapeditorhelp.cpp"
 	"${FRAMEWORK_DIR}/project/mapeditorhelp.h"
-
+	"${FRAMEWORK_DIR}/project/questlog.cpp"
+	"${FRAMEWORK_DIR}/project/questlog.h"
+	"${FRAMEWORK_DIR}/project/backgound.cpp"
+	"${FRAMEWORK_DIR}/project/background.h"
+	"${FRAMEWORK_DIR}/project/questnpc.cpp"
+	"${FRAMEWORK_DIR}/project/questnpc.h"
 )
 
 target_link_libraries(project

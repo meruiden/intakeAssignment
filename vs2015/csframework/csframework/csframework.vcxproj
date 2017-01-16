@@ -129,6 +129,7 @@
     <ClInclude Include="..\..\..\csframework\engine\textmesh.h" />
     <ClInclude Include="..\..\..\csframework\engine\texture.h" />
     <ClInclude Include="..\..\..\csframework\engine\vector2.h" />
+    <ClInclude Include="csutils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

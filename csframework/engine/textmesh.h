@@ -2,6 +2,7 @@
 
 #include <engine/entity.h>
 #include <engine/resourcemanager.h>
+#include <engine/csutils.h>
 
 class TextMesh : public Entity
 {

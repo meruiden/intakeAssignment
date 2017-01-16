@@ -316,7 +316,6 @@ void Renderer::renderEntity(glm::mat4 &modelmatrix, Entity* entity, Camera* came
 					texture = ResourceManager::getInstance()->getTexture(entity->getSprite()->getFileName(), succes);
 				}
 				
-				
 				if (!succes)
 				{
 					return;
