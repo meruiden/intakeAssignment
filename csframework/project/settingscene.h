@@ -17,11 +17,8 @@ public:
 
 private:
 	std::vector<SettingsButton*> buttons;
-	std::vector<HudText*> buttonTexts;
-	HudElement* toggleFullScreenButton;
-	HudElement* backButton;
-	HudElement* toggleVsync;
-	HudText* toggleFullScreenButtonText;
-	HudText* toggleVsyncText;
+	SettingsButton* toggleFullScreenButton;
+	SettingsButton* toggleVsync;
+
 };
 

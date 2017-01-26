@@ -12,11 +12,9 @@ SettingScene::SettingScene() : Scene()
 		buttons.push_back(button);
 		addHudElement(button);
 
-		HudText* buttonText = new HudText();
-		buttonText->loadFont("assets/arial.ttf");
-		buttonText->setText(resolutions[i].toString());
 		button->setScale(Vector2(4, 1));
 		button->setPosition(Vector2(0, -350));
+		button->refitText();
 		if (nextToPrev) 
 		{
 			button->setPosition(button->getPosition() + Vector2(200, (i-1) * 30));
@@ -28,41 +26,25 @@ SettingScene::SettingScene() : Scene()
 			nextToPrev = true;
 
 		}
-		
-		buttonText->setPosition(button->getPosition());
-		addHudElement(buttonText);
-		buttonText->color = BLACK;
+
 	}
 
-	toggleFullScreenButton = new HudElement();
+	toggleFullScreenButton = new SettingsButton("Toggle fullscreen");
 	toggleFullScreenButton->setAnchorPoint(HudElement::ANCHOR_BOTTOM_LEFT);
 	toggleFullScreenButton->addSprite("assets/images/square.png");
 	addHudElement(toggleFullScreenButton);
 	toggleFullScreenButton->setPosition(Vector2(200, -100));
 	toggleFullScreenButton->setScale(Vector2(7, 1));
+	toggleFullScreenButton->refitText();
 
-	toggleFullScreenButtonText = new HudText();
-	toggleFullScreenButtonText->setAnchorPoint(HudElement::ANCHOR_BOTTOM_LEFT);
-	toggleFullScreenButtonText->loadFont("assets/arial.ttf");
-	toggleFullScreenButtonText->setText("Toggle fullscreen");
-	addHudElement(toggleFullScreenButtonText);
-	toggleFullScreenButtonText->color = BLACK;
-	toggleFullScreenButtonText->setPosition(toggleFullScreenButton->getPosition());
-
-	toggleVsync = new HudElement();
+	toggleVsync = new SettingsButton("Vsync: on");
 	toggleVsync->setAnchorPoint(HudElement::ANCHOR_BOTTOM_LEFT);
 	toggleVsync->addSprite("assets/images/square.png");
 	addHudElement(toggleVsync);
 	toggleVsync->setPosition(Vector2(200, -200));
 	toggleVsync->setScale(Vector2(7, 1));
+	toggleVsync->refitText();
 
-	toggleVsyncText = new HudText();
-	toggleVsyncText->setAnchorPoint(HudElement::ANCHOR_BOTTOM_LEFT);
-	toggleVsyncText->loadFont("assets/arial.ttf");
-	toggleVsyncText->setText("Vsync: on");
-	addHudElement(toggleVsyncText);
-	toggleVsyncText->color = BLACK;
-	toggleVsyncText->setPosition(toggleVsync->getPosition());
 }
 
 void SettingScene::update(float deltatime)
@@ -107,11 +89,11 @@ void SettingScene::update(float deltatime)
 			Camera::setVsync(!Camera::getVsync());
 			if (Camera::getVsync())
 			{
-				toggleVsyncText->setText("Vsync: on");
+				toggleVsync->setText("Vsync: on");
 			}
 			else
 			{
-				toggleVsyncText->setText("Vsync: off");
+				toggleVsync->setText("Vsync: off");
 			}
 		}
 	}
@@ -136,20 +118,10 @@ SettingScene::~SettingScene()
 
 	buttons.clear();
 
-	for (unsigned int i = 0; i < buttonTexts.size(); i++)
-	{
-		delete buttonTexts[i];
-	}
-
-	buttonTexts.clear();
-
 	removeHudElement(toggleFullScreenButton);
 	delete toggleFullScreenButton;
-	removeHudElement(toggleFullScreenButtonText);
-	delete toggleFullScreenButtonText;
 
 	removeHudElement(toggleVsync);
 	delete toggleVsync;
-	removeHudElement(toggleVsyncText);
-	delete toggleVsyncText;
+
 }
