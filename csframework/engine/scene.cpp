@@ -151,7 +151,7 @@ void Scene::removeHudElement(HudElement* element)
 
 Entity * Scene::getEntityByName(std::string name)
 {
-	for each (Entity* entity in entities)
+	for (Entity* entity : entities)
 	{
 		if (entity->getName() == name) {
 			return entity;
@@ -164,7 +164,7 @@ Entity * Scene::getEntityByName(std::string name)
 std::vector<Entity*> Scene::getEntitiesByName(std::string name)
 {
 	std::vector<Entity*> foundEntities;
-	for each (Entity* entity in entities)
+	for (Entity* entity : entities)
 	{
 		if (entity->getName() == name) {
 			foundEntities.push_back(entity);

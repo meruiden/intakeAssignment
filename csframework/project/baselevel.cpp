@@ -786,7 +786,7 @@ void BaseLevel::checkCrates()
 
 void BaseLevel::checkNpcs()
 {
-	for each(QuestNpc* npc in npcs)
+	for(QuestNpc* npc : npcs)
 	{
 		if (npc->canStartChat() && player->getPosition().x > npc->getPosition().x - 100 - npc->getWidth() / 2.0f &&
 			player->getPosition().x < npc->getPosition().x + 100 + npc->getWidth() / 2.0f) 
@@ -862,7 +862,7 @@ void BaseLevel::checkExplosiveBarrels()
 				}
 			}
 			 
-			for each(Zombie* zombie in zombies)
+			for (Zombie* zombie : zombies)
 			{
 				float distance = Vector2(zombie->getPosition(), (*it)->getPosition()).magnitude();
 				if (distance <= 300)

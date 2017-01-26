@@ -39,7 +39,7 @@ void HudText::setText(std::string text)
 	{
 		std::vector<std::string> lines = csframework::splitString(text, "\n");
 		std::string longestLine = "";
-		for each(std::string line in lines) 
+		for (std::string line : lines) 
 		{
 			if (line.size() > longestLine.size())
 			{
