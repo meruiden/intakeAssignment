@@ -25,7 +25,7 @@ MapEditor::MapEditor() : Scene()
 	fileNameHandler = new TextInputField();
 	addHudElement(fileNameHandler);
 	fileNameHandler->setVisable(false);
-	fileNameHandler->setText("LevelName");
+	fileNameHandler->setText("levelname");
 
 	infoButton = new HudElement();
 	infoButton->addSprite("assets/images/questionMark.png");

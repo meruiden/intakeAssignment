@@ -63,7 +63,7 @@ void Level2::reset()
 	hasWater = false;
 	water = getEntityByName("water");
 	std::vector<Entity*> foundNpcs = getEntitiesByName("npc");
-	for each(Entity* npc in foundNpcs)
+    for(Entity* npc : foundNpcs)
 	{
 		npcs.push_back((QuestNpc*)npc);
 	}
