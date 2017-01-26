@@ -149,7 +149,7 @@
     <ClInclude Include="..\..\..\csframework\engine\vector2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="csutils.h">
+    <ClInclude Include="..\..\..\csframework\engine\csutils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

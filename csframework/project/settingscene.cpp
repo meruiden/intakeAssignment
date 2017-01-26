@@ -1,7 +1,8 @@
 #include <project/settingscene.h>
 
-SettingScene::SettingScene()
+SettingScene::SettingScene() : Scene()
 {
+	Camera::setVsync(true);
 	std::vector<Vector2> resolutions = Camera::getAvailableResolutions();
 
 	bool nextToPrev = false;
@@ -35,7 +36,7 @@ SettingScene::SettingScene()
 
 	toggleFullScreenButton = new HudElement();
 	toggleFullScreenButton->setAnchorPoint(HudElement::ANCHOR_BOTTOM_LEFT);
-	toggleFullScreenButton->addSprite("assets/square.png");
+	toggleFullScreenButton->addSprite("assets/images/square.png");
 	addHudElement(toggleFullScreenButton);
 	toggleFullScreenButton->setPosition(Vector2(200, -100));
 	toggleFullScreenButton->setScale(Vector2(7, 1));
@@ -47,6 +48,21 @@ SettingScene::SettingScene()
 	addHudElement(toggleFullScreenButtonText);
 	toggleFullScreenButtonText->color = BLACK;
 	toggleFullScreenButtonText->setPosition(toggleFullScreenButton->getPosition());
+
+	toggleVsync = new HudElement();
+	toggleVsync->setAnchorPoint(HudElement::ANCHOR_BOTTOM_LEFT);
+	toggleVsync->addSprite("assets/images/square.png");
+	addHudElement(toggleVsync);
+	toggleVsync->setPosition(Vector2(200, -200));
+	toggleVsync->setScale(Vector2(7, 1));
+
+	toggleVsyncText = new HudText();
+	toggleVsyncText->setAnchorPoint(HudElement::ANCHOR_BOTTOM_LEFT);
+	toggleVsyncText->loadFont("assets/arial.ttf");
+	toggleVsyncText->setText("Vsync: on");
+	addHudElement(toggleVsyncText);
+	toggleVsyncText->color = BLACK;
+	toggleVsyncText->setPosition(toggleVsync->getPosition());
 }
 
 void SettingScene::update(float deltatime)
@@ -83,6 +99,27 @@ void SettingScene::update(float deltatime)
 		toggleFullScreenButton->color = WHITE;
 	}
 
+	if (toggleVsync->overLapsWithPoint(mousePos))
+	{
+		toggleVsync->color = GREY;
+		if (Input::getInstance()->getMouseButtonUp(1))
+		{
+			Camera::setVsync(!Camera::getVsync());
+			if (Camera::getVsync())
+			{
+				toggleVsyncText->setText("Vsync: on");
+			}
+			else
+			{
+				toggleVsyncText->setText("Vsync: off");
+			}
+		}
+	}
+	else
+	{
+		toggleVsync->color = WHITE;
+	}
+
 	if (input()->getKeyDown(SDLK_ESCAPE))
 	{
 		SceneManager::loadScene("menu");
@@ -106,6 +143,13 @@ SettingScene::~SettingScene()
 
 	buttonTexts.clear();
 
+	removeHudElement(toggleFullScreenButton);
 	delete toggleFullScreenButton;
+	removeHudElement(toggleFullScreenButtonText);
 	delete toggleFullScreenButtonText;
+
+	removeHudElement(toggleVsync);
+	delete toggleVsync;
+	removeHudElement(toggleVsyncText);
+	delete toggleVsyncText;
 }

@@ -4,6 +4,8 @@
 
 #include <project/zombie.h>
 #include <project/crate.h>
+#include <project/explosivebarrel.h>
+
 class Bullet : public Entity
 {
 public:
@@ -13,6 +15,7 @@ public:
 	virtual void onCollisionBegin(Entity* other);
 	virtual void onCollisionEnd(Entity* other);
 	
+	bool spawnBlood() { return blood; }
 	bool mustDestroy() { return destroyme; }
 private:
 	float speed;
@@ -20,6 +23,7 @@ private:
 	float lifeTimeCounter;
 
 	bool destroyme;
+	bool blood;
 	Vector2 direction;
 
 };

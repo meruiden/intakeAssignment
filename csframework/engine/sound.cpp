@@ -20,6 +20,7 @@ Sound::Sound(std::string filepath){
 
 Sound::~Sound() {
 	if (hasChannel) { // If this instance is deleted and a channel whas assigned to this sound. set that channel available again.
+		setVolume(100);
 		Sound::availableChannels[this->channel] = true;
 	}
 }
@@ -114,6 +115,6 @@ void Sound::stop(){
 			return; // If no channel has been assigned yet. return.
 		}
 	}
-
+	
     Mix_HaltChannel(this->channel); // Stop playing the audio.
 }

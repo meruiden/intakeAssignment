@@ -3,7 +3,7 @@
 TextInputField::TextInputField() : HudElement()
 {
 	backGround = new HudElement();
-	backGround->addSprite("assets/whiteSquare.png");
+	backGround->addSprite("assets/images/whiteSquare.png");
 	addChild(backGround);
 
 	selected = false;

@@ -3,6 +3,7 @@
 SDL_Window* Camera::window = NULL;
 Vector2 Camera::resolution = Vector2(WINDOW_WIDTH, WINDOW_HEIGHT);
 bool Camera::fullscreen = false;
+bool Camera::vsync = false;
 
 Camera::Camera()
 {
@@ -95,6 +96,12 @@ void Camera::setFullScreen(bool value)
 void Camera::toggleFullScreen()
 {
 	Camera::setFullScreen(!Camera::getFullScreen());
+}
+
+void Camera::setVsync(bool value)
+{
+	Camera::vsync = value;
+	SDL_GL_SetSwapInterval(value ? 1 : 0);
 }
 
 Camera::~Camera()

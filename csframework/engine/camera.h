@@ -22,6 +22,7 @@ public:
 	static void setResolution(Vector2 resolution);
 	static void setFullScreen(bool value);
 	static void toggleFullScreen();
+	static void setVsync(bool value);
 
 	void setPosition(Vector2 newPos);
 	
@@ -33,6 +34,7 @@ public:
 
 	static Vector2 getWindowSize();
 	static Vector2 getResolution() { return resolution; }
+	static bool getVsync() { return vsync; }
 
 	static bool getFullScreen() { return fullscreen; }
 private:
@@ -40,6 +42,7 @@ private:
 
 	static Vector2 resolution;
 	static bool fullscreen;
+	static bool vsync;
 	Vector2 position;
 	
 };

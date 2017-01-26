@@ -2,7 +2,7 @@
 
 Crate::Crate() : Entity()
 {
-	addSprite("assets/crate/crate_full.png");
+	addSprite("assets/images/crate/crate_full.png");
 	getPhysicsBody()->setPhysicsActive(true);
 	setName("crate");
 	health = 30;

@@ -14,9 +14,12 @@ class QuestLog : public HudElement
 public:
 	QuestLog();
 	virtual ~QuestLog();
+
 	void addQuest(std::string questName, std::string questInfo);
 	void removeQuest(std::string questName);
+	void clear();
 
+	bool hasQuest(std::string questname) { return quests.find(questname) != quests.end(); }
 private:
 	void reformatText();
 	std::map<std::string, std::string> quests;

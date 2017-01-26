@@ -1,9 +1,9 @@
 #include <project/settingsbutton.h>
 
-SettingsButton::SettingsButton(Vector2 res)
+SettingsButton::SettingsButton(Vector2 res) : HudElement()
 {
 	this->resolution = res;
-	this->addSprite("assets/square.png");
+	this->addSprite("assets/images/square.png");
 }
 
 

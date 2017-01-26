@@ -69,8 +69,8 @@ private:
 	int window_width;
 	int window_height;
 
-	void renderEntity(glm::mat4 &modelmatrix, Entity* entity, Camera* camera);
-	void renderHudElement(glm::mat4&modelmatrix, HudElement* hudelement);
+	void renderEntity(glm::mat4 modelmatrix, Entity* entity, Camera* camera);
+	void renderHudElement(glm::mat4 modelmatrix, HudElement* hudelement);
 	void updateDeltaTime();
 	void showFps();
 	void renderMesh(glm::mat4 matrix, Mesh* mesh, GLuint textureBuffer, Vector2 uvOffset, Color color);
@@ -90,5 +90,6 @@ private:
 	int fullScreenFlag;
 
 	GLuint lastRenderedTexture;
+	Scene* lastSceneRendered;
 
 };

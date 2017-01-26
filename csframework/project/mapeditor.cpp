@@ -25,9 +25,10 @@ MapEditor::MapEditor() : Scene()
 	fileNameHandler = new TextInputField();
 	addHudElement(fileNameHandler);
 	fileNameHandler->setVisable(false);
+	fileNameHandler->setText("LevelName");
 
 	infoButton = new HudElement();
-	infoButton->addSprite("assets/questionMark.png");
+	infoButton->addSprite("assets/images/questionMark.png");
 	addHudElement(infoButton);
 	infoButton->setAnchorPoint(HudElement::ANCHOR_TOP_RIGHT);
 	infoButton->setPosition(Vector2(-40, 40));
@@ -51,7 +52,7 @@ MapEditor::MapEditor() : Scene()
 	Sprite* sprite = new Sprite();
 	sprite->setDynamics(mesh, texture);
 	hoveringVertIndicator->addSprite(sprite);
-
+	hoveringVertIndicator->setLayer(2);
 	mesh->setDrawMode(Mesh::drawModeSettings::polygons);
 	std::vector<Vector2> indicatorVerts;
 	float radius = 10.0f;
@@ -64,6 +65,8 @@ MapEditor::MapEditor() : Scene()
 	mesh->setFromVertices(indicatorVerts);
 	addEntity(hoveringVertIndicator);
 	hoveringVertIndicator->color.a = 0;
+
+	savingFile = false;
 }
 
 
@@ -135,14 +138,16 @@ void MapEditor::update(float deltaTime)
 			getCamera()->setPosition(getCamera()->getPosition() + Vector2(0, campSpeed) * deltaTime);
 		}
 
-		if (input()->getKeyUp(SDLK_o) && !renamer->isVisable())
+		if (input()->getKeyUp(SDLK_o) && !renamer->isVisable() && !fileNameHandler->isVisable())
 		{
 			fileNameHandler->setVisable(true);
+			savingFile = false;
 		}
 
-		if (input()->getKeyUp(SDLK_n))
+		if (input()->getKeyUp(SDLK_n) && !renamer->isVisable() && !fileNameHandler->isVisable())
 		{
-			saveMapFile();
+			fileNameHandler->setVisable(true);
+			savingFile = true;
 		}
 
 		if (input()->getKeyUp(SDLK_p))
@@ -175,12 +180,22 @@ void MapEditor::update(float deltaTime)
 		if (input()->getKeyDown(SDLK_RETURN))
 		{
 			fileNameHandler->setVisable(false);
-			openMapFile(fileNameHandler->getText());
+			if (savingFile)
+			{
+				saveMapFile(fileNameHandler->getText());
+				savingFile = false;
+			}
+			else
+			{
+				openMapFile(fileNameHandler->getText());
+			}
+			
 		}
 
 		if (input()->getKeyDown(SDLK_ESCAPE))
 		{
 			fileNameHandler->setVisable(false);
+			savingFile = false;
 		}
 	}
 	if (colliderMode)
@@ -206,7 +221,7 @@ void MapEditor::updateObjectMode()
 	else
 	{
 
-		if (selected->getSprite()->getFileName() == "assets/player_icon.png")
+		if (selected->getSprite()->getFileName() == "assets/images/player_icon.png")
 		{
 			if (!renamer->isVisable())
 			{
@@ -228,7 +243,7 @@ void MapEditor::updateObjectMode()
 			selected->setName(renamer->getText());
 		}
 
-		if (input()->getKeyUp(SDLK_c))
+		if (input()->getKeyUp(SDLK_c) && !renamer->isSelected())
 		{
 			draggingImage = new HudElement();
 			addHudElement(draggingImage);
@@ -258,7 +273,8 @@ void MapEditor::updateObjectMode()
 					removeEntity((*it));
 					delete (*it);
 					it = mapObjects.erase(it);
-
+					selected = NULL;
+					selectedName = "No Name";
 				}
 				else
 				{
@@ -280,7 +296,7 @@ void MapEditor::updateObjectMode()
 		{
 			if (selected == NULL)
 			{
-				for (int i = 0; i < mapObjects.size(); i++)
+				for (int i = mapObjects.size()-1; i >= 0; i--)
 				{
 					if (mapObjects[i]->overLapsWithPoint(getCamera()->screenToWorldSpace(input()->getMousePosition())))
 					{
@@ -329,13 +345,13 @@ void MapEditor::updateObjectMode()
 		}
 		else
 		{
-			bool isPlayer = draggingImage->getSprite()->getFileName() == "assets/player_icon.png";
+			bool isPlayer = draggingImage->getSprite()->getFileName() == "assets/images/player_icon.png";
 			if (isPlayer)
 			{
 				std::vector< Entity* >::iterator it = mapObjects.begin();
 				while (it != mapObjects.end())
 				{
-					if ((*it)->getSprite() != NULL && (*it)->getSprite()->getFileName() == "assets/player_icon.png")
+					if ((*it)->getSprite() != NULL && (*it)->getSprite()->getFileName() == "assets/images/player_icon.png")
 					{
 						removeEntity((*it));
 						delete (*it);
@@ -353,7 +369,7 @@ void MapEditor::updateObjectMode()
 			entity->addSprite(draggingImage->getSprite()->getFileName());
 			addEntity(entity);
 			entity->setPosition(getCamera()->screenToWorldSpace(draggingImage->getPosition()));
-			if (entity->getSprite()->getFileName() == "assets/crate/crate_full.png")
+			if (entity->getSprite()->getFileName() == "assets/images/crate/crate_full.png")
 			{
 				entity->setScale(Vector2(0.5f, 0.5f));
 			}
@@ -395,7 +411,7 @@ void MapEditor::updateObjectMode()
 	if (draggingImage != NULL)
 	{
 		draggingImage->setPosition(input()->getMousePosition());
-		if (draggingImage->getSprite()->getFileName() == "assets/crate/crate_full.png")
+		if (draggingImage->getSprite()->getFileName() == "assets/images/crate/crate_full.png")
 		{
 			draggingImage->setScale(Vector2(0.5f, 0.5f));
 		}
@@ -425,6 +441,7 @@ void MapEditor::updateObjectMode()
 
 void MapEditor::loadMap(std::vector<Entity*>& entities, std::string filePath)
 {
+	filePath = "assets/maps/" + filePath + ".map";
 	std::ifstream mapFile;
 	mapFile.open(filePath);
 	std::string output;
@@ -553,6 +570,7 @@ void MapEditor::updateColliderMode()
 		edgeColliders.push_back(edgeCollider);
 		edgeCollider->setPosition(getCamera()->screenToWorldSpace(input()->getMousePosition()));
 		addEntity(edgeCollider);
+		edgeCollider->setLayer(2);
 	}
 
 	if (drawingCollider != -1)
@@ -699,6 +717,7 @@ void MapEditor::updateColliderMode()
 			edgeColliderVerts.erase(edgeColliderVerts.begin() + selectedCollider);
 			lockedVert = -1;
 			selectedCollider = -1;
+			hoveringVertIndicator->color.a = 0;
 		}
 	}
 }
@@ -832,7 +851,7 @@ void MapEditor::loadAvailableSprites()
 	for (int i = 0; i < imagePaths.size(); i++)
 	{
 		HudElement* img = new HudElement();
-		img->addSprite("assets/" + imagePaths[i]);
+		img->addSprite("assets/images/" + imagePaths[i]);
 		availableSprites.push_back(img);
 		addHudElement(img);
 		img->setAnchorPoint(HudElement::ANCHOR_TOP_LEFT);
@@ -857,8 +876,9 @@ void MapEditor::fitSprites()
 	}
 }
 
-void MapEditor::saveMapFile()
+void MapEditor::saveMapFile(std::string filePath)
 {
+	filePath = "assets/maps/" + filePath + ".map";
 	std::stringstream mapData;
 
 	mapData << "[EntityList]\n";
@@ -914,7 +934,7 @@ void MapEditor::saveMapFile()
 
 	
 
-	std::ofstream myfile("assets/level1.map");
+	std::ofstream myfile(filePath);
 	if (myfile.is_open())
 	{
 		myfile << mapData.str();
@@ -1023,12 +1043,27 @@ void MapEditor::snap(bool smartSnap)
 
 void MapEditor::openMapFile(std::string filePath)
 {
+
 	for (int i = 0; i < mapObjects.size(); i++)
 	{
 		removeEntity(mapObjects[i]);
 		delete mapObjects[i];
 	}
 	mapObjects.clear();
+
+	for (int i = 0; i < edgeColliders.size(); i++)
+	{
+		removeEntity(edgeColliders[i]);
+		delete edgeColliders[i];
+	}
+	edgeColliders.clear();
+
+	for (int i = 0; i < edgeColliderVerts.size(); i++)
+	{
+		edgeColliderVerts[i].clear();
+	}
+	edgeColliderVerts.clear();
+
 	std::vector<Entity*> loadedEntities;
 	MapEditor::loadMap(loadedEntities, filePath);
 	for (int i = 0; i < loadedEntities.size(); i++)
@@ -1054,6 +1089,7 @@ void MapEditor::openMapFile(std::string filePath)
 			colliderMesh->setFromVertices(fixedVerts);
 			edgeColliderVerts.push_back(fixedVerts);
 			edgeColliders.push_back(edgeCollider);
+			edgeCollider->setLayer(2);
 		}
 		else
 		{

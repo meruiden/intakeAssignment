@@ -3,13 +3,13 @@
 Bullet::Bullet(Vector2 dir) : Entity()
 {
 	this->direction = dir;
-	this->addSprite("assets/bullet.png");
+	this->addSprite("assets/images/bullet.png");
 	speed = 1200.0f;
 	this->setScale(Vector2(0.5f, 0.5f));
 	lifeTime = 5.0f;
 	lifeTimeCounter = 0;
 	destroyme = false;
-
+	blood = false;
 	this->getPhysicsBody()->setPhysicsActive(true);
 	this->getPhysicsBody()->setPhysicsMode(PhysicsBody::DYNAMIC);
 	this->getPhysicsBody()->setTrigger(true);
@@ -45,11 +45,17 @@ void Bullet::onCollisionBegin(Entity * other)
 	if (other->getName() == "zombie")
 	{
 		((Zombie*)other)->applyDamage(10);
+		blood = true;
 	}
 
 	if (other->getName() == "crate")
 	{
 		((Crate*)other)->applyDamage(10);
+	}
+
+	if (other->getName() == "explosive barrel")
+	{
+		((ExplosiveBarrel*)other)->applyDamage(10);
 	}
 }
 

@@ -2,16 +2,20 @@
 
 Player::Player(PlayerGroundTrigger* groundTrigger) : Entity()
 {
-	this->addSprite("assets/character_idle.png");
+	this->addSprite("assets/images/character_idle.png");
 	this->getPhysicsBody()->setPhysicsActive(true);
 	this->groundTrigger = groundTrigger;
 	this->setName("player");
 
-	getPhysicsBody()->setDrawColliders(false);
-	wasGrounded = false;
-	landsound = new Sound("assets/footStep.wav");
-	setLayer(4);
+	this->wasGrounded = false;
 
+	this->landsound = new Sound("assets/audio/footStep.wav");
+
+	this->setLayer(4);
+
+	this->health = 100;
+	this->ammoInMag = 20;
+	this->maxAmmoInMag = 20;
 }
 
 Player::~Player()
@@ -62,13 +66,30 @@ void Player::onIdle()
 	walking = false;
 }
 
+void Player::applyDamage(int damage)
+{
+	health -= damage;
+	if (health < 0)
+	{
+		health = 0;
+	}
+}
+
 void Player::setWalk(bool value)
 {
 	walking = value;
 }
 
+void Player::resetStats()
+{
+	health = 100; 
+	ammoInMag = 20;
+}
+
 Bullet * Player::shoot(float dir)
 {
+	ammoInMag--;
+
 	Vector2 bulletDir;
 	dir *= -1;
 

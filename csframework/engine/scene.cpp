@@ -50,6 +50,10 @@ void Scene::fixedUpdate()
 
 }
 
+void Scene::onLoad()
+{
+}
+
 void Scene::removePhysicsFor(Entity* entity)
 {
 	if (entity->getPhysicsBody()->getBox2dBody() == NULL)
@@ -149,10 +153,12 @@ Entity * Scene::getEntityByName(std::string name)
 {
 	for each (Entity* entity in entities)
 	{
-		if (entity->getName().compare(name)) {
+		if (entity->getName() == name) {
 			return entity;
 		}
 	}
+
+	return NULL;
 }
 
 std::vector<Entity*> Scene::getEntitiesByName(std::string name)
@@ -160,7 +166,7 @@ std::vector<Entity*> Scene::getEntitiesByName(std::string name)
 	std::vector<Entity*> foundEntities;
 	for each (Entity* entity in entities)
 	{
-		if (entity->getName().compare(name)) {
+		if (entity->getName() == name) {
 			foundEntities.push_back(entity);
 		}
 	}

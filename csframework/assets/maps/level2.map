@@ -1,0 +1,65 @@
+[EntityList]
+No Name,-125,332.9,1,1,0,assets/images/ground.png
+Player,-208,-181.3,1,1,0,assets/images/player_icon.png
+No Name,379,332.9,1,1,0,assets/images/ground.png
+No Name,879.199,332.9,1,1,0,assets/images/ground.png
+No Name,1374.2,332.9,1,1,0,assets/images/ground.png
+No Name,1868.2,332.9,1,1,0,assets/images/ground.png
+No Name,2378.2,332.9,1,1,0,assets/images/ground.png
+No Name,2858.21,332.9,1,1,0,assets/images/ground.png
+No Name,3368.62,332.9,1,1,0,assets/images/ground.png
+No Name,3869.02,332.9,1,1,0,assets/images/ground.png
+No Name,4366.03,332.9,1,1,0,assets/images/ground.png
+No Name,4869.53,332.9,1,1,0,assets/images/ground.png
+zombie,2157.61,129.3,1,1,0,assets/images/zombie_icon.png
+zombie,2294.61,131.3,1,1,0,assets/images/zombie_icon.png
+explosive barrel,2004.61,185.3,1,1,0,assets/images/explosive_barrel.png
+crate,2421.61,191.3,0.5,0.5,0,assets/images/crate/crate_full.png
+npc,2566.41,119.8,1,1,0,assets/images/npc.png
+crate,2715.41,185.8,0.5,0.5,0,assets/images/crate/crate_full.png
+explosive barrel,2857.41,180.8,1,1,0,assets/images/explosive_barrel.png
+No Name,5375.43,332.7,1,1,0,assets/images/ground.png
+No Name,5873.53,332.7,1,1,0,assets/images/ground.png
+No Name,6385.53,332.7,1,1,0,assets/images/ground.png
+No Name,6890.43,332.7,1,1,0,assets/images/ground.png
+No Name,7384.33,332.7,1,1,0,assets/images/ground.png
+No Name,7863.13,332.7,1,1,0,assets/images/ground.png
+No Name,8359.23,332.7,1,1,0,assets/images/ground.png
+No Name,8859.62,332.7,1,1,0,assets/images/ground.png
+No Name,9359.58,332.7,1,1,0,assets/images/ground.png
+No Name,9859.45,332.7,1,1,0,assets/images/ground.png
+No Name,10346.1,332.7,1,1,0,assets/images/ground.png
+No Name,10831.1,332.7,1,1,0,assets/images/ground.png
+No Name,11318.3,332.7,1,1,0,assets/images/ground.png
+No Name,-624.698,332.9,1,1,0,assets/images/ground.png
+No Name,-1131.7,332.9,1,1,0,assets/images/ground.png
+No Name,-1640.5,332.9,1,1,0,assets/images/ground.png
+No Name,-2147.5,332.9,1,1,0,assets/images/ground.png
+No Name,-2640.3,332.9,1,1,0,assets/images/ground.png
+No Name,-3145.3,332.9,1,1,0,assets/images/ground.png
+No Name,-3652.31,332.9,1,1,0,assets/images/ground.png
+No Name,-4153.42,332.9,1,1,0,assets/images/ground.png
+No Name,4823.53,-253.6,1,1,0,assets/images/hospital.png
+zombie,4216.83,125.2,1,1,0,assets/images/zombie_icon.png
+zombie,4561.13,125.2,1,1,0,assets/images/zombie_icon.png
+explosive barrel,4353.13,193.1,1,1,0,assets/images/explosive_barrel.png
+store,5702.63,13,1,1,0,assets/images/bens.png
+explosive barrel,5921.63,-167,1,1,0,assets/images/explosive_barrel.png
+water,5983.63,-136,1,1,0,assets/images/water_bottle.png
+explosive barrel,5562.33,194.9,1,1,0,assets/images/explosive_barrel.png
+zombie,5472.23,-231,1,1,0,assets/images/zombie_icon.png
+zombie,5682.73,125,1,1,0,assets/images/zombie_icon.png
+zombie,5832.13,129,1,1,0,assets/images/zombie_icon.png
+zombie,5988.93,131,1,1,0,assets/images/zombie_icon.png
+crate,4704.63,199,0.5,0.5,0,assets/images/crate/crate_full.png
+npc,4853.63,134,1,1,0,assets/images/npc.png
+crate,4981.63,194,0.5,0.5,0,assets/images/crate/crate_full.png
+zombie,5417.73,134.8,1,1,0,assets/images/zombie_icon.png
+[/EntityList]
+[EdgeColliderList]
+No Name,-381.2,267.8,1,1,0,-813.992|0.199951/8194.83|-3.40002
+No Name,7810.93,258.1,1,1,0,1.80078|10.2001/-1.99951|-619
+No Name,-1194.3,268.9,1,1,0,0|0/-0.00012207|-635
+No Name,5318.33,-97,1,1,0,0|0/768|-1
+No Name,5528.63,-99,1,1,0,0|0/-4|-311
+[/EdgeColliderList]

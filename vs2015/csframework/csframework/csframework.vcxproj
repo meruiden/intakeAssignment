@@ -111,6 +111,7 @@
     <ClInclude Include="..\..\..\csframework\engine\collisionhandler.h" />
     <ClInclude Include="..\..\..\csframework\engine\color.h" />
     <ClInclude Include="..\..\..\csframework\engine\config.h" />
+    <ClInclude Include="..\..\..\csframework\engine\csutils.h" />
     <ClInclude Include="..\..\..\csframework\engine\entity.h" />
     <ClInclude Include="..\..\..\csframework\engine\hudelement.h" />
     <ClInclude Include="..\..\..\csframework\engine\hudtext.h" />
@@ -129,7 +130,6 @@
     <ClInclude Include="..\..\..\csframework\engine\textmesh.h" />
     <ClInclude Include="..\..\..\csframework\engine\texture.h" />
     <ClInclude Include="..\..\..\csframework\engine\vector2.h" />
-    <ClInclude Include="csutils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

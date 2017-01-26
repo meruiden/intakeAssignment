@@ -6,9 +6,9 @@ MenuScene::MenuScene() : Scene()
 	settingsButton = new HudElement();
 	quitButton = new HudElement();
 
-	startButton->addSprite("assets/start.jpg");
-	settingsButton->addSprite("assets/settings.jpg");
-	quitButton->addSprite("assets/quit.jpg");
+	startButton->addSprite("assets/images/start.jpg");
+	settingsButton->addSprite("assets/images/settings.jpg");
+	quitButton->addSprite("assets/images/quit.jpg");
 	addHudElement(quitButton);
 	addHudElement(startButton);
 	addHudElement(settingsButton); 

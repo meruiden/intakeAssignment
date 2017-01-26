@@ -32,7 +32,7 @@ private:
 
 	void loadAvailableSprites();
 	void fitSprites();
-	void saveMapFile();
+	void saveMapFile(std::string filePath);
 	void snap(bool smartSnap);
 	void openMapFile(std::string filePath);
 	void updateObjectMode();
@@ -64,6 +64,7 @@ private:
 	std::string selectedName;
 
 	bool colliderMode;
+	bool savingFile;
 	int drawingCollider;
 	int selectedCollider;
 	int lockedVert;

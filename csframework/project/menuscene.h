@@ -14,7 +14,6 @@ public:
 	~MenuScene();
 	virtual void update(float deltaTime);
 
-
 private:
 	HudElement* startButton;
 	HudElement* settingsButton;

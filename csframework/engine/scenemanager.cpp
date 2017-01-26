@@ -18,7 +18,6 @@ void SceneManager::loadScene(std::string sceneName)
 	if (sIt != SceneManager::scenes.end())
 	{
 		scene = sIt->second;
-		std::cout << typeid(scene).name() << std::endl;
 		SceneManager::currentScene = scene;
 	}
 	

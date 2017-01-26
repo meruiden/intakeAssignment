@@ -19,6 +19,7 @@ public:
 	virtual ~Scene();
 	virtual void update(float deltaTime);
 	virtual void fixedUpdate();
+	virtual void onLoad();
 	
 	void addEntity(Entity* entity);
 	void removeEntity(Entity* entity);

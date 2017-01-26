@@ -4,18 +4,13 @@
 CratePart::CratePart(int sliceId) : Entity()
 {
 	this->sliceId = sliceId;
-	std::stringstream pathname;
-	pathname << "assets/crate/crate_slice_";
-	pathname << sliceId;
-	pathname << ".png";
-
-	this->addSprite(pathname.str());
-	lifeTime = (static_cast <float> (rand()) / static_cast <float> (RAND_MAX)) * 6 + 3;
+	this->addSpriteAsSpriteSheet("assets/images/crate/crate_slices.png", 128, 128, 2, 5);
+	this->getSpriteSheet()->setSprite(sliceId-1);
+	lifeTime = ((float) (rand()) / (float)(RAND_MAX)) * 2 + 1;
 	lifeTimeCounter = 0;
 
 	getPhysicsBody()->setPhysicsActive(true);
 	setName("cratePart");
-
 }
 
 

@@ -18,6 +18,7 @@ Renderer::Renderer()
 	initGL();
 	Camera::setWindow(window);
 	Sound::init();
+	lastSceneRendered = NULL;
 
 	SDL_DisplayMode current;
 
@@ -149,6 +150,11 @@ void Renderer::renderScene()
 	updateDeltaTime();
 	Scene* scene;
 	scene = SceneManager::getCurrentScene();
+	if (lastSceneRendered != scene)
+	{
+		lastSceneRendered = scene;
+		scene->onLoad();
+	}
 	fixedUpdateCounter += dt;
 	if (fixedUpdateCounter >= 1.0 / 60.0)
 	{
@@ -224,7 +230,6 @@ void Renderer::renderScene()
 			for (unsigned int i = 0; i < numEntities; i++)
 			{
 				if (entities[i]->getLayer() == curLayer) {
-					entities[i]->update(dt);
 					glm::mat4 modelmatrix = glm::mat4(1.0f);
 					renderEntity(modelmatrix, entities[i], scene->getCamera());
 				}
@@ -249,7 +254,6 @@ void Renderer::renderScene()
 			for (unsigned int i = 0; i < numHudElements; i++)
 			{
 				if (hudElements[i]->getLayer() == curLayer) {
-					hudElements[i]->update(dt);
 					glm::mat4 modelmatrix = glm::mat4(1.0f);
 					renderHudElement(modelmatrix, hudElements[i]);
 				}
@@ -266,8 +270,9 @@ void Renderer::renderScene()
 	SDL_GL_SwapWindow(window);
 }
 
-void Renderer::renderEntity(glm::mat4 &modelmatrix, Entity* entity, Camera* camera)
+void Renderer::renderEntity(glm::mat4 modelmatrix, Entity* entity, Camera* camera)
 {
+	entity->update(dt);
 	// Use our shader
 	glm::mat4 MVP;
 	glUseProgram(programID);
@@ -367,14 +372,13 @@ void Renderer::renderEntity(glm::mat4 &modelmatrix, Entity* entity, Camera* came
 	while (it != children.end())
 	{
 		renderEntity(modelmatrix, (*it), camera);
-		modelmatrix = getModelMatrix(entity->getPosition(), entity->getScale(), entity->getRotation());
 		it++;
 	}
 }
 
-void Renderer::renderHudElement(glm::mat4 &modelmatrix, HudElement * hudelement)
+void Renderer::renderHudElement(glm::mat4 modelmatrix, HudElement * hudelement)
 {
-
+	hudelement->update(dt);
 	Vector2 position = Vector2();
 	Vector2 windowSize = Camera::getWindowSize();
 
@@ -479,16 +483,6 @@ void Renderer::renderHudElement(glm::mat4 &modelmatrix, HudElement * hudelement)
 	{
 		renderHudElement(modelmatrix, (*it));
 
-		Vector2 pos = Vector2();
-		if (hudelement->getParent() == NULL)
-		{
-			position = hudelement->getAnchoredPosition() + windowSize / 2.0f;
-		}
-		else
-		{
-			position = hudelement->getPosition();
-		}
-		modelmatrix = getModelMatrix(position, hudelement->getScale(), hudelement->getRotation());
 		it++;
 	}
 }
@@ -502,7 +496,7 @@ void Renderer::renderMesh(glm::mat4 matrix, Mesh* mesh, GLuint textureBuffer, Ve
 	glUniformMatrix4fv(matrixID, 1, GL_FALSE, &matrix[0][0]);
 
 	glUniform2f(uvoffset, uvOffset.x, uvOffset.y);
-	glUniform1f(alphafloat, 1.0f / 255.0f * (float)color.a);
+	glUniform1f(alphafloat, (1.0f / 255.0f) * (float)color.a);
 	
 	glUniform3f(rgbVec, (1.0f / 255.0f) * (float)color.r, (1.0f / 255.0f) * (float)color.g, (1.0f / 255.0f) * (float)color.b);
 
@@ -560,8 +554,8 @@ bool Renderer::isMeshVisable(Vector2 position, Vector2 scale, Vector2 size, Vect
 
 	Vector2 windowSize = Camera::getWindowSize();
 
-	if ((abs(position.x - cameraPos.x) * 2 < (meshSize + windowSize.x)) &&
-		(abs(position.y - cameraPos.y) * 2 < (meshSize + windowSize.y)))
+	if ((std::abs(position.x - cameraPos.x) * 2 < (meshSize + windowSize.x)) &&
+		(std::abs(position.y - cameraPos.y) * 2 < (meshSize + windowSize.y)))
 	{
 		return true;
 	}

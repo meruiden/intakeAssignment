@@ -1,0 +1,37 @@
+[EntityList]
+No Name,-494,534,1,1,0,assets/images/ground.png
+No Name,13,534,1,1,0,assets/images/ground.png
+No Name,519,534,1,1,0,assets/images/ground.png
+No Name,1019,534,1,1,0,assets/images/ground.png
+No Name,1524,534,1,1,0,assets/images/ground.png
+No Name,2029,534,1,1,0,assets/images/ground.png
+No Name,2532.1,534,1,1,0,assets/images/ground.png
+No Name,3035.31,534,1,1,0,assets/images/ground.png
+Player,-531.101,117,1,1,0,assets/images/player_icon.png
+zombie,1565,323.2,1,1,0,assets/images/zombie_icon.png
+zombie,1437,323.2,1,1,0,assets/images/zombie_icon.png
+crate,455.697,396.2,0.5,0.5,0,assets/images/crate/crate_full.png
+npc,173.7,333.4,1,1,0,assets/images/npc.png
+crate,455.697,268.2,0.5,0.5,0,assets/images/crate/crate_full.png
+hospital,2762.71,-54.5999,1,1,0,assets/images/hospital.png
+explosive barrel,1152.4,386.9,1,1,0,assets/images/explosive_barrel.png
+zombie,1013.4,327,1,1,0,assets/images/zombie_icon.png
+No Name,3542.32,534,1,1,0,assets/images/ground.png
+No Name,4042.12,534,1,1,0,assets/images/ground.png
+No Name,4545.93,534,1,1,0,assets/images/ground.png
+No Name,5041.73,534,1,1,0,assets/images/ground.png
+No Name,5550.73,534,1,1,0,assets/images/ground.png
+No Name,6059.83,534,1,1,0,assets/images/ground.png
+No Name,-2014.09,534,1,1,0,assets/images/ground.png
+No Name,-2517.1,534,1,1,0,assets/images/ground.png
+No Name,-3026.11,534,1,1,0,assets/images/ground.png
+No Name,-3534.92,534,1,1,0,assets/images/ground.png
+No Name,-999.395,534,1,1,0,assets/images/ground.png
+No Name,-1505.4,534,1,1,0,assets/images/ground.png
+zombie,1279.3,322.5,1,1,0,assets/images/zombie_icon.png
+[/EntityList]
+[EdgeColliderList]
+No Name,-749.301,464.1,1,1,0,-285|-3/4215.53|2.00003
+No Name,3463.32,465.8,1,1,0,0|0/-1|-571
+No Name,-1034.8,461.4,1,1,0,0|0/0|-620
+[/EdgeColliderList]

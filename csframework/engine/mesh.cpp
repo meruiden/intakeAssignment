@@ -6,6 +6,8 @@ Mesh::Mesh()
 	uvBuffer = 0;
 	drawMode = drawModeSettings::triangles;
 	lineThickness = 3.0f;
+	width = 0;
+	height = 0;
 }
 
 

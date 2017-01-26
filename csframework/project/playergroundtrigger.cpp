@@ -1,6 +1,6 @@
 #include <project/playergroundtrigger.h>
 
-PlayerGroundTrigger::PlayerGroundTrigger()
+PlayerGroundTrigger::PlayerGroundTrigger() : Entity()
 {
 	this->groundedCollisions = 0;
 	this->getPhysicsBody()->setPhysicsActive(true);

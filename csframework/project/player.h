@@ -16,11 +16,18 @@ public:
 	virtual void onCollisionEnd(Entity* other);
 
 	bool isGrounded() { return groundTrigger->getGroundedCollisions() > 0; }
+	bool hasAmmo() { return ammoInMag > 0; }
 
 	void onWalk();
 	void onIdle();
+	void applyDamage(int damage);
 	void setWalk(bool value);
+	void reload() { ammoInMag = maxAmmoInMag; }
+	void resetStats();
 	
+	int getHealth() { return health; }
+	int getMaxAmmo() { return maxAmmoInMag; }
+	int getAmmoLeft() { return ammoInMag; }
 	Bullet* shoot(float dir);
 private:
 	PlayerGroundTrigger* groundTrigger;
@@ -30,5 +37,10 @@ private:
 
 	bool wasGrounded;
 	bool walking;
+
+	int health;
+
+	int ammoInMag;
+	int maxAmmoInMag;
 };
 

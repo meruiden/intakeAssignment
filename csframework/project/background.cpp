@@ -2,7 +2,7 @@
 
 Background::Background(Camera* sceneCamera)
 {
-	addSprite("assets/background.png");
+	addSprite("assets/images/background.png");
 	this->sceneCamera = sceneCamera;
 }
 
@@ -13,6 +13,9 @@ Background::~Background()
 
 void Background::update(float deltaTime)
 {
-	this->setScale(Camera::getWindowSize() / this->getSprite()->getTextureSize());
+	if (this->getSprite()->getTextureSize().magnitude() > 0)
+	{
+		this->setScale(Camera::getWindowSize() / this->getSprite()->getTextureSize());
+	}
 	this->setPosition(sceneCamera->getPosition());
 }

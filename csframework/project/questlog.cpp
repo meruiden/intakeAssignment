@@ -1,6 +1,6 @@
 #include <project/questlog.h>
 
-QuestLog::QuestLog()
+QuestLog::QuestLog() : HudElement()
 {
 	this->infoText = new HudText();
 	this->addChild(infoText);
@@ -17,6 +17,7 @@ QuestLog::QuestLog()
 	sprite->setDynamics(surrounding, emptyTexture);
 	this->addSprite(sprite);
 	this->color = BLACK;
+	this->color.a = 0;
 
 	padding = 5;
 }
@@ -43,8 +44,27 @@ void QuestLog::removeQuest(std::string questName)
 	{
 		quests.erase(it);
 	}
+	
+	if (quests.size() > 0)
+	{
+		reformatText();
 
+	}
+	else
+	{
+		this->color.a = 0;
+		this->infoText->color.a = 0;
+	}
+}
+
+void QuestLog::clear()
+{
+	infoText->setText("");
+	quests.clear();
 	reformatText();
+	this->color.a = 0;
+	this->infoText->color.a = 0;
+	
 }
 
 void QuestLog::reformatText()
@@ -78,5 +98,6 @@ void QuestLog::reformatText()
 	vertices.push_back(Vector2(-halveSize.x, -halveSize.y));
 
 	surrounding->setFromVertices(vertices);
-
+	this->color.a = 255;
+	this->infoText->color.a = 255;
 }

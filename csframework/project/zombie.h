@@ -11,11 +11,20 @@ public:
 	virtual void update(float deltaTime);
 
 	void applyDamage(float damage);
+	void startAttack();
+	void stopAttack();
+	void onIdle();
+	void onWalk();
+	void disableAttack() { canattack = false; }
 
-	float getHealth() { return health; }
+	bool canAttack() { return canattack; }
+	bool isAttacking() { return attacking; }
+	int getHealth() { return health; }
 private:
-	float health;
-
+	int health;
+	bool attacking;
+	bool walking;
+	bool canattack;
 	TextMesh* healthText;
 
 };

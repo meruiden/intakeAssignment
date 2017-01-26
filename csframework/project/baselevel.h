@@ -4,6 +4,7 @@
 #include <engine/textmesh.h>
 #include <engine/scenemanager.h>
 #include <engine/resourcemanager.h>
+#include <engine/sound.h>
 
 #include <project/player.h>
 #include <project/playergroundtrigger.h>
@@ -15,6 +16,11 @@
 #include <project/cratepart.h>
 #include <project/questlog.h>
 #include <project/background.h>
+#include <project/questnpc.h>
+#include <project/bloodsplatter.h>
+#include <project/explosivebarrel.h>
+#include <project/explosionparticle.h>
+#include <project/ammoclip.h>
 
 class BaseLevel : public Scene
 {
@@ -23,9 +29,11 @@ public:
 	virtual ~BaseLevel();
 	virtual void update(float deltaTime);
 	virtual void fixedUpdate();
+	virtual void onLoad();
 
 protected:
 	void loadMap(std::string filePath);
+
 private:
 	void preloadImages();
 	void handleInput();
@@ -33,17 +41,30 @@ private:
 	void checkAudioParticles();
 	void handleZombies();
 	void checkCrates();
+	void checkNpcs();
+	void checkBloodSplatters();
+	void checkExplosiveBarrels();
+	void checkExplosionParticles();
+	void checkDroppedAmmoClips();
+	void handleReloading(float deltaTime);
 
 	AudioParticle* createAudioParticle(std::string filePath);
 	float shootDelay;
 	float shootDelayCounter;
+	float cameraOffset;
+	float playerReloadStartAngle;
+	float blackFadeAlpha;
 
-	Player* player;
 	PlayerGroundTrigger* playerGroundTrigger;
 
 	bool playerLeft;
 	bool playerRight;
 	bool playerJump;
+	bool playerCanWalk;
+	bool playerReloading;
+	bool armReturning;
+	bool fadingIn;
+	bool fadingOut;
 
 	std::vector<Entity*> loadedEntities;
 	std::vector<Zombie*> zombies;
@@ -51,6 +72,11 @@ private:
 	std::vector<AudioParticle*> audioParticles;
 	std::vector<CratePart*> crateParts;
 	std::vector<Crate*> crates;
+	std::vector<QuestNpc*> npcs;
+	std::vector<BloodSplatter*> bloodSplatters;
+	std::vector<ExplosiveBarrel*> explosiveBarrels;
+	std::vector<ExplosionParticle*> explosionParticles;
+	std::vector<AmmoClip*> droppedAmmoClips;
 
 	Entity* leftArmPivot;
 	Entity* rightArmPivot;
@@ -59,6 +85,25 @@ private:
 	Entity* weapon;
 	Entity* bulletLaunchPos;
 
-	QuestLog* questLog;
 	Background* background;
+
+	Sound* nightTimeAmbientSound;
+	Sound* ambientSound;
+
+	HudText* playerHealthText;
+	HudText* ammoText;
+	HudText* blackFade;
+protected:
+	QuestLog* questLog;
+	Player* player;
+
+	void fadeIn();
+	void fadeOut();
+	void clearMap();
+	void playMusic();
+	void stopMusic();
+
+	bool doneFadingIn() { return blackFadeAlpha == 255; }
+	bool doneFadingOut() { return blackFadeAlpha == 0; }
+	bool isFading() { return fadingIn || fadingOut; }
 };
