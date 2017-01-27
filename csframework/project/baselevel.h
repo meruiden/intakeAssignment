@@ -54,6 +54,8 @@ private:
 	float cameraOffset;
 	float playerReloadStartAngle;
 	float blackFadeAlpha;
+	float reloadIndicatorAlpha;
+	float reloadIndicatorAlphaTimer;
 
 	PlayerGroundTrigger* playerGroundTrigger;
 
@@ -93,6 +95,7 @@ private:
 	HudText* playerHealthText;
 	HudText* ammoText;
 	HudText* blackFade;
+	HudText* reloadIndicator;
 protected:
 	QuestLog* questLog;
 	Player* player;

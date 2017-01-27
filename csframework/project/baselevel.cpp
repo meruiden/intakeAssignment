@@ -86,10 +86,22 @@ BaseLevel::BaseLevel() : Scene()
 	fadingIn = false;
 	fadingOut = false;
 	blackFadeAlpha = 255;
+	reloadIndicatorAlpha = 255;
+	reloadIndicatorAlphaTimer = 0;
+
+	reloadIndicator = new HudText();
+	reloadIndicator->loadFont("assets/arial.ttf");
+	reloadIndicator->setText("Press 'R' to reload");
+	reloadIndicator->setAnchorPoint(HudElement::ANCHOR_BOTTOM_CENTER);
+	reloadIndicator->setPosition(Vector2(0, -80));
+	addHudElement(reloadIndicator);
 }
 
 BaseLevel::~BaseLevel()
 {
+	removeHudElement(reloadIndicator);
+	delete reloadIndicator;
+
 	removeHudElement(ammoText);
 	delete ammoText;
 
@@ -131,6 +143,17 @@ BaseLevel::~BaseLevel()
 
 void BaseLevel::update(float deltaTime)
 {
+	if (player->getAmmoLeft() == 0)
+	{
+		reloadIndicatorAlphaTimer += deltaTime*2.5f;
+		reloadIndicatorAlpha = (std::sin(reloadIndicatorAlphaTimer) + 1.0f) / 2.0f * 255.0f;
+		reloadIndicator->color.a = reloadIndicatorAlpha;
+	}
+	else
+	{
+		reloadIndicator->color.a = 0;
+		reloadIndicatorAlphaTimer = 0;
+	}
 	if (player->getAmmoLeft() <= 5)
 	{
 		ammoText->color = RED;
